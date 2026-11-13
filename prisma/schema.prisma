@@ -1,0 +1,277 @@
+// AcademyHub - Core Database Schema
+// PostgreSQL 16 via Prisma ORM
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  PARENT
+}
+
+enum TeacherStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum StudentStatus {
+  ACTIVE
+  LEFT
+  STRUCK_OFF
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  LEFT
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LEAVE
+  LATE
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PARTIAL
+  PAID
+}
+
+enum PaymentMethod {
+  CASH
+  JAZZCASH
+  EASYPAISA
+  BANK
+}
+
+enum TestStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum NotificationChannel {
+  SMS
+  WHATSAPP
+}
+
+enum NotificationStatus {
+  QUEUED
+  SENT
+  FAILED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  role         Role
+  name         String
+  phone        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  teacher      Teacher?
+  children     Student[] @relation("ParentGuardianUser")
+}
+
+model Teacher {
+  id          String        @id @default(cuid())
+  userId      String        @unique
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjects    String[]      // e.g. ["Maths", "Physics"]
+  salaryMinor Int           // Salary in minor units (paisa)
+  joiningDate DateTime      @default(now())
+  status      TeacherStatus @default(ACTIVE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  batches     Batch[]
+}
+
+model Student {
+  id             String        @id @default(cuid())
+  admissionNo    String        @unique
+  name           String
+  guardianName   String
+  guardianPhone  String
+  guardianUserId String?
+  guardianUser   User?         @relation("ParentGuardianUser", fields: [guardianUserId], references: [id], onDelete: SetNull)
+  dateOfBirth    DateTime?
+  address        String?
+  status         StudentStatus @default(ACTIVE)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  enrollments    Enrollment[]
+  invoices       FeeInvoice[]
+  testResults    TestResult[]
+
+  @@index([guardianPhone])
+  @@index([guardianUserId])
+}
+
+model Class {
+  id        String   @id @default(cuid())
+  name      String   // e.g. "9th", "10th"
+  section   String   // e.g. "A", "B"
+  capacity  Int      @default(40)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  batches   Batch[]
+}
+
+model Batch {
+  id        String   @id @default(cuid())
+  classId   String
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  name      String   // e.g. "Evening Batch"
+  timing    String   // e.g. "4-6 PM"
+  teacherId String?
+  teacher   Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  feeMinor  Int      // Base fee in paisa
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  feePlan     FeePlan?
+  enrollments Enrollment[]
+  invoices    FeeInvoice[]
+  tests       Test[]
+
+  @@index([classId])
+  @@index([teacherId])
+}
+
+model Enrollment {
+  id         String           @id @default(cuid())
+  studentId  String
+  student    Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  batchId    String
+  batch      Batch            @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  enrolledAt DateTime         @default(now())
+  status     EnrollmentStatus @default(ACTIVE)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  attendance Attendance[]
+
+  @@unique([studentId, batchId])
+  @@index([batchId])
+}
+
+model Attendance {
+  id           String           @id @default(cuid())
+  enrollmentId String
+  enrollment   Enrollment       @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  date         DateTime         @db.Date
+  status       AttendanceStatus
+  remarks      String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@unique([enrollmentId, date])
+  @@index([date])
+}
+
+model FeePlan {
+  id               String   @id @default(cuid())
+  batchId          String   @unique
+  batch            Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  monthlyFeeMinor  Int      // in paisa
+  admissionFeeMinor Int     @default(0) // in paisa
+  lateFineMinor    Int      @default(0) // in paisa
+  dueDayOfMonth    Int      @default(10)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model FeeInvoice {
+  id            String        @id @default(cuid())
+  studentId     String
+  student       Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  batchId       String
+  batch         Batch         @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  month         String        // "YYYY-MM"
+  amountMinor   Int           // Monthly fee in paisa
+  discountMinor Int           @default(0) // Discount in paisa
+  fineMinor     Int           @default(0) // Late fine in paisa
+  totalMinor    Int           // (amount + fine) - discount in paisa
+  status        InvoiceStatus @default(UNPAID)
+  paidAt        DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  payments      FeePayment[]
+
+  @@unique([studentId, batchId, month])
+  @@index([studentId])
+  @@index([batchId])
+  @@index([status])
+}
+
+model FeePayment {
+  id          String        @id @default(cuid())
+  invoiceId   String
+  invoice     FeeInvoice    @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  amountMinor Int           // in paisa (append-only)
+  method      PaymentMethod @default(CASH)
+  receivedBy  String        // User ID or name of staff
+  paidAt      DateTime      @default(now())
+  createdAt   DateTime      @default(now())
+
+  @@index([invoiceId])
+}
+
+model Test {
+  id         String     @id @default(cuid())
+  batchId    String
+  batch      Batch      @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  subject    String     // e.g. "Maths"
+  title      String     // e.g. "Chapter 1 Test"
+  totalMarks Int
+  date       DateTime   @db.Date
+  status     TestStatus @default(DRAFT)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  results    TestResult[]
+
+  @@index([batchId])
+}
+
+model TestResult {
+  id            String   @id @default(cuid())
+  testId        String
+  test          Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  obtainedMarks Float
+  remarks       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([testId, studentId])
+  @@index([studentId])
+}
+
+model NotificationLog {
+  id             String              @id @default(cuid())
+  recipientPhone String
+  channel        NotificationChannel @default(SMS)
+  template       String
+  message        String
+  status         NotificationStatus  @default(QUEUED)
+  sentAt         DateTime?
+  createdAt      DateTime            @default(now())
+
+  @@index([recipientPhone])
+  @@index([status])
+}
