@@ -1,12 +1,42 @@
+import NextAuth from "next-auth";
+import { authConfig } from "@/lib/auth.config";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
-  // Phase 0: Base passthrough middleware
-  // Route guarding (admin, teacher, parent) will be activated in Phase 1
+const { auth } = NextAuth(authConfig);
+
+export default auth((req) => {
+  const { pathname } = req.nextUrl;
+  const user = req.auth?.user;
+
+  // Protect /admin routes -> requires ADMIN
+  if (pathname.startsWith("/admin")) {
+    if (!user) {
+      const loginUrl = new URL("/login", req.nextUrl.origin);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (user.role !== "ADMIN") {
+      return new NextResponse("Forbidden: Administrator access required.", { status: 403 });
+    }
+  }
+
+  // Protect /teacher routes -> requires TEACHER or ADMIN
+  if (pathname.startsWith("/teacher")) {
+    if (!user) {
+      const loginUrl = new URL("/login", req.nextUrl.origin);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (user.role !== "TEACHER" && user.role !== "ADMIN") {
+      return new NextResponse("Forbidden: Teacher access required.", { status: 403 });
+    }
+  }
+
   return NextResponse.next();
-}
+});
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/admin/:path*", "/teacher/:path*"],
 };

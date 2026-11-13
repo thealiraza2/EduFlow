@@ -14,7 +14,7 @@ One academy runs on one installation. The academy owner (admin) manages students
 | Phase | Description | Status |
 | :--- | :--- | :--- |
 | **Phase 0** | Pre-flight & repo setup, tooling, env, DB schema, health check | **DONE** |
-| **Phase 1** | Auth + roles (Admin, Teacher, Parent) + middleware protection | Not built yet |
+| **Phase 1** | Auth + roles (Admin, Teacher, Parent) + middleware protection | **DONE** |
 | **Phase 2** | Students, teachers, classes & batches | Not built yet |
 | **Phase 3** | Timetable management | Not built yet |
 | **Phase 4** | Attendance + parent absence notifications | Not built yet |
@@ -99,3 +99,20 @@ Health check endpoint:
 curl http://localhost:3000/api/health
 ```
 Response: `{"status":"ok"}`
+
+---
+
+## Authentication & Authorization (Phase 1)
+
+- **Engine**: Auth.js (NextAuth v5 beta.20) with JWT session strategy and bcryptjs password hashing.
+- **Roles**: `ADMIN`, `TEACHER`, `PARENT`.
+- **Registration**: Strictly closed; academy accounts are created exclusively by the academy administrator.
+- **Route Protection (`src/middleware.ts`)**:
+  - `/admin/*`: Restricted strictly to `ADMIN` role. Unauthenticated requests are redirected to `/login?callbackUrl=...`; non-admin authenticated users are blocked with HTTP `403 Forbidden`.
+  - `/teacher/*`: Accessible to `TEACHER` and `ADMIN` (directors oversee all batches).
+  - Unauthenticated access to protected routes redirects to `/login`.
+- **Permissions Layer (`src/lib/permissions.ts`)**: Server-side guards `requireAdmin()`, `requireTeacher()`, and `requireParent()` enforce security at the server actions and API levels.
+- **Default Seed Accounts**:
+  - Admin: `admin@academyhub.test` / `Admin123!`
+  - Parent (verification): `parent@academyhub.test` / `Parent123!`
+

@@ -16,6 +16,7 @@ All core dependencies are strictly pinned to the versions specified in the Maste
 | `vitest` | `2.0.5` | `2.0.5` | Pinned exact |
 | `@playwright/test` | `1.46.1` | `1.46.1` | Pinned exact |
 | `next-auth` | `5.0.0-beta.20` | `5.0.0-beta.20` | Pinned exact |
+| `bcryptjs` | `2.4.3` | `2.4.3` | Pure JS bcrypt for password hashing |
 | `PostgreSQL` | `16` | `16.16.0` | PostgreSQL 16 Portable Binaries |
 
 ## Notes:
