@@ -15,7 +15,7 @@ One academy runs on one installation. The academy owner (admin) manages students
 | :--- | :--- | :--- |
 | **Phase 0** | Pre-flight & repo setup, tooling, env, DB schema, health check | **DONE** |
 | **Phase 1** | Auth + roles (Admin, Teacher, Parent) + middleware protection | **DONE** |
-| **Phase 2** | Students, teachers, classes & batches | Not built yet |
+| **Phase 2** | Students, teachers, classes & batches | **DONE** |
 | **Phase 3** | Timetable management | Not built yet |
 | **Phase 4** | Attendance + parent absence notifications | Not built yet |
 | **Phase 5** | Fees: plans, monthly invoices, append-only payments, challans | Not built yet |
@@ -115,4 +115,26 @@ Response: `{"status":"ok"}`
 - **Default Seed Accounts**:
   - Admin: `admin@academyhub.test` / `Admin123!`
   - Parent (verification): `parent@academyhub.test` / `Parent123!`
+
+---
+
+## Students, Faculty & Class Management (Phase 2)
+
+- **Student Admissions**:
+  - Auto-generated, non-reusable sequential admission numbers (`AH-YYYY-####`).
+  - Records student details, guardian info, contact numbers, and address.
+  - Optional Guardian Account provisioning: seamlessly creates a linked `PARENT` user account with bcrypt password hashing in a single transaction.
+- **Faculty Management**:
+  - Hires teachers via atomic transactions creating both the `TEACHER` user account and `Teacher` profile.
+  - Salary stored in integer minor units (paisa) via `src/lib/money.ts`.
+- **Classes & Batches**:
+  - Academic class levels with sections and capacity caps.
+  - Batches scheduled with timings, assigned teachers, and base monthly fees in paisa.
+  - Automatic `FeePlan` initialization for every batch created.
+- **Enrollment Rules**:
+  - Enrolls active students into batches with `UNIQUE(studentId, batchId)`.
+  - Duplicate enrollment attempts return clean error messages without duplicate records.
+  - Student status state machine: `ACTIVE | LEFT | STRUCK_OFF`.
+  - Students marked `LEFT` maintain historical audit records but are automatically excluded from active batch rosters and attendance sheets.
+
 
