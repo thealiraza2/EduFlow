@@ -16,7 +16,8 @@ One academy runs on one installation. The academy owner (admin) manages students
 | **Phase 0** | Pre-flight & repo setup, tooling, env, DB schema, health check | **DONE** |
 | **Phase 1** | Auth + roles (Admin, Teacher, Parent) + middleware protection | **DONE** |
 | **Phase 2** | Students, teachers, classes & batches | **DONE** |
-| **Phase 3** | Timetable management | Not built yet |
+| **Phase 3** | Timetable management | **DONE** |
+| **Phase 4** | Attendance + parent absence notifications | Not built yet |
 | **Phase 4** | Attendance + parent absence notifications | Not built yet |
 | **Phase 5** | Fees: plans, monthly invoices, append-only payments, challans | Not built yet |
 | **Phase 6** | Tests, marks, result cards & publishing | Not built yet |
@@ -136,5 +137,21 @@ Response: `{"status":"ok"}`
   - Duplicate enrollment attempts return clean error messages without duplicate records.
   - Student status state machine: `ACTIVE | LEFT | STRUCK_OFF`.
   - Students marked `LEFT` maintain historical audit records but are automatically excluded from active batch rosters and attendance sheets.
+
+---
+
+## Weekly Timetable System (Phase 3)
+
+- **Timetable Schema (`TimetableSlot`)**:
+  - Weekly schedule indexed by `batchId`, `dayOfWeek` (0–6), `startTime`, `endTime`, `subject`, `teacherId`, and `room`.
+  - Enforces `UNIQUE(batchId, dayOfWeek, startTime)` at the database level to prevent double-booking batch time slots.
+- **Double-Booking & Conflict Validation**:
+  - **Batch Overlap**: Validates that no two lectures overlap for the same batch on the same day.
+  - **Teacher Conflict**: Validates that a faculty member cannot be scheduled to teach two batches simultaneously.
+- **Role-Based Schedule Views**:
+  - **Admin Grid (`/admin/timetable`)**: Weekly Mon–Sat schedule grid with slot creation, teacher assignment, and slot deletion.
+  - **Teacher Schedule (`/teacher`)**: Faculty members see their personal "My timetable this week" showing lecture timings, batch, and assigned room.
+  - **Parent View (`/parent/timetable`)**: Read-only weekly schedule strictly scoped by `guardianUserId` displaying timetables for all enrolled children.
+
 
 

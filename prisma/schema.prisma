@@ -93,7 +93,8 @@ model Teacher {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  batches     Batch[]
+  batches        Batch[]
+  timetableSlots TimetableSlot[]
 }
 
 model Student {
@@ -141,13 +142,34 @@ model Batch {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  feePlan     FeePlan?
-  enrollments Enrollment[]
-  invoices    FeeInvoice[]
-  tests       Test[]
+  feePlan        FeePlan?
+  enrollments    Enrollment[]
+  invoices       FeeInvoice[]
+  tests          Test[]
+  timetableSlots TimetableSlot[]
 
   @@index([classId])
   @@index([teacherId])
+}
+
+model TimetableSlot {
+  id        String   @id @default(cuid())
+  batchId   String
+  batch     Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  dayOfWeek Int      // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  startTime String   // e.g. "16:00"
+  endTime   String   // e.g. "17:00"
+  subject   String   // e.g. "Maths"
+  teacherId String
+  teacher   Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  room      String?  // e.g. "Room 101"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([batchId, dayOfWeek, startTime])
+  @@index([batchId])
+  @@index([teacherId])
+  @@index([dayOfWeek])
 }
 
 model Enrollment {

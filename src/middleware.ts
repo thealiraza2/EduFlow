@@ -34,9 +34,22 @@ export default auth((req) => {
     }
   }
 
+  // Protect /parent routes -> requires PARENT or ADMIN
+  if (pathname.startsWith("/parent")) {
+    if (!user) {
+      const loginUrl = new URL("/login", req.nextUrl.origin);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (user.role !== "PARENT" && user.role !== "ADMIN") {
+      return new NextResponse("Forbidden: Parent access required.", { status: 403 });
+    }
+  }
+
   return NextResponse.next();
 });
 
 export const config = {
-  matcher: ["/admin/:path*", "/teacher/:path*"],
+  matcher: ["/admin/:path*", "/teacher/:path*", "/parent/:path*"],
 };

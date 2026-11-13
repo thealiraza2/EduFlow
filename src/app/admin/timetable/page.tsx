@@ -1,0 +1,131 @@
+import { requireAdmin } from "@/lib/permissions";
+import { db } from "@/lib/db";
+import Link from "next/link";
+import { AddSlotModal } from "@/components/admin/AddSlotModal";
+import { TimetableGrid } from "@/components/admin/TimetableGrid";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, School, Clock } from "lucide-react";
+
+export default async function AdminTimetablePage({
+  searchParams,
+}: {
+  searchParams: { batchId?: string };
+}) {
+  await requireAdmin();
+
+  const [batches, teachers] = await Promise.all([
+    db.batch.findMany({
+      include: {
+        class: true,
+        teacher: { include: { user: true } },
+      },
+      orderBy: { createdAt: "asc" },
+    }),
+    db.teacher.findMany({
+      where: { status: "ACTIVE" },
+      include: { user: true },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
+
+  const selectedBatchId = searchParams.batchId || (batches.length > 0 ? batches[0].id : null);
+  const selectedBatch = batches.find((b) => b.id === selectedBatchId) || null;
+
+  const slots = selectedBatch
+    ? await db.timetableSlot.findMany({
+        where: { batchId: selectedBatch.id },
+        include: {
+          teacher: {
+            include: { user: true },
+          },
+        },
+        orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
+      })
+    : [];
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Weekly Timetable</h1>
+          <p className="text-slate-500">
+            Define daily subject lectures and avoid teacher double-booking conflicts.
+          </p>
+        </div>
+
+        {selectedBatch && (
+          <AddSlotModal
+            batchId={selectedBatch.id}
+            batchName={`${selectedBatch.class.name}-${selectedBatch.class.section} ${selectedBatch.name}`}
+            teachers={teachers}
+          />
+        )}
+      </div>
+
+      {batches.length === 0 ? (
+        <Card className="text-center py-12">
+          <CardContent className="space-y-3">
+            <School className="h-10 w-10 text-slate-400 mx-auto" />
+            <h3 className="text-lg font-semibold text-slate-900">No batches created yet</h3>
+            <p className="text-sm text-slate-500 max-w-sm mx-auto">
+              Please create an academic class and batch first before setting up timetables.
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-6">
+          {/* Batch Selector Bar */}
+          <div className="flex items-center space-x-3 overflow-x-auto pb-2">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+              Select Batch:
+            </span>
+            <div className="flex space-x-2">
+              {batches.map((b) => (
+                <Link
+                  key={b.id}
+                  href={`/admin/timetable?batchId=${b.id}`}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors border ${
+                    b.id === selectedBatchId
+                      ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+                      : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
+                  }`}
+                >
+                  {b.class.name}-{b.class.section} {b.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {selectedBatch && (
+            <div className="p-4 bg-white rounded-lg border shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h3 className="text-lg font-bold text-slate-900">
+                    Class {selectedBatch.class.name}-{selectedBatch.class.section} ({selectedBatch.name})
+                  </h3>
+                  <Badge variant="outline">{slots.length} Lectures/Week</Badge>
+                </div>
+                <div className="flex items-center space-x-4 text-xs text-slate-500 mt-1">
+                  <span className="flex items-center">
+                    <Clock className="h-3.5 w-3.5 mr-1" />
+                    Batch Hours: {selectedBatch.timing}
+                  </span>
+                  <span>
+                    Lead Teacher:{" "}
+                    <strong>{selectedBatch.teacher?.user.name || "Unassigned"}</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Timetable Grid */}
+          {selectedBatch && (
+            <TimetableGrid slots={slots} batchId={selectedBatch.id} />
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
