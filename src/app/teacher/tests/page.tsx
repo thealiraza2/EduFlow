@@ -4,7 +4,7 @@ import { Role } from "@prisma/client";
 import { CreateTestModal } from "@/components/teacher/CreateTestModal";
 import { TeacherMarksEntry } from "@/components/teacher/TeacherMarksEntry";
 import Link from "next/link";
-import { ArrowLeft, FileSpreadsheet, PlusCircle, CheckCircle2, Clock } from "lucide-react";
+import { ArrowLeft, FileSpreadsheet, PlusCircle, CheckCircle2, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -100,7 +100,20 @@ export default async function TeacherTestsPage({
             </div>
           </div>
 
-          {!selectedTest && <CreateTestModal batches={batches} />}
+          {!selectedTest && (
+            <div className="flex items-center gap-2">
+              <Link href="/teacher/tests/generate">
+                <Button
+                  size="sm"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-sm flex items-center"
+                >
+                  <Sparkles className="h-4 w-4 mr-1.5" />
+                  AI Test Generator
+                </Button>
+              </Link>
+              <CreateTestModal batches={batches} />
+            </div>
+          )}
         </div>
 
         {selectedTest ? (

@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { formatPKR } from "@/lib/money";
 import { calculateRemainingBalance } from "@/lib/fees";
 import { AdminAnnouncementsCard } from "@/components/admin/AdminAnnouncementsCard";
+import { AtRiskStudentsCard } from "@/components/common/AtRiskStudentsCard";
+import { getAcademyStudentsRiskOverview } from "@/lib/risk";
 import Link from "next/link";
 import {
   Users,
@@ -198,6 +200,10 @@ export default async function AdminDashboardPage() {
     createdAt: a.createdAt.toISOString(),
   }));
 
+  // 8. AI Dropout Risk & Academic Retention Analysis (Phase 13)
+  const atRiskStudents = await getAcademyStudentsRiskOverview(tenant.academyId);
+  const isAiAvailable = !!process.env.LLM_API_KEY?.trim();
+
   return (
     <div className="space-y-8">
       {/* Top Welcome Banner */}
@@ -359,6 +365,9 @@ export default async function AdminDashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* AI Dropout Risk & Academic Retention Analysis */}
+      <AtRiskStudentsCard students={atRiskStudents} isAiAvailable={isAiAvailable} />
 
       {/* Middle Row: Low Attendance (<75%) & Upcoming Tests */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

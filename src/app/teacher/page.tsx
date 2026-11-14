@@ -4,10 +4,12 @@ import { Role } from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DAYS_OF_WEEK } from "@/lib/constants";
-import { Clock, MapPin, School, Calendar, BookOpen, CheckCircle2, FileSpreadsheet, FileCheck2 } from "lucide-react";
+import { Clock, MapPin, School, Calendar, BookOpen, CheckCircle2, FileSpreadsheet, FileCheck2, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AnnouncementsFeed } from "@/components/common/AnnouncementsFeed";
+import { AtRiskStudentsCard } from "@/components/common/AtRiskStudentsCard";
+import { getAcademyStudentsRiskOverview } from "@/lib/risk";
 
 export default async function TeacherDashboardPage() {
   const user = await requireRole([Role.TEACHER, Role.ADMIN]);
@@ -75,6 +77,14 @@ export default async function TeacherDashboardPage() {
     createdAt: a.createdAt.toISOString(),
   }));
 
+  // Fetch at-risk students for this teacher's batches
+  const teacherBatchIds = teacher ? teacher.batches.map((b) => b.id) : [];
+  const atRiskStudents = await getAcademyStudentsRiskOverview(
+    user.academyId || "",
+    teacherBatchIds.length > 0 ? teacherBatchIds : undefined
+  );
+  const isAiAvailable = !!process.env.LLM_API_KEY?.trim();
+
   return (
     <div className="min-h-screen bg-slate-50 p-6 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -95,6 +105,12 @@ export default async function TeacherDashboardPage() {
                 {teacher.batches.length} Assigned Batches
               </Badge>
             )}
+            <Link href="/teacher/tests/generate">
+              <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white flex items-center text-xs shadow-sm">
+                <Sparkles className="h-4 w-4 mr-1.5" />
+                AI Test Generator
+              </Button>
+            </Link>
             <Link href="/teacher/marking">
               <Button size="sm" variant="outline" className="flex items-center text-xs text-amber-700 border-amber-300 hover:bg-amber-50">
                 <FileCheck2 className="h-4 w-4 mr-1.5 text-amber-600" />
@@ -115,6 +131,14 @@ export default async function TeacherDashboardPage() {
             </Link>
           </div>
         </div>
+
+        {/* At-Risk Students Retention Alert */}
+        <AtRiskStudentsCard
+          students={atRiskStudents}
+          isAiAvailable={isAiAvailable}
+          title="My Students Retention & Risk Alert"
+          description="Deterministic dropout risk for students enrolled in your assigned batches."
+        />
 
         {/* Faculty Announcements & Notices */}
         <AnnouncementsFeed
