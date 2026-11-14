@@ -75,6 +75,17 @@ enum NotificationTrigger {
   CUSTOM
 }
 
+enum SalaryStatus {
+  UNPAID
+  PAID
+}
+
+enum AnnouncementAudience {
+  ALL
+  TEACHERS
+  PARENTS
+}
+
 model User {
   id           String    @id @default(cuid())
   email        String    @unique
@@ -102,6 +113,7 @@ model Teacher {
 
   batches        Batch[]
   timetableSlots TimetableSlot[]
+  salaries       TeacherSalary[]
 }
 
 model Student {
@@ -315,4 +327,33 @@ model NotificationLog {
   @@index([studentId])
   @@index([trigger])
   @@index([referenceId])
+}
+
+model TeacherSalary {
+  id          String       @id @default(cuid())
+  teacherId   String
+  teacher     Teacher      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  month       String       // "YYYY-MM"
+  amountMinor Int          // in paisa
+  status      SalaryStatus @default(UNPAID)
+  paidAt      DateTime?
+  notes       String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([teacherId, month])
+  @@index([month])
+  @@index([status])
+}
+
+model Announcement {
+  id        String               @id @default(cuid())
+  title     String
+  content   String
+  audience  AnnouncementAudience @default(ALL)
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  @@index([audience])
+  @@index([createdAt])
 }

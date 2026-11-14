@@ -1,8 +1,10 @@
 import { requireRole } from "@/lib/auth";
+import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { getParentDashboardData } from "@/lib/parent";
 import { ParentChildCard } from "@/components/parent/ParentChildCard";
 import { ParentMessagesList } from "@/components/parent/ParentMessagesList";
+import { AnnouncementsFeed } from "@/components/common/AnnouncementsFeed";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { User, ShieldCheck, HeartHandshake } from "lucide-react";
@@ -14,6 +16,22 @@ export default async function ParentPortalDashboardPage() {
     user.id,
     user.role as Role
   );
+
+  const announcements = await db.announcement.findMany({
+    where: {
+      audience: { in: ["ALL", "PARENTS"] },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+  });
+
+  const serializedAnnouncements = announcements.map((a) => ({
+    id: a.id,
+    title: a.title,
+    content: a.content,
+    audience: a.audience,
+    createdAt: a.createdAt.toISOString(),
+  }));
 
   return (
     <div className="min-h-screen bg-slate-50 p-6 md:p-8">
@@ -39,6 +57,12 @@ export default async function ParentPortalDashboardPage() {
             </Badge>
           </div>
         </div>
+
+        {/* Academy Notices for Parents */}
+        <AnnouncementsFeed
+          announcements={serializedAnnouncements}
+          title="Academy Notices & Circulars"
+        />
 
         {/* Children List */}
         {dashboardData.children.length === 0 ? (

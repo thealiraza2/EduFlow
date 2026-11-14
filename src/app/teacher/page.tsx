@@ -7,6 +7,7 @@ import { DAYS_OF_WEEK } from "@/lib/constants";
 import { Clock, MapPin, School, Calendar, BookOpen, CheckCircle2, FileSpreadsheet } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { AnnouncementsFeed } from "@/components/common/AnnouncementsFeed";
 
 export default async function TeacherDashboardPage() {
   const user = await requireRole([Role.TEACHER, Role.ADMIN]);
@@ -50,6 +51,22 @@ export default async function TeacherDashboardPage() {
 
   const displayDays = DAYS_OF_WEEK.filter((d) => d.id >= 1 && d.id <= 6);
 
+  const announcements = await db.announcement.findMany({
+    where: {
+      audience: { in: ["ALL", "TEACHERS"] },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+  });
+
+  const serializedAnnouncements = announcements.map((a) => ({
+    id: a.id,
+    title: a.title,
+    content: a.content,
+    audience: a.audience,
+    createdAt: a.createdAt.toISOString(),
+  }));
+
   return (
     <div className="min-h-screen bg-slate-50 p-6 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -84,6 +101,12 @@ export default async function TeacherDashboardPage() {
             </Link>
           </div>
         </div>
+
+        {/* Faculty Announcements & Notices */}
+        <AnnouncementsFeed
+          announcements={serializedAnnouncements}
+          title="Academy Notices for Faculty"
+        />
 
         {/* My Timetable This Week */}
         <Card className="shadow-sm overflow-hidden">

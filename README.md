@@ -8,8 +8,8 @@ One academy runs on one installation. The academy owner (admin) manages students
 
 ## Project Status
 
-> **Current Milestone: Phase 7 Complete**  
-> All subsequent phases (8 through 15) are **NOT built yet**.
+> **Current Milestone: Phase 8 Complete**  
+> All subsequent phases (9 through 15) are **NOT built yet**.
 
 | Phase | Description | Status |
 | :--- | :--- | :--- |
@@ -21,7 +21,7 @@ One academy runs on one installation. The academy owner (admin) manages students
 | **Phase 5** | Fees: plans, monthly invoices, append-only payments, challans | **DONE** |
 | **Phase 6** | Tests, marks, result cards & publishing | **DONE** |
 | **Phase 7** | Parent portal (strict child data isolation) | **DONE** |
-| **Phase 8** | Admin dashboard, reports & teacher salaries | Not built yet |
+| **Phase 8** | Admin dashboard, reports & teacher salaries | **DONE** |
 | **Phase 9** | Core checkpoint: unit + e2e tests & security audit | Not built yet |
 | **Phase 10** | Multi-branch SaaS: multi-tenancy & tenant isolation | Not built yet |
 | **Phase 11** | Real payments: JazzCash + Easypaisa (sandbox + idempotent webhooks) | Not built yet |
@@ -44,14 +44,21 @@ In this codebase:
 
 ---
 
+## Notice on Teacher Salaries & Payroll Accounting
+
+> **Operational Accounting Notice**: Teacher salaries are marked as PAID inside AcademyHub for internal record-keeping; actual bank transfers occur outside the system.
+
+---
+
 ## Core Invariants
 
 1. **Money Math**: Money is **ALWAYS integer minor units (paisa)**. No floating-point numbers anywhere. 1 PKR = 100 paisas. All calculations strictly reside in `src/lib/money.ts`.
 2. **Append-Only Fees**: Fee payments are immutable and append-only. No payment record can ever be modified or deleted. Adjustments are recorded as new compensating transactions.
-3. **Attendance**: Exactly one attendance record per student per day per batch.
-4. **Parent Isolation**: Parents can only access records belonging to their own children (`guardianUserId` verification). Any unauthorized access returns `403 Forbidden`.
-5. **Teacher Isolation**: Teachers can only access and update batches assigned directly to them.
-6. **No Secrets in Repo**: Environment variables and keys are never committed; `.env` is gitignored.
+3. **Attendance**: Exactly one attendance record per student per day per batch. Upsert semantics prevent duplicate records.
+4. **Result Cards Locked**: Marks become read-only once published; corrections require administrative audit logging.
+5. **Parent Isolation**: Parents can only access records belonging to their own children (`guardianUserId` verification). Any unauthorized direct access returns `403 Forbidden`.
+6. **Teacher Isolation**: Teachers can only access and update batches assigned directly to them.
+7. **No Secrets in Repo**: Environment variables and keys are never committed; `.env` is gitignored.
 
 ---
 
@@ -85,7 +92,7 @@ Ensure `DATABASE_URL` points to your PostgreSQL 16 instance.
 ```bash
 npm install
 npx prisma generate
-npx prisma db push
+npx prisma migrate dev
 ```
 
 ### 4. Running the Development Server
@@ -102,55 +109,63 @@ Response: `{"status":"ok"}`
 
 ---
 
-## Authentication & Authorization (Phase 1)
+## Modules Implemented (Phases 1–8)
 
-- **Engine**: Auth.js (NextAuth v5 beta.20) with JWT session strategy and bcryptjs password hashing.
-- **Roles**: `ADMIN`, `TEACHER`, `PARENT`.
-- **Registration**: Strictly closed; academy accounts are created exclusively by the academy administrator.
-- **Route Protection (`src/middleware.ts`)**:
-  - `/admin/*`: Restricted strictly to `ADMIN` role. Unauthenticated requests are redirected to `/login?callbackUrl=...`; non-admin authenticated users are blocked with HTTP `403 Forbidden`.
-  - `/teacher/*`: Accessible to `TEACHER` and `ADMIN` (directors oversee all batches).
-  - Unauthenticated access to protected routes redirects to `/login`.
-- **Permissions Layer (`src/lib/permissions.ts`)**: Server-side guards `requireAdmin()`, `requireTeacher()`, and `requireParent()` enforce security at the server actions and API levels.
-- **Default Seed Accounts**:
-  - Admin: `admin@academyhub.test` / `Admin123!`
-  - Parent (verification): `parent@academyhub.test` / `Parent123!`
+### Phase 1: Authentication & Authorization
+- Auth.js v5 with credentials provider, JWT sessions, bcryptjs.
+- Roles: `ADMIN`, `TEACHER`, `PARENT`.
+- Middleware protection on `/admin/*`, `/teacher/*`, `/parent/*`. Server-side guards in `src/lib/permissions.ts`.
 
----
+### Phase 2: Students, Faculty, Classes & Batches
+- Sequential non-reusable student admission numbers (`AH-YYYY-####`).
+- Atomic transactions for teacher accounts and guardian accounts.
+- Batch scheduling, enrollment rules, and status lifecycle (`ACTIVE`, `LEFT`, `STRUCK_OFF`).
 
-## Students, Faculty & Class Management (Phase 2)
+### Phase 3: Weekly Timetable System
+- Mon–Sat schedule grid with double-booking prevention for batches and teachers.
+- Teacher personal timetable and parent read-only timetable views.
 
-- **Student Admissions**:
-  - Auto-generated, non-reusable sequential admission numbers (`AH-YYYY-####`).
-  - Records student details, guardian info, contact numbers, and address.
-  - Optional Guardian Account provisioning: seamlessly creates a linked `PARENT` user account with bcrypt password hashing in a single transaction.
-- **Faculty Management**:
-  - Hires teachers via atomic transactions creating both the `TEACHER` user account and `Teacher` profile.
-  - Salary stored in integer minor units (paisa) via `src/lib/money.ts`.
-- **Classes & Batches**:
-  - Academic class levels with sections and capacity caps.
-  - Batches scheduled with timings, assigned teachers, and base monthly fees in paisa.
-  - Automatic `FeePlan` initialization for every batch created.
-- **Enrollment Rules**:
-  - Enrolls active students into batches with `UNIQUE(studentId, batchId)`.
-  - Duplicate enrollment attempts return clean error messages without duplicate records.
-  - Student status state machine: `ACTIVE | LEFT | STRUCK_OFF`.
-  - Students marked `LEFT` maintain historical audit records but are automatically excluded from active batch rosters and attendance sheets.
+### Phase 4: Attendance & Absence Notifications
+- Rapid attendance marking with upsert semantics and 7-day teacher edit window.
+- Guardian absence alerts queued with strict once-per-day duplicate prevention.
+- Admin attendance analytics flagging students below 75% attendance.
 
----
+### Phase 5: Fees, Invoices, Payments & Challan PDFs
+- Idempotent monthly invoice generation (`generateMonthlyInvoices(month)`).
+- Append-only payment ledger with auto-derived payment status (`UNPAID`, `PARTIAL`, `PAID`).
+- High-fidelity 3-copy A4 fee challan PDF generation (Bank, Academy, Student copies).
+- Defaulters dashboard with 1-tap SMS fee reminder.
 
-## Weekly Timetable System (Phase 3)
+### Phase 6: Tests, Marks, Result Cards & Publishing
+- Teacher test creation and student marks entry in DRAFT state.
+- Admin publishing workflow locking marks from modifications.
+- Official A4 Result Card PDF with letter grading, percentage, and faculty remarks.
+- Batch analytics, toppers list, and subject difficulty diagnostics.
 
-- **Timetable Schema (`TimetableSlot`)**:
-  - Weekly schedule indexed by `batchId`, `dayOfWeek` (0–6), `startTime`, `endTime`, `subject`, `teacherId`, and `room`.
-  - Enforces `UNIQUE(batchId, dayOfWeek, startTime)` at the database level to prevent double-booking batch time slots.
-- **Double-Booking & Conflict Validation**:
-  - **Batch Overlap**: Validates that no two lectures overlap for the same batch on the same day.
-  - **Teacher Conflict**: Validates that a faculty member cannot be scheduled to teach two batches simultaneously.
-- **Role-Based Schedule Views**:
-  - **Admin Grid (`/admin/timetable`)**: Weekly Mon–Sat schedule grid with slot creation, teacher assignment, and slot deletion.
-  - **Teacher Schedule (`/teacher`)**: Faculty members see their personal "My timetable this week" showing lecture timings, batch, and assigned room.
-  - **Parent View (`/parent/timetable`)**: Read-only weekly schedule strictly scoped by `guardianUserId` displaying timetables for all enrolled children.
+### Phase 7: Parent Portal
+- Strict guardian isolation (Invariant 5) enforced at service layer and HTTP routes (403 Forbidden).
+- Overview of linked children, attendance summaries, fee payment ledger, downloadable challans, and published test cards.
+- Historical log of SMS messages and absence alerts.
 
-
-
+### Phase 8: Admin Dashboard, Reports & Teacher Salaries
+- **Admin Control Center (`/admin`)**:
+  - Live monthly fee collection KPI (collected vs due).
+  - Defaulters counter.
+  - Today's academy attendance percentage.
+  - Active roster metrics (students, batches, faculty).
+  - Low-attendance watchlist (<75% attendance rate).
+  - Upcoming evaluation tests and status tracker.
+- **CSV Reports Engine (`/admin/reports` & `/api/admin/reports`)**:
+  - 1. Monthly fee collection report (all line items, discounts, late fines, paid amounts, remaining balances).
+  - 2. Batch attendance report (total sessions, present, absent, leave, late, attendance %).
+  - 3. Student academic performance report (test marks, percentage, grade, remarks).
+  - 4. Teacher workload & payroll report (base contracts, assigned batches, weekly lecture slots, estimated weekly hours).
+- **Teacher Salaries & Payroll Ledger (`/admin/salaries`)**:
+  - Contract base salary in minor units (paisa).
+  - Monthly disbursement tracking (`PAID` vs `UNPAID`).
+  - Workload metrics derived from timetable slots.
+  - Prominent operational notice that bank transfers take place outside the system.
+- **Academy Announcements**:
+  - Admin announcement composer with audience targeting (`ALL`, `TEACHERS`, `PARENTS`).
+  - Broadcast notification logging via `NotificationService`.
+  - Targeted notices banner on Teacher and Parent dashboards.
