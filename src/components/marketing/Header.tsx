@@ -3,10 +3,25 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { Menu, X, ArrowRight } from "lucide-react";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const navLinks = [
+    { name: "Home", href: "/" },
+    { name: "Features", href: "/features" },
+    { name: "Pricing", href: "/pricing" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
+  ];
+
+  const isLinkActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
@@ -27,15 +42,27 @@ export function Header() {
             </span>
           </Link>
 
-          {/* Centre nav: Only show pages that exist; Home bold + yellow underline */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link
-              href="/"
-              className="relative text-sm font-bold text-[#0F2040] py-1 transition-colors"
-            >
-              <span>Home</span>
-              <span className="absolute bottom-0 left-0 w-full h-[3px] bg-[#F5B800] rounded-full" />
-            </Link>
+          {/* Centre nav: Home / Features / Pricing / About / Contact with active yellow underline */}
+          <nav className="hidden md:flex items-center gap-7 lg:gap-8">
+            {navLinks.map((link) => {
+              const active = isLinkActive(link.href);
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`relative text-sm py-1.5 transition-colors ${
+                    active
+                      ? "font-bold text-[#0F2040]"
+                      : "font-semibold text-[#4B5563] hover:text-[#0F2040]"
+                  }`}
+                >
+                  <span>{link.name}</span>
+                  {active && (
+                    <span className="absolute bottom-0 left-0 w-full h-[3px] bg-[#F5B800] rounded-full" />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Right side: Login + Get Started Free */}
@@ -70,15 +97,25 @@ export function Header() {
 
         {/* Mobile dropdown menu */}
         {mobileMenuOpen && (
-          <div className="sm:hidden border-t border-gray-100 py-4 px-2 space-y-3 bg-white">
-            <Link
-              href="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-base font-bold text-[#0F2040] bg-[#FFF9E6]"
-            >
-              Home
-            </Link>
-            <div className="pt-2 flex flex-col gap-2">
+          <div className="sm:hidden border-t border-gray-100 py-4 px-2 space-y-2 bg-white">
+            {navLinks.map((link) => {
+              const active = isLinkActive(link.href);
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`block px-3 py-2 rounded-lg text-base ${
+                    active
+                      ? "font-bold text-[#0F2040] bg-[#FFF9E6]"
+                      : "font-semibold text-[#4B5563] hover:bg-gray-50 hover:text-[#0F2040]"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+            <div className="pt-3 flex flex-col gap-2 border-t border-gray-100">
               <Link
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}

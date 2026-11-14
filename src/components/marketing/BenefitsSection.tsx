@@ -35,10 +35,10 @@ export function BenefitsSection() {
   ];
 
   return (
-    <section className="py-20 md:py-28 bg-[#FFF9E6]/70 border-t border-amber-100/80">
+    <section className="py-14 md:py-20 bg-[#FFF9E6]/70 border-t border-amber-100/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-16 sm:mb-20 space-y-4">
+        <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-10 space-y-3">
           <div className="inline-flex items-center gap-2 rounded-full border border-[#F5B800]/40 bg-white px-4 py-1.5 text-xs font-bold text-[#0F2040] uppercase tracking-wider shadow-sm">
             <span className="w-2 h-2 rounded-full bg-[#F5B800]" />
             <span>WHY CHOOSE US</span>
@@ -54,7 +54,7 @@ export function BenefitsSection() {
         </div>
 
         {/* 6 Benefit Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {benefits.map((b) => {
             const Icon = b.icon;
             return (

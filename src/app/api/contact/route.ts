@@ -5,7 +5,11 @@ import { checkContactRateLimit } from "@/lib/rate-limit";
 
 const contactSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters"),
-  contact: z.string().trim().min(5, "Please provide a valid phone number or email address"),
+  contact: z.string().trim().optional(),
+  email: z.string().trim().email("Please provide a valid email address").optional().or(z.literal("")),
+  phone: z.string().trim().optional(),
+  schoolName: z.string().trim().optional(),
+  topic: z.string().trim().optional(),
   message: z.string().trim().min(5, "Message must be at least 5 characters").max(2000, "Message cannot exceed 2000 characters"),
 });
 
@@ -35,21 +39,31 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { name, contact, message } = parsed.data;
+    const { name, contact, email, phone, schoolName, topic, message } = parsed.data;
+
+    // Build contact info string
+    const contactInfo = contact || [email, phone].filter(Boolean).join(" • ") || "Not provided";
+    
+    // Build enriched message if metadata provided
+    const messageParts: string[] = [];
+    if (topic) messageParts.push(`[Topic: ${topic}]`);
+    if (schoolName) messageParts.push(`[School: ${schoolName}]`);
+    messageParts.push(message);
+    const finalMessage = messageParts.join("\n\n");
 
     // 4. Save to database
     const submission = await db.contactSubmission.create({
       data: {
         name,
-        contact,
-        message,
+        contact: contactInfo,
+        message: finalMessage,
         ipAddress: ip,
       },
     });
 
     return NextResponse.json({
       success: true,
-      message: "Shukriya! Aapka message mil gaya hai. Hamari team jald rabta karegi.",
+      message: "Thank you! Your message has been received. Our team will contact you shortly.",
       id: submission.id,
     });
   } catch (err: any) {

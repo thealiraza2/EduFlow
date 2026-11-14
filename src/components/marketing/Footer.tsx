@@ -22,10 +22,22 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Nav links (Only pages that actually exist) */}
-          <nav className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm font-semibold text-[#0F2040]">
+          {/* Nav links (Features / Pricing / About / Contact / Login / Sign Up / Privacy / Terms) */}
+          <nav className="flex flex-wrap justify-center md:justify-end gap-x-6 sm:gap-x-7 gap-y-3 text-sm font-semibold text-[#0F2040]">
             <Link href="/" className="hover:text-[#F5B800] transition-colors">
               Home
+            </Link>
+            <Link href="/features" className="hover:text-[#F5B800] transition-colors">
+              Features
+            </Link>
+            <Link href="/pricing" className="hover:text-[#F5B800] transition-colors">
+              Pricing
+            </Link>
+            <Link href="/about" className="hover:text-[#F5B800] transition-colors">
+              About
+            </Link>
+            <Link href="/contact" className="hover:text-[#F5B800] transition-colors">
+              Contact
             </Link>
             <Link href="/login" className="hover:text-[#F5B800] transition-colors">
               Login
