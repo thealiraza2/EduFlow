@@ -342,19 +342,22 @@ model FeeInvoice {
 }
 
 model FeePayment {
-  id          String        @id @default(cuid())
-  academyId   String
-  academy     Academy       @relation(fields: [academyId], references: [id], onDelete: Cascade)
-  invoiceId   String
-  invoice     FeeInvoice    @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-  amountMinor Int           // in paisa (append-only)
-  method      PaymentMethod @default(CASH)
-  receivedBy  String        // User ID or name of staff
-  paidAt      DateTime      @default(now())
-  createdAt   DateTime      @default(now())
+  id                   String        @id @default(cuid())
+  academyId            String
+  academy              Academy       @relation(fields: [academyId], references: [id], onDelete: Cascade)
+  invoiceId            String
+  invoice              FeeInvoice    @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  amountMinor          Int           // in paisa (append-only)
+  method               PaymentMethod @default(CASH)
+  receivedBy           String        // User ID or name of staff / Gateway
+  gatewayTransactionId String?       @unique
+  rawGatewayPayload    String?       // JSON serialized callback data for audit
+  paidAt               DateTime      @default(now())
+  createdAt            DateTime      @default(now())
 
   @@index([academyId])
   @@index([invoiceId])
+  @@index([gatewayTransactionId])
 }
 
 model Test {

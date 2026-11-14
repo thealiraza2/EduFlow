@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatPKR } from "@/lib/money";
 import { ParentChildSummary } from "@/lib/parent";
 import { DAYS_OF_WEEK } from "@/lib/constants";
+import { PayInvoiceButton } from "@/components/parent/PayInvoiceButton";
 import {
   Calendar,
   CheckCircle2,
@@ -25,8 +27,10 @@ interface Props {
 }
 
 export function ParentChildCard({ child }: Props) {
+  const searchParams = useSearchParams();
+  const paymentParam = searchParams?.get("payment");
   const [activeTab, setActiveTab] = useState<"attendance" | "fees" | "results" | "timetable">(
-    "attendance"
+    paymentParam ? "fees" : "attendance"
   );
 
   const displayDays = DAYS_OF_WEEK.filter((d) => d.id >= 1 && d.id <= 6);
@@ -286,6 +290,14 @@ export function ParentChildCard({ child }: Props) {
                             </div>
                           </div>
 
+                          {/* Pay Now Button (if unpaid or partial) */}
+                          {inv.remainingMinor > 0 && inv.status !== "PAID" && (
+                            <PayInvoiceButton
+                              invoiceId={inv.id}
+                              remainingMinor={inv.remainingMinor}
+                            />
+                          )}
+
                           {/* Challan PDF Download */}
                           <a
                             href={`/api/invoices/${inv.id}/challan`}
@@ -305,8 +317,15 @@ export function ParentChildCard({ child }: Props) {
                           <span className="font-semibold text-slate-700 block">Payment Receipts:</span>
                           {inv.payments.map((p) => (
                             <div key={p.id} className="flex justify-between items-center font-mono">
-                              <span>
-                                {p.paidAt.split("T")[0]} • via {p.method} (Received by: {p.receivedBy})
+                              <span className="flex items-center space-x-1.5 flex-wrap">
+                                <span>{p.paidAt.split("T")[0]} •</span>
+                                {p.gatewayTransactionId ? (
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800">
+                                    {p.method} Gateway ({p.gatewayTransactionId.slice(-8)})
+                                  </span>
+                                ) : (
+                                  <span>via {p.method} (Manual: {p.receivedBy})</span>
+                                )}
                               </span>
                               <span className="font-bold text-emerald-700">
                                 +{formatPKR(p.amountMinor)}

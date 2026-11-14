@@ -70,6 +70,7 @@ export interface ParentChildSummary {
         method: string;
         paidAt: string;
         receivedBy: string;
+        gatewayTransactionId?: string | null;
       }>;
     }>;
     totalOutstandingMinor: number;
@@ -258,6 +259,7 @@ export async function getParentDashboardData(
           method: p.method,
           paidAt: p.paidAt.toISOString(),
           receivedBy: p.receivedBy,
+          gatewayTransactionId: p.gatewayTransactionId,
         })),
       };
     });

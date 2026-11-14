@@ -61,6 +61,7 @@ export default async function AdminFeesPage() {
       amountMinor: p.amountMinor,
       method: p.method,
       receivedBy: p.receivedBy,
+      gatewayTransactionId: p.gatewayTransactionId,
       paidAt: p.paidAt.toISOString(),
     })),
   }));

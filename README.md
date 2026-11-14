@@ -8,8 +8,8 @@ One academy runs on one installation. The academy owner (admin) oversees student
 
 ## Project Status
 
-> **Current Milestone: Phase 9 Complete (Core Checkpoint)**  
-> Phases 0 through 9 are fully implemented and verified. Advanced modules (Phases 10 through 14) and production deployment (Phase 15) are **NOT built yet**.
+> **Current Milestone: Phase 11 Complete (Real Payments: JazzCash & Easypaisa Sandbox)**  
+> Phases 0 through 11 are fully implemented and verified. Advanced modules (Phases 12 through 14) and production deployment (Phase 15) are **NOT built yet**.
 
 | Phase | Description | Status |
 | :--- | :--- | :--- |
@@ -23,8 +23,8 @@ One academy runs on one installation. The academy owner (admin) oversees student
 | **Phase 7** | Parent portal with strict child data isolation (Invariant 5) | **DONE** |
 | **Phase 8** | Admin dashboard, CSV reports, teacher payroll records & announcements | **DONE** |
 | **Phase 9** | Core checkpoint: unit tests (39/39), E2E flows (8/8), security audit & documentation | **DONE** |
-| **Phase 10** | Multi-branch SaaS: multi-tenancy & tenant isolation | Not built yet |
-| **Phase 11** | Real payments: JazzCash + Easypaisa (sandbox + idempotent webhooks) | Not built yet |
+| **Phase 10** | Multi-branch SaaS: multi-tenancy, tenant isolation & SuperAdmin dashboard | **DONE** |
+| **Phase 11** | Real payments: JazzCash + Easypaisa (sandbox + idempotent webhooks) | **DONE** |
 | **Phase 12** | Online test engine: timed MCQs, auto-grading, leaderboard | Not built yet |
 | **Phase 13** | AI analytics (dropout prediction, weak subjects) + test paper generator | Not built yet |
 | **Phase 14** | WhatsApp Business bot + QR attendance | Not built yet |
@@ -38,9 +38,10 @@ The database seed (`npm run seed`) provisions preconfigured demonstration accoun
 
 | Role | Email | Password | Primary Access |
 | :--- | :--- | :--- | :--- |
+| **Super Admin** (Platform Owner) | `superadmin@academyhub.test` | `SuperAdmin123!` | `/superadmin` (Cross-tenant SaaS oversight & billing) |
 | **Admin** (Academy Owner) | `admin@academyhub.test` | `Admin123!` | `/admin` (Full administrative control) |
 | **Teacher** (Faculty Lead) | `usman.teacher@academyhub.test` | `Teacher123!` | `/teacher` (Attendance & marks) |
-| **Parent** (Guardian) | `parent@academyhub.test` | `Parent123!` | `/parent` (Child attendance, dues, results) |
+| **Parent** (Guardian) | `parent@academyhub.test` | `Parent123!` | `/parent` (Child attendance, dues, results & online payments) |
 
 > *Note: For production deployments (Phase 15), seed passwords must be changed immediately upon first login.*
 
@@ -112,7 +113,7 @@ curl http://localhost:3000/api/health
 AcademyHub includes comprehensive automated testing covering all core business logic and critical user journeys.
 
 ### 1. Unit Tests (Vitest)
-Runs 39 tests across 7 test suites verifying mathematical invariants, isolation guarantees, and edge cases:
+Runs 60 tests across 9 test suites verifying mathematical invariants, multi-tenant isolation, and cryptographic payment webhooks:
 ```bash
 npm test
 ```
@@ -123,6 +124,8 @@ npm test
 - `tests/unit/parent.test.ts`: Guardian isolation (Invariant 5) — parent A cannot read parent B's child data (throws 403).
 - `tests/unit/teacher.test.ts`: Teacher batch isolation — teachers can only mark attendance and enter marks for assigned batches.
 - `tests/unit/admin.test.ts`: Monthly collection math, defaulter calculations, CSV exports, teacher salary ledger.
+- `tests/unit/multitenancy.test.ts`: Tenant data isolation, scoped admission sequences, suspended academy 403 blocking, SuperAdmin control center.
+- `tests/unit/payments.test.ts`: Invariant 11 HMAC-SHA256 signature verification (JazzCash + Easypaisa), duplicate webhook idempotency guard (`FeePayment.gatewayTransactionId UNIQUE`), automated invoice status derivation (`PAID` / `PARTIAL`).
 
 ### 2. End-to-End Tests (Playwright)
 Executes 8 headless browser tests validating the three core workflows:
@@ -173,22 +176,34 @@ npm run test:e2e
    - Faculty members can only mark attendance, create tests, and enter marks for batches where they are the designated instructor.
 7. **No Secrets in Repo**:
    - Secrets are loaded exclusively from `.env`. Sensitive credentials are never committed.
+8. **Multi-Tenant Isolation (Invariant 10)**:
+   - Every tenant model carries `academyId`. All queries enforce `where: { academyId }`. Cross-tenant data leakage is strictly blocked.
+9. **Cryptographic Payment Webhooks & Idempotency (Invariant 11)**:
+   - Webhook callbacks from payment gateways (JazzCash / Easypaisa) **MUST verify cryptographic HMAC-SHA256 signatures server-side**. Tampered payloads or forged signatures are rejected with HTTP 400.
+   - Idempotency is strictly enforced via `FeePayment.gatewayTransactionId UNIQUE` at both application and PostgreSQL engine levels: replaying identical webhook transactions records **ZERO duplicate payments** and never alters invoice balances.
 
 ---
 
 ## Operational Limitations & Disclosures
 
-### 1. SMS & WhatsApp Notifications (Simulated Log Driver)
+### 1. Payment Gateways Honesty Note (Sandbox vs. Live Mode)
+> [!IMPORTANT]
+> **Developer Honesty Note**:
+> Sandbox payments via JazzCash and Easypaisa are **100% functional end-to-end** with real HMAC-SHA256 cryptographic verification, live wallet simulation, append-only payment recording, and automated invoice status updates (`PAID` / `PARTIAL`).
+> However, **LIVE payments require an approved commercial merchant account** with JazzCash (Mobilink Microfinance Bank) or Easypaisa (Telenor Microfinance Bank), requiring verified corporate NTN, commercial business bank accounts, and merchant agreement paperwork.
+> Until merchant credentials are provisioned, the academy operates in **sandbox mode** and **manual collection mode** (CASH / BANK). Never claim live payments work without an approved merchant account.
+
+### 2. SMS & WhatsApp Notifications (Simulated Log Driver)
 - Real bulk SMS in Pakistan requires registering a branded alphanumeric sender ID with local telecommunication operators via an aggregator (e.g. standard telco shortcodes). WhatsApp bot integration requires an approved Meta WhatsApp Business Account.
 - By default, AcademyHub runs with `SMS_PROVIDER="log"`.
 - All notifications are routed through `NotificationService` (`src/lib/notify.ts`), which writes outgoing SMS payloads to `stdout` and logs them to the `NotificationLog` database table for audit purposes.
 - Real SMS/WhatsApp integration is slated for **Phase 14**.
 
-### 2. Teacher Salaries & Payroll
+### 3. Teacher Salaries & Payroll
 - The `/admin/salaries` module allows academy owners to track monthly salary disbursement status (`PAID` vs `UNPAID`) and cross-reference contracted salaries against weekly timetable hours.
 - **AcademyHub does NOT execute direct bank-to-bank transfers or 1Link integration.** Disbursal occurs through external commercial banking channels or cash, and is recorded in the system for bookkeeping.
 
-### 3. Pinned Stack & Dependency Audit
+### 4. Pinned Stack & Dependency Audit
 - All packages are strictly pinned to exact versions as specified in project requirements:
   - `next@14.2.5`
   - `react@18.3.1`
@@ -202,7 +217,7 @@ npm run test:e2e
   - `@playwright/test@1.46.1`
 - `npm audit` reports 13 upstream advisories within these pinned packages. Running `npm audit fix --force` was intentionally bypassed because doing so would unpin required dependencies and introduce breaking API changes (e.g. Zod v4). Mitigating server-side authorization checks and validation schemas are enforced on all routes.
 
-### 4. Hosting & Deployment
+### 5. Hosting & Deployment
 - Production deployment configuration (Vercel + Supabase) is deferred to **Phase 15**.
 
 ---
@@ -218,3 +233,10 @@ npm run test:e2e
 | `AUTH_TRUST_HOST` | Trust proxy headers for local Auth.js | `true` |
 | `SMS_PROVIDER` | Driver for notifications (`log` or mock) | `log` |
 | `SMS_API_KEY` | Vendor API key (for future phases) | `""` |
+| `JAZZCASH_MERCHANT_ID` | JazzCash Merchant Identifier (Sandbox/Live) | `MC12345_SANDBOX` |
+| `JAZZCASH_PASSWORD` | JazzCash API Password | `sandbox_password_123` |
+| `JAZZCASH_INTEGRITY_SALT` | JazzCash Secret Salt for HMAC-SHA256 | `sandbox_salt_secret_9876543210` |
+| `JAZZCASH_RETURN_URL` | Callback IPN / Webhook URL for JazzCash | `http://localhost:3000/api/webhooks/jazzcash` |
+| `EASYPAISA_STORE_ID` | Easypaisa Merchant Store Identifier | `12345` |
+| `EASYPAISA_HASH_KEY` | Easypaisa HMAC-SHA256 Secret Hash Key | `easypaisa_sandbox_hash_key_12345` |
+| `EASYPAISA_RETURN_URL` | Callback IPN / Webhook URL for Easypaisa | `http://localhost:3000/api/webhooks/easypaisa` |

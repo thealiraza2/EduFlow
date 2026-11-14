@@ -51,6 +51,7 @@ interface InvoiceItem {
     amountMinor: number;
     method: string;
     receivedBy: string;
+    gatewayTransactionId?: string | null;
     paidAt: string;
   }>;
 }
@@ -310,6 +311,29 @@ export function FeeInvoiceManager({
                           <div className="text-[11px] font-mono text-slate-500">
                             {inv.student.admissionNo} • {inv.student.guardianPhone}
                           </div>
+                          {inv.payments.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {inv.payments.map((p) => (
+                                <span
+                                  key={p.id}
+                                  className={`inline-flex items-center text-[9px] font-mono px-1.5 py-0.5 rounded font-semibold ${
+                                    p.gatewayTransactionId
+                                      ? "bg-purple-100 text-purple-800 border border-purple-200"
+                                      : "bg-slate-100 text-slate-700 border border-slate-200"
+                                  }`}
+                                  title={
+                                    p.gatewayTransactionId
+                                      ? `Gateway Txn: ${p.gatewayTransactionId}`
+                                      : `Manual: ${p.receivedBy}`
+                                  }
+                                >
+                                  {p.gatewayTransactionId
+                                    ? `${p.method} (Gateway)`
+                                    : `${p.method} (Manual)`}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </td>
 
                         <td className="py-3 px-4 text-slate-600">
