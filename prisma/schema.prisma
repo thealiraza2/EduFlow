@@ -15,6 +15,18 @@ enum Role {
   ADMIN
   TEACHER
   PARENT
+  STUDENT
+}
+
+enum QuestionType {
+  MCQ
+  SHORT
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  GRADED
 }
 
 enum AcademyPlan {
@@ -120,6 +132,9 @@ model Academy {
   feePayments     FeePayment[]
   tests           Test[]
   testResults     TestResult[]
+  questions       Question[]
+  testAttempts    TestAttempt[]
+  studentAnswers  StudentAnswer[]
   notifications   NotificationLog[]
   timetableSlots  TimetableSlot[]
   teacherSalaries TeacherSalary[]
@@ -143,6 +158,7 @@ model User {
 
   teacher      Teacher?
   children     Student[] @relation("ParentGuardianUser")
+  student      Student?  @relation("StudentUser")
 
   @@index([academyId])
 }
@@ -177,6 +193,8 @@ model Student {
   guardianPhone  String
   guardianUserId String?
   guardianUser   User?         @relation("ParentGuardianUser", fields: [guardianUserId], references: [id], onDelete: SetNull)
+  userId         String?       @unique
+  user           User?         @relation("StudentUser", fields: [userId], references: [id], onDelete: SetNull)
   dateOfBirth    DateTime?
   address        String?
   status         StudentStatus @default(ACTIVE)
@@ -186,6 +204,7 @@ model Student {
   enrollments    Enrollment[]
   invoices       FeeInvoice[]
   testResults    TestResult[]
+  attempts       TestAttempt[]
   notifications  NotificationLog[]
 
   @@unique([academyId, admissionNo])
@@ -361,25 +380,98 @@ model FeePayment {
 }
 
 model Test {
-  id          String     @id @default(cuid())
-  academyId   String
-  academy     Academy    @relation(fields: [academyId], references: [id], onDelete: Cascade)
-  batchId     String
-  batch       Batch      @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  subject     String     // e.g. "Maths"
-  title       String     // e.g. "Chapter 1 Test"
-  totalMarks  Int
-  date        DateTime   @db.Date
-  status      TestStatus @default(DRAFT)
-  publishedAt DateTime?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id               String       @id @default(cuid())
+  academyId        String
+  academy          Academy      @relation(fields: [academyId], references: [id], onDelete: Cascade)
+  batchId          String
+  batch            Batch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  subject          String       // e.g. "Maths"
+  title            String       // e.g. "Chapter 1 Test"
+  totalMarks       Int
+  date             DateTime     @db.Date
+  status           TestStatus   @default(DRAFT)
+  publishedAt      DateTime?
+  durationMinutes  Int?         // Duration in minutes for online test
+  negativeMarking  Float        @default(0) // Marks deducted per wrong MCQ (e.g. 0.25)
+  shuffleQuestions Boolean      @default(false)
+  isClosed         Boolean      @default(false) // Leaderboard published only after close
+  closedAt         DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
-  results     TestResult[]
+  results          TestResult[]
+  questions        Question[]
+  attempts         TestAttempt[]
 
   @@index([academyId])
   @@index([batchId])
   @@index([status])
+}
+
+model Question {
+  id            String       @id @default(cuid())
+  academyId     String
+  academy       Academy      @relation(fields: [academyId], references: [id], onDelete: Cascade)
+  testId        String
+  test          Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
+  type          QuestionType @default(MCQ)
+  text          String
+  options       Json?        // Array of options, e.g. ["A", "B", "C", "D"]
+  correctAnswer String
+  marks         Float        @default(1.0)
+  order         Int          @default(0)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  studentAnswers StudentAnswer[]
+
+  @@index([academyId])
+  @@index([testId])
+}
+
+model TestAttempt {
+  id             String        @id @default(cuid())
+  academyId      String
+  academy        Academy       @relation(fields: [academyId], references: [id], onDelete: Cascade)
+  testId         String
+  test           Test          @relation(fields: [testId], references: [id], onDelete: Cascade)
+  studentId      String
+  student        Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  startedAt      DateTime      @default(now())
+  submittedAt    DateTime?
+  score          Float         @default(0)
+  scoreMinor     Int           @default(0)
+  status         AttemptStatus @default(IN_PROGRESS)
+  tabSwitchCount Int           @default(0) // Anti-cheat blur/switch counter
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  answers        StudentAnswer[]
+
+  @@unique([testId, studentId])
+  @@index([academyId])
+  @@index([testId])
+  @@index([studentId])
+}
+
+model StudentAnswer {
+  id           String      @id @default(cuid())
+  academyId    String
+  academy      Academy     @relation(fields: [academyId], references: [id], onDelete: Cascade)
+  attemptId    String
+  attempt      TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId   String
+  question     Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answer       String
+  isCorrect    Boolean?    // null for SHORT questions until marked by teacher
+  marksAwarded Float       @default(0)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@unique([attemptId, questionId])
+  @@index([academyId])
+  @@index([attemptId])
+  @@index([questionId])
 }
 
 model TestResult {

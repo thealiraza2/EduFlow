@@ -49,6 +49,7 @@ export async function loginAction(
       if (existingUser?.role === "SUPER_ADMIN") defaultRedirect = "/superadmin";
       else if (existingUser?.role === "TEACHER") defaultRedirect = "/teacher";
       else if (existingUser?.role === "PARENT") defaultRedirect = "/parent";
+      else if (existingUser?.role === "STUDENT") defaultRedirect = "/student";
     } catch {
       // Default to /admin if lookup fails
     }

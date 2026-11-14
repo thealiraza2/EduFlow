@@ -6,6 +6,7 @@ import {
   EnrollmentStatus,
   AcademyPlan,
   AcademyStatus,
+  TestStatus,
 } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
@@ -294,6 +295,226 @@ async function main() {
   }
 
   console.log(`✓ Seeded ${slotsToSeed.length} weekly timetable slots for ${eveningBatch.name}`);
+
+  // 11. Student User Account
+  const studentHash = await bcrypt.hash("Student123!", 10);
+  const studentUser = await prisma.user.upsert({
+    where: { email: "student@academyhub.test" },
+    update: {
+      passwordHash: studentHash,
+      role: Role.STUDENT,
+      name: "Hamza Tariq",
+      academyId: seedAcademy.id,
+    },
+    create: {
+      email: "student@academyhub.test",
+      passwordHash: studentHash,
+      role: Role.STUDENT,
+      name: "Hamza Tariq",
+      phone: "03009876543",
+      academyId: seedAcademy.id,
+    },
+  });
+
+  await prisma.student.update({
+    where: { id: student.id },
+    data: { userId: studentUser.id },
+  });
+  console.log(`✓ Seeded student login: ${studentUser.email} (Student123!)`);
+
+  // 12. Additional Students for Leaderboard
+  const student2 = await prisma.student.upsert({
+    where: {
+      academyId_admissionNo: { academyId: seedAcademy.id, admissionNo: "AH-2026-0002" },
+    },
+    update: {},
+    create: {
+      academyId: seedAcademy.id,
+      admissionNo: "AH-2026-0002",
+      name: "Ayesha Malik",
+      guardianName: "Tariq Malik",
+      guardianPhone: "03111223344",
+      status: StudentStatus.ACTIVE,
+    },
+  });
+
+  await prisma.enrollment.upsert({
+    where: {
+      studentId_batchId: {
+        studentId: student2.id,
+        batchId: eveningBatch.id,
+      },
+    },
+    update: { status: EnrollmentStatus.ACTIVE },
+    create: {
+      academyId: seedAcademy.id,
+      studentId: student2.id,
+      batchId: eveningBatch.id,
+      status: EnrollmentStatus.ACTIVE,
+    },
+  });
+
+  const student3 = await prisma.student.upsert({
+    where: {
+      academyId_admissionNo: { academyId: seedAcademy.id, admissionNo: "AH-2026-0003" },
+    },
+    update: {},
+    create: {
+      academyId: seedAcademy.id,
+      admissionNo: "AH-2026-0003",
+      name: "Bilal Ahmed",
+      guardianName: "Ahmed Khan",
+      guardianPhone: "03215554433",
+      status: StudentStatus.ACTIVE,
+    },
+  });
+
+  await prisma.enrollment.upsert({
+    where: {
+      studentId_batchId: {
+        studentId: student3.id,
+        batchId: eveningBatch.id,
+      },
+    },
+    update: { status: EnrollmentStatus.ACTIVE },
+    create: {
+      academyId: seedAcademy.id,
+      studentId: student3.id,
+      batchId: eveningBatch.id,
+      status: EnrollmentStatus.ACTIVE,
+    },
+  });
+
+  // 13. Seed Online Test with Questions (Phase 12)
+  let onlineTest = await prisma.test.findFirst({
+    where: { academyId: seedAcademy.id, batchId: eveningBatch.id, title: "Midterm Physics Online Test" },
+  });
+
+  if (!onlineTest) {
+    onlineTest = await prisma.test.create({
+      data: {
+        academyId: seedAcademy.id,
+        batchId: eveningBatch.id,
+        subject: "Physics",
+        title: "Midterm Physics Online Test",
+        totalMarks: 10,
+        date: new Date(),
+        status: TestStatus.PUBLISHED,
+        durationMinutes: 15,
+        negativeMarking: 0.25,
+        shuffleQuestions: true,
+        isClosed: false,
+      },
+    });
+  }
+
+  // Clear and recreate questions for deterministic setup
+  await prisma.question.deleteMany({ where: { testId: onlineTest.id } });
+
+  const q1 = await prisma.question.create({
+    data: {
+      academyId: seedAcademy.id,
+      testId: onlineTest.id,
+      type: "MCQ",
+      text: "What is the SI unit of electric current?",
+      options: ["Ampere", "Volt", "Ohm", "Watt"],
+      correctAnswer: "Ampere",
+      marks: 2.0,
+      order: 1,
+    },
+  });
+
+  const q2 = await prisma.question.create({
+    data: {
+      academyId: seedAcademy.id,
+      testId: onlineTest.id,
+      type: "MCQ",
+      text: "Which of the following is a vector quantity?",
+      options: ["Speed", "Velocity", "Distance", "Mass"],
+      correctAnswer: "Velocity",
+      marks: 2.0,
+      order: 2,
+    },
+  });
+
+  const q3 = await prisma.question.create({
+    data: {
+      academyId: seedAcademy.id,
+      testId: onlineTest.id,
+      type: "MCQ",
+      text: "What is the acceleration due to gravity on Earth's surface?",
+      options: ["9.8 m/s²", "8.9 m/s²", "10.8 m/s²", "7.8 m/s²"],
+      correctAnswer: "9.8 m/s²",
+      marks: 2.0,
+      order: 3,
+    },
+  });
+
+  const q4 = await prisma.question.create({
+    data: {
+      academyId: seedAcademy.id,
+      testId: onlineTest.id,
+      type: "MCQ",
+      text: "Light year is a unit of which physical quantity?",
+      options: ["Time", "Light intensity", "Astronomical distance", "Velocity"],
+      correctAnswer: "Astronomical distance",
+      marks: 2.0,
+      order: 4,
+    },
+  });
+
+  const q5 = await prisma.question.create({
+    data: {
+      academyId: seedAcademy.id,
+      testId: onlineTest.id,
+      type: "SHORT",
+      text: "State Newton's First Law of Motion in one sentence.",
+      options: undefined,
+      correctAnswer: "An object remains at rest or in uniform motion unless acted upon by a net external force.",
+      marks: 2.0,
+      order: 5,
+    },
+  });
+
+  // Seed sample completed attempts for Ayesha & Bilal to populate leaderboard
+  await prisma.testAttempt.deleteMany({ where: { testId: onlineTest.id } });
+
+  const now = new Date();
+  // Ayesha: Score 8.0, Time taken: 300s (5 mins)
+  const ayeshaStart = new Date(now.getTime() - 400 * 1000);
+  const ayeshaSubmit = new Date(now.getTime() - 100 * 1000); // 300 seconds
+  await prisma.testAttempt.create({
+    data: {
+      academyId: seedAcademy.id,
+      testId: onlineTest.id,
+      studentId: student2.id,
+      startedAt: ayeshaStart,
+      submittedAt: ayeshaSubmit,
+      score: 8.0,
+      scoreMinor: 800,
+      status: "GRADED",
+      tabSwitchCount: 1,
+    },
+  });
+
+  // Bilal: Score 8.0, Time taken: 450s (Tie on score with Ayesha, but took longer)
+  const bilalStart = new Date(now.getTime() - 600 * 1000);
+  const bilalSubmit = new Date(now.getTime() - 150 * 1000); // 450 seconds
+  await prisma.testAttempt.create({
+    data: {
+      academyId: seedAcademy.id,
+      testId: onlineTest.id,
+      studentId: student3.id,
+      startedAt: bilalStart,
+      submittedAt: bilalSubmit,
+      score: 8.0,
+      scoreMinor: 800,
+      status: "GRADED",
+      tabSwitchCount: 0,
+    },
+  });
+
+  console.log(`✓ Seeded Online Test: "${onlineTest.title}" with 5 questions and 2 completed attempts`);
   console.log("Multi-Tenant Seed completed successfully!");
 }
 

@@ -8,8 +8,8 @@ One academy runs on one installation. The academy owner (admin) oversees student
 
 ## Project Status
 
-> **Current Milestone: Phase 11 Complete (Real Payments: JazzCash & Easypaisa Sandbox)**  
-> Phases 0 through 11 are fully implemented and verified. Advanced modules (Phases 12 through 14) and production deployment (Phase 15) are **NOT built yet**.
+> **Current Milestone: Phase 12 Complete (Online Test Engine: Timed MCQs, Auto-Grading & Leaderboard)**  
+> Phases 0 through 12 are fully implemented and verified. Advanced modules (Phases 13 through 14) and production deployment (Phase 15) are **NOT built yet**.
 
 | Phase | Description | Status |
 | :--- | :--- | :--- |
@@ -25,7 +25,7 @@ One academy runs on one installation. The academy owner (admin) oversees student
 | **Phase 9** | Core checkpoint: unit tests (39/39), E2E flows (8/8), security audit & documentation | **DONE** |
 | **Phase 10** | Multi-branch SaaS: multi-tenancy, tenant isolation & SuperAdmin dashboard | **DONE** |
 | **Phase 11** | Real payments: JazzCash + Easypaisa (sandbox + idempotent webhooks) | **DONE** |
-| **Phase 12** | Online test engine: timed MCQs, auto-grading, leaderboard | Not built yet |
+| **Phase 12** | Online test engine: timed MCQs, auto-grading, leaderboard | **DONE** |
 | **Phase 13** | AI analytics (dropout prediction, weak subjects) + test paper generator | Not built yet |
 | **Phase 14** | WhatsApp Business bot + QR attendance | Not built yet |
 | **Phase 15** | Final verification & production deployment (Vercel + Supabase) | Not built yet |
@@ -40,8 +40,9 @@ The database seed (`npm run seed`) provisions preconfigured demonstration accoun
 | :--- | :--- | :--- | :--- |
 | **Super Admin** (Platform Owner) | `superadmin@academyhub.test` | `SuperAdmin123!` | `/superadmin` (Cross-tenant SaaS oversight & billing) |
 | **Admin** (Academy Owner) | `admin@academyhub.test` | `Admin123!` | `/admin` (Full administrative control) |
-| **Teacher** (Faculty Lead) | `usman.teacher@academyhub.test` | `Teacher123!` | `/teacher` (Attendance & marks) |
+| **Teacher** (Faculty Lead) | `usman.teacher@academyhub.test` | `Teacher123!` | `/teacher` (Attendance, marks & `/teacher/marking`) |
 | **Parent** (Guardian) | `parent@academyhub.test` | `Parent123!` | `/parent` (Child attendance, dues, results & online payments) |
+| **Student** (Enrolled Pupil) | `student@academyhub.test` | `Student123!` | `/student` (Take timed tests, live score & leaderboard) |
 
 > *Note: For production deployments (Phase 15), seed passwords must be changed immediately upon first login.*
 
@@ -113,7 +114,7 @@ curl http://localhost:3000/api/health
 AcademyHub includes comprehensive automated testing covering all core business logic and critical user journeys.
 
 ### 1. Unit Tests (Vitest)
-Runs 60 tests across 9 test suites verifying mathematical invariants, multi-tenant isolation, and cryptographic payment webhooks:
+Runs 71 tests across 10 test suites verifying mathematical invariants, multi-tenant isolation, cryptographic payment webhooks, and the online test engine:
 ```bash
 npm test
 ```
@@ -126,31 +127,21 @@ npm test
 - `tests/unit/admin.test.ts`: Monthly collection math, defaulter calculations, CSV exports, teacher salary ledger.
 - `tests/unit/multitenancy.test.ts`: Tenant data isolation, scoped admission sequences, suspended academy 403 blocking, SuperAdmin control center.
 - `tests/unit/payments.test.ts`: Invariant 11 HMAC-SHA256 signature verification (JazzCash + Easypaisa), duplicate webhook idempotency guard (`FeePayment.gatewayTransactionId UNIQUE`), automated invoice status derivation (`PAID` / `PARTIAL`).
+- `tests/unit/online-tests.test.ts`: Invariant 12 auto-grading math with negative marking, floor at 0, subjective SHORT question routing, leaderboard ranking with tie-breaking (score DESC, time taken ASC), single-attempt constraint (`UNIQUE(testId, studentId)`), anti-cheat tab-switch audit flag.
 
 ### 2. End-to-End Tests (Playwright)
-Executes 8 headless browser tests validating the three core workflows:
+Executes 13 headless browser tests validating the end-to-end user journeys:
 ```bash
 npm run test:e2e
 ```
 - `tests/e2e/canary.spec.ts`: Health check API & login page rendering.
 - `tests/e2e/auth.spec.ts`: Authentication & role-based dashboard redirection for Admin, Teacher, and Parent.
-- `tests/e2e/core-flow-1.spec.ts`: **Core Lifecycle Flow 1**:
-  - Admin admits student with sequential admission number (`AH-YYYY-####`).
-  - Admin assigns batch enrollment with monthly fee plan.
-  - Teacher marks student present on attendance roster.
-  - Admin generates monthly invoices (idempotent, 0 duplicates).
-  - Admin records cash fee payment.
-  - Generates & downloads official 3-copy Fee Challan PDF (`%PDF-` format verified).
-- `tests/e2e/core-flow-2.spec.ts`: **Core Evaluation Flow 2**:
-  - Teacher creates new assessment test in DRAFT state.
-  - Teacher inputs student marks into roster.
-  - Admin reviews and officially publishes test results (locking marks against further edits).
-  - Parent logs in and views verified test result, score, percentage, and grade.
-  - Official student Result Card PDF downloaded and validated.
-- `tests/e2e/core-flow-3.spec.ts`: **Parent Isolation Flow 3**:
-  - Parent views own linked child's dashboard and profile.
-  - Parent attempts direct URL guessing to an unlinked student profile (`/parent/child/[unlinkedId]`) → receives custom 403 Forbidden screen.
-  - Parent makes direct HTTP request to `/api/parent/child/[unlinkedId]` → receives HTTP 403 Forbidden with `{ error: "Access denied: ..." }`.
+- `tests/e2e/core-flow-1.spec.ts`: Core Student Lifecycle (Admission → Attendance → Fee Invoicing → Payment → Challan PDF).
+- `tests/e2e/core-flow-2.spec.ts`: Core Evaluation Lifecycle (Test → Marks → Publish → Parent Result Card PDF).
+- `tests/e2e/core-flow-3.spec.ts`: Parent Isolation Flow (Strict 403 blocking on unlinked student profile guessing).
+- `tests/e2e/multitenancy.spec.ts`: Multi-Branch SaaS (Public signup with 14-day trial & SuperAdmin tenant controls).
+- `tests/e2e/payments.spec.ts`: Real Mobile Wallet Payments (Parent initiates checkout → JazzCash sandbox wallet → automated `PAID` invoice update).
+- `tests/e2e/online-tests.spec.ts`: Online Test Engine (Student logs in → takes timed assessment → auto-graded score & leaderboard; teacher manages marking queue & closes test).
 
 ---
 
@@ -181,6 +172,12 @@ npm run test:e2e
 9. **Cryptographic Payment Webhooks & Idempotency (Invariant 11)**:
    - Webhook callbacks from payment gateways (JazzCash / Easypaisa) **MUST verify cryptographic HMAC-SHA256 signatures server-side**. Tampered payloads or forged signatures are rejected with HTTP 400.
    - Idempotency is strictly enforced via `FeePayment.gatewayTransactionId UNIQUE` at both application and PostgreSQL engine levels: replaying identical webhook transactions records **ZERO duplicate payments** and never alters invoice balances.
+10. **Online Test Integrity & Server-Side Timers (Invariant 12)**:
+    - Test countdown clocks are computed and enforced strictly on the server (`startedAt` and duration in minutes). Client browser clocks are never trusted.
+    - Exactly one attempt per student per test (`UNIQUE(testId, studentId)`). Second attempts are strictly blocked.
+    - Question correct answers are never sent to the browser during an active assessment.
+    - Negative marking auto-grades MCQs instantly with score floored at 0. Subjective SHORT answers route to `/teacher/marking`.
+    - Leaderboards are sealed until faculty closes the test. Tab-switch counter audits student focus honestly without automated false accusations.
 
 ---
 
