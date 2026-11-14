@@ -261,20 +261,22 @@ model FeePayment {
 }
 
 model Test {
-  id         String     @id @default(cuid())
-  batchId    String
-  batch      Batch      @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  subject    String     // e.g. "Maths"
-  title      String     // e.g. "Chapter 1 Test"
-  totalMarks Int
-  date       DateTime   @db.Date
-  status     TestStatus @default(DRAFT)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id          String     @id @default(cuid())
+  batchId     String
+  batch       Batch      @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  subject     String     // e.g. "Maths"
+  title       String     // e.g. "Chapter 1 Test"
+  totalMarks  Int
+  date        DateTime   @db.Date
+  status      TestStatus @default(DRAFT)
+  publishedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
-  results    TestResult[]
+  results     TestResult[]
 
   @@index([batchId])
+  @@index([status])
 }
 
 model TestResult {
@@ -285,6 +287,7 @@ model TestResult {
   student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   obtainedMarks Float
   remarks       String?
+  correctionLog String?  // Stores reason & history if corrected after publishing
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

@@ -4,7 +4,7 @@ import { Role } from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DAYS_OF_WEEK } from "@/lib/constants";
-import { Clock, MapPin, School, Calendar, BookOpen, CheckCircle2 } from "lucide-react";
+import { Clock, MapPin, School, Calendar, BookOpen, CheckCircle2, FileSpreadsheet } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -70,6 +70,12 @@ export default async function TeacherDashboardPage() {
                 {teacher.batches.length} Assigned Batches
               </Badge>
             )}
+            <Link href="/teacher/tests">
+              <Button size="sm" variant="outline" className="flex items-center text-xs">
+                <FileSpreadsheet className="h-4 w-4 mr-1.5 text-blue-600" />
+                Tests & Marks
+              </Button>
+            </Link>
             <Link href="/teacher/attendance">
               <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center">
                 <CheckCircle2 className="h-4 w-4 mr-1.5" />

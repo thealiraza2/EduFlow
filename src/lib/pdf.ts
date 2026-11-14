@@ -339,3 +339,362 @@ export async function generateFeeChallanPdf(data: ChallanData): Promise<Uint8Arr
 
   return await pdfDoc.save();
 }
+
+export interface ResultCardData {
+  academyName: string;
+  studentName: string;
+  admissionNo: string;
+  className: string;
+  batchName: string;
+  testTitle: string;
+  subject: string;
+  testDate: string;
+  totalMarks: number;
+  obtainedMarks: number;
+  percentage: number;
+  grade: string;
+  classPosition: string; // e.g. "1st / 30"
+  teacherRemarks?: string | null;
+  correctionLog?: string | null;
+}
+
+/**
+ * Generates an official A4 portrait Student Result Card PDF
+ */
+export async function generateResultCardPdf(data: ResultCardData): Promise<Uint8Array> {
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage([595.28, 841.89]); // A4 Portrait in points
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  const { width, height } = page.getSize();
+  const margin = 45;
+  let y = height - margin;
+
+  // Outer decorative border
+  page.drawRectangle({
+    x: margin - 15,
+    y: margin - 15,
+    width: width - (margin - 15) * 2,
+    height: height - (margin - 15) * 2,
+    borderColor: rgb(0.12, 0.22, 0.4),
+    borderWidth: 1.5,
+  });
+
+  // Inner border
+  page.drawRectangle({
+    x: margin - 10,
+    y: margin - 10,
+    width: width - (margin - 10) * 2,
+    height: height - (margin - 10) * 2,
+    borderColor: rgb(0.8, 0.85, 0.9),
+    borderWidth: 0.5,
+  });
+
+  // 1. Academy Header
+  y -= 15;
+  page.drawText(data.academyName.toUpperCase(), {
+    x: margin,
+    y,
+    size: 18,
+    font: boldFont,
+    color: rgb(0.08, 0.15, 0.35),
+  });
+  y -= 18;
+
+  page.drawText("OFFICIAL STUDENT ASSESSMENT REPORT & RESULT CARD", {
+    x: margin,
+    y,
+    size: 10,
+    font: boldFont,
+    color: rgb(0.3, 0.35, 0.45),
+  });
+  y -= 15;
+
+  page.drawLine({
+    start: { x: margin, y },
+    end: { x: width - margin, y },
+    thickness: 2,
+    color: rgb(0.12, 0.22, 0.4),
+  });
+  y -= 25;
+
+  // 2. Student & Test Profile Box
+  page.drawRectangle({
+    x: margin,
+    y: y - 85,
+    width: width - margin * 2,
+    height: 95,
+    color: rgb(0.97, 0.98, 1.0),
+    borderColor: rgb(0.85, 0.88, 0.95),
+    borderWidth: 1,
+  });
+
+  const leftX = margin + 15;
+  const rightX = margin + 260;
+  let profileY = y - 5;
+
+  // Left column: Student Profile
+  page.drawText("STUDENT DETAILS", {
+    x: leftX,
+    y: profileY,
+    size: 9,
+    font: boldFont,
+    color: rgb(0.12, 0.22, 0.4),
+  });
+  profileY -= 16;
+
+  page.drawText(`Student Name: ${data.studentName}`, {
+    x: leftX,
+    y: profileY,
+    size: 9.5,
+    font: boldFont,
+    color: rgb(0.15, 0.15, 0.15),
+  });
+  profileY -= 15;
+
+  page.drawText(`Admission / Roll No: ${data.admissionNo}`, {
+    x: leftX,
+    y: profileY,
+    size: 9,
+    font,
+    color: rgb(0.3, 0.3, 0.3),
+  });
+  profileY -= 15;
+
+  page.drawText(`Class & Batch: ${data.className} (${data.batchName})`, {
+    x: leftX,
+    y: profileY,
+    size: 9,
+    font,
+    color: rgb(0.3, 0.3, 0.3),
+  });
+
+  // Right column: Test Details
+  let testY = y - 5;
+  page.drawText("EXAMINATION DETAILS", {
+    x: rightX,
+    y: testY,
+    size: 9,
+    font: boldFont,
+    color: rgb(0.12, 0.22, 0.4),
+  });
+  testY -= 16;
+
+  page.drawText(`Assessment: ${data.testTitle}`, {
+    x: rightX,
+    y: testY,
+    size: 9.5,
+    font: boldFont,
+    color: rgb(0.15, 0.15, 0.15),
+  });
+  testY -= 15;
+
+  page.drawText(`Subject: ${data.subject}`, {
+    x: rightX,
+    y: testY,
+    size: 9,
+    font,
+    color: rgb(0.3, 0.3, 0.3),
+  });
+  testY -= 15;
+
+  page.drawText(`Test Date: ${data.testDate}`, {
+    x: rightX,
+    y: testY,
+    size: 9,
+    font,
+    color: rgb(0.3, 0.3, 0.3),
+  });
+
+  y -= 115;
+
+  // 3. Performance Summary Cards (Score, Percentage, Grade, Position)
+  const cardWidth = (width - margin * 2 - 30) / 4;
+  const cards = [
+    { title: "MARKS OBTAINED", value: `${data.obtainedMarks} / ${data.totalMarks}`, color: rgb(0.1, 0.15, 0.25) },
+    { title: "PERCENTAGE", value: `${data.percentage}%`, color: rgb(0.12, 0.35, 0.7) },
+    { title: "GRADE", value: data.grade, color: data.grade === "A+" || data.grade === "A" ? rgb(0.1, 0.6, 0.2) : data.grade === "F" ? rgb(0.8, 0.1, 0.1) : rgb(0.8, 0.5, 0.1) },
+    { title: "CLASS POSITION", value: data.classPosition, color: rgb(0.7, 0.2, 0.1) },
+  ];
+
+  cards.forEach((card, i) => {
+    const cardX = margin + i * (cardWidth + 10);
+    page.drawRectangle({
+      x: cardX,
+      y: y - 55,
+      width: cardWidth,
+      height: 65,
+      color: rgb(0.98, 0.99, 1.0),
+      borderColor: rgb(0.85, 0.88, 0.93),
+      borderWidth: 1,
+    });
+
+    page.drawText(card.title, {
+      x: cardX + 8,
+      y: y - 10,
+      size: 7,
+      font: boldFont,
+      color: rgb(0.45, 0.5, 0.55),
+    });
+
+    page.drawText(card.value, {
+      x: cardX + 8,
+      y: y - 35,
+      size: 15,
+      font: boldFont,
+      color: card.color,
+    });
+  });
+
+  y -= 95;
+
+  // 4. Performance Assessment Table / Breakdown
+  page.drawText("ACADEMIC PERFORMANCE SUMMARY", {
+    x: margin,
+    y,
+    size: 10,
+    font: boldFont,
+    color: rgb(0.12, 0.22, 0.4),
+  });
+  y -= 12;
+
+  // Table header
+  page.drawRectangle({
+    x: margin,
+    y: y - 16,
+    width: width - margin * 2,
+    height: 22,
+    color: rgb(0.92, 0.94, 0.97),
+  });
+
+  page.drawText("Subject / Paper", { x: margin + 12, y: y - 8, size: 8.5, font: boldFont });
+  page.drawText("Max Marks", { x: margin + 180, y: y - 8, size: 8.5, font: boldFont });
+  page.drawText("Obtained Marks", { x: margin + 270, y: y - 8, size: 8.5, font: boldFont });
+  page.drawText("Percentage", { x: margin + 370, y: y - 8, size: 8.5, font: boldFont });
+  page.drawText("Grade", { x: margin + 450, y: y - 8, size: 8.5, font: boldFont });
+  y -= 26;
+
+  // Table row
+  page.drawText(data.subject, { x: margin + 12, y: y - 4, size: 9, font });
+  page.drawText(data.totalMarks.toString(), { x: margin + 180, y: y - 4, size: 9, font });
+  page.drawText(data.obtainedMarks.toString(), { x: margin + 270, y: y - 4, size: 9, font: boldFont });
+  page.drawText(`${data.percentage}%`, { x: margin + 370, y: y - 4, size: 9, font: boldFont });
+  page.drawText(data.grade, { x: margin + 450, y: y - 4, size: 9, font: boldFont });
+  y -= 15;
+
+  page.drawLine({
+    start: { x: margin, y },
+    end: { x: width - margin, y },
+    thickness: 0.5,
+    color: rgb(0.85, 0.85, 0.85),
+  });
+  y -= 25;
+
+  // 5. Teacher Remarks Box
+  page.drawText("FACULTY REMARKS & FEEDBACK", {
+    x: margin,
+    y,
+    size: 9.5,
+    font: boldFont,
+    color: rgb(0.12, 0.22, 0.4),
+  });
+  y -= 12;
+
+  page.drawRectangle({
+    x: margin,
+    y: y - 45,
+    width: width - margin * 2,
+    height: 52,
+    color: rgb(0.99, 0.99, 0.99),
+    borderColor: rgb(0.85, 0.88, 0.92),
+    borderWidth: 1,
+  });
+
+  const remarksText = data.teacherRemarks || "Satisfactory academic performance. Regular revision is encouraged.";
+  page.drawText(remarksText, {
+    x: margin + 12,
+    y: y - 18,
+    size: 9,
+    font,
+    color: rgb(0.2, 0.2, 0.2),
+  });
+
+  if (data.correctionLog) {
+    page.drawText(`* Revision note: ${data.correctionLog}`, {
+      x: margin + 12,
+      y: y - 34,
+      size: 7.5,
+      font,
+      color: rgb(0.5, 0.3, 0.1),
+    });
+  }
+
+  y -= 75;
+
+  // 6. Grading Scale Legend Box
+  page.drawRectangle({
+    x: margin,
+    y: y - 35,
+    width: width - margin * 2,
+    height: 40,
+    color: rgb(0.96, 0.97, 0.99),
+    borderColor: rgb(0.9, 0.92, 0.95),
+    borderWidth: 0.5,
+  });
+
+  page.drawText("GRADING SCALE LEGEND:", {
+    x: margin + 10,
+    y: y - 12,
+    size: 7,
+    font: boldFont,
+    color: rgb(0.3, 0.35, 0.45),
+  });
+
+  page.drawText("A+ (90-100%): Outstanding  |  A (80-89%): Excellent  |  B (70-79%): Very Good  |  C (60-69%): Good  |  D (50-59%): Satisfactory  |  F (<50%): Needs Improvement", {
+    x: margin + 10,
+    y: y - 25,
+    size: 7,
+    font,
+    color: rgb(0.4, 0.45, 0.5),
+  });
+
+  y -= 95;
+
+  // 7. Signature Sign-offs
+  const sigY = margin + 40;
+  const sigColWidth = 180;
+
+  // Teacher signature line
+  page.drawLine({
+    start: { x: margin + 20, y: sigY },
+    end: { x: margin + 20 + sigColWidth, y: sigY },
+    thickness: 0.8,
+    color: rgb(0.5, 0.5, 0.5),
+  });
+  page.drawText("Subject Teacher Signature", {
+    x: margin + 45,
+    y: sigY - 14,
+    size: 8,
+    font: boldFont,
+    color: rgb(0.3, 0.3, 0.3),
+  });
+
+  // Principal signature line
+  page.drawLine({
+    start: { x: width - margin - 20 - sigColWidth, y: sigY },
+    end: { x: width - margin - 20, y: sigY },
+    thickness: 0.8,
+    color: rgb(0.5, 0.5, 0.5),
+  });
+  page.drawText("Principal / Academic Director & Stamp", {
+    x: width - margin - sigColWidth,
+    y: sigY - 14,
+    size: 8,
+    font: boldFont,
+    color: rgb(0.3, 0.3, 0.3),
+  });
+
+  return await pdfDoc.save();
+}
+
