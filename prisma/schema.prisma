@@ -21,6 +21,7 @@ enum Role {
 enum QuestionType {
   MCQ
   SHORT
+  LONG
 }
 
 enum AttemptStatus {
@@ -396,6 +397,8 @@ model Test {
   shuffleQuestions Boolean      @default(false)
   isClosed         Boolean      @default(false) // Leaderboard published only after close
   closedAt         DateTime?
+  schemeId         String?
+  scheme           PaperScheme? @relation(fields: [schemeId], references: [id], onDelete: SetNull)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
 
@@ -406,6 +409,7 @@ model Test {
   @@index([academyId])
   @@index([batchId])
   @@index([status])
+  @@index([schemeId])
 }
 
 model Question {
@@ -553,4 +557,59 @@ model Announcement {
   @@index([academyId])
   @@index([audience])
   @@index([createdAt])
+}
+
+model Board {
+  id        String        @id @default(cuid())
+  name      String        @unique // e.g. "BISE Lahore"
+  province  String        // e.g. "Punjab"
+  subjects  Subject[]
+  schemes   PaperScheme[]
+  createdAt DateTime      @default(now())
+}
+
+model Subject {
+  id        String        @id @default(cuid())
+  boardId   String
+  board     Board         @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  className String        // e.g. "9th", "10th"
+  name      String        // e.g. "Physics"
+  chapters  Chapter[]
+  schemes   PaperScheme[]
+  createdAt DateTime      @default(now())
+
+  @@unique([boardId, className, name])
+}
+
+model Chapter {
+  id        String   @id @default(cuid())
+  subjectId String
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  number    Int
+  title     String
+  createdAt DateTime @default(now())
+
+  @@unique([subjectId, number])
+}
+
+model PaperScheme {
+  id          String    @id @default(cuid())
+  boardId     String
+  board       Board     @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  className   String
+  subjectId   String
+  subject     Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  // e.g. { "mcq": { "count": 12, "marksEach": 1 }, "short": { "count": 9, "marksEach": 2, "attempt": 6 }, "long": { "count": 3, "marksEach": 5, "attempt": 2 } }
+  structure   Json
+  totalMarks  Int
+  timeMinutes Int
+  sourceUrl   String?   // link to the board's official pairing-scheme document
+  verified    Boolean   @default(false)
+  verifiedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  tests       Test[]
+
+  @@unique([boardId, className, subjectId])
 }

@@ -515,6 +515,174 @@ async function main() {
   });
 
   console.log(`✓ Seeded Online Test: "${onlineTest.title}" with 5 questions and 2 completed attempts`);
+
+  // ==========================================
+  // 17. Seed Boards, Subjects, Chapters & Paper Schemes (Phase 13 Patch)
+  // All seeded with verified: false and sourceUrl: null (placeholders)
+  // ==========================================
+  console.log("Seeding Boards, Subjects, Chapters & Schemes (Unverified placeholders)...");
+
+  const boardsData = [
+    {
+      name: "BISE Lahore",
+      province: "Punjab",
+      subjects: [
+        {
+          name: "Physics",
+          className: "9th",
+          chapters: [
+            { number: 1, title: "Physical Quantities & Measurement" },
+            { number: 2, title: "Kinematics" },
+            { number: 3, title: "Dynamics & Forces" },
+          ],
+          scheme: {
+            structure: {
+              mcq: { count: 12, marksEach: 1 },
+              short: { count: 8, marksEach: 2, attempt: 5 },
+              long: { count: 2, marksEach: 5, attempt: 2 },
+            },
+            totalMarks: 38,
+            timeMinutes: 90,
+          },
+        },
+        {
+          name: "Chemistry",
+          className: "9th",
+          chapters: [
+            { number: 1, title: "Fundamentals of Chemistry" },
+            { number: 2, title: "Structure of Atoms" },
+            { number: 3, title: "Periodic Table & Periodicity" },
+          ],
+          scheme: {
+            structure: {
+              mcq: { count: 12, marksEach: 1 },
+              short: { count: 8, marksEach: 2, attempt: 5 },
+              long: { count: 2, marksEach: 5, attempt: 2 },
+            },
+            totalMarks: 38,
+            timeMinutes: 90,
+          },
+        },
+      ],
+    },
+    {
+      name: "BISE Karachi",
+      province: "Sindh",
+      subjects: [
+        {
+          name: "Physics",
+          className: "9th",
+          chapters: [
+            { number: 1, title: "Introduction to Physics" },
+            { number: 2, title: "Kinematics & Motion" },
+            { number: 3, title: "Vectors & Scalars" },
+          ],
+          scheme: {
+            structure: {
+              mcq: { count: 10, marksEach: 1 },
+              short: { count: 6, marksEach: 2, attempt: 4 },
+              long: { count: 2, marksEach: 5, attempt: 2 },
+            },
+            totalMarks: 32,
+            timeMinutes: 90,
+          },
+        },
+        {
+          name: "Chemistry",
+          className: "9th",
+          chapters: [
+            { number: 1, title: "Introduction to Chemistry" },
+            { number: 2, title: "Chemical Reactions" },
+            { number: 3, title: "Atomic Structure" },
+          ],
+          scheme: {
+            structure: {
+              mcq: { count: 10, marksEach: 1 },
+              short: { count: 6, marksEach: 2, attempt: 4 },
+              long: { count: 2, marksEach: 5, attempt: 2 },
+            },
+            totalMarks: 32,
+            timeMinutes: 90,
+          },
+        },
+      ],
+    },
+  ];
+
+  for (const b of boardsData) {
+    const board = await prisma.board.upsert({
+      where: { name: b.name },
+      update: { province: b.province },
+      create: { name: b.name, province: b.province },
+    });
+
+    for (const s of b.subjects) {
+      const subject = await prisma.subject.upsert({
+        where: {
+          boardId_className_name: {
+            boardId: board.id,
+            className: s.className,
+            name: s.name,
+          },
+        },
+        update: {},
+        create: {
+          boardId: board.id,
+          className: s.className,
+          name: s.name,
+        },
+      });
+
+      for (const ch of s.chapters) {
+        await prisma.chapter.upsert({
+          where: {
+            subjectId_number: {
+              subjectId: subject.id,
+              number: ch.number,
+            },
+          },
+          update: { title: ch.title },
+          create: {
+            subjectId: subject.id,
+            number: ch.number,
+            title: ch.title,
+          },
+        });
+      }
+
+      await prisma.paperScheme.upsert({
+        where: {
+          boardId_className_subjectId: {
+            boardId: board.id,
+            className: s.className,
+            subjectId: subject.id,
+          },
+        },
+        update: {
+          structure: s.scheme.structure,
+          totalMarks: s.scheme.totalMarks,
+          timeMinutes: s.scheme.timeMinutes,
+          sourceUrl: null,
+          verified: false,
+          verifiedAt: null,
+        },
+        create: {
+          boardId: board.id,
+          className: s.className,
+          subjectId: subject.id,
+          structure: s.scheme.structure,
+          totalMarks: s.scheme.totalMarks,
+          timeMinutes: s.scheme.timeMinutes,
+          sourceUrl: null,
+          verified: false,
+          verifiedAt: null,
+        },
+      });
+    }
+
+    console.log(`✓ Seeded Board: ${board.name} (${board.province}) with 2 subjects, chapters, and unverified schemes`);
+  }
+
   console.log("Multi-Tenant Seed completed successfully!");
 }
 

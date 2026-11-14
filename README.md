@@ -178,6 +178,11 @@ npm run test:e2e
     - Question correct answers are never sent to the browser during an active assessment.
     - Negative marking auto-grades MCQs instantly with score floored at 0. Subjective SHORT answers route to `/teacher/marking`.
     - Leaderboards are sealed until faculty closes the test. Tab-switch counter audits student focus honestly without automated false accusations.
+11. **Board-Aware Pairing Schemes (Invariant 13)**:
+    - **AI never invents an educational board's paper scheme.**
+    - The paper structure (MCQ count and marks, Short question count/marks/attempts, Long question count/marks/attempts, total marks, time limit) always comes strictly from a stored `PaperScheme` database record.
+    - The LLM only writes questions inside that verified structure, using only the instructor-selected syllabus chapters.
+    - Output validation strictly rejects and retries any LLM response with mismatched question counts or marks. Unverified schemes are prominently labeled everywhere with `"UNVERIFIED — confirm before use"`.
 
 ---
 

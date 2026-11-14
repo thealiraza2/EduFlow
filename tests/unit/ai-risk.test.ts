@@ -11,6 +11,10 @@ import {
   parseAndValidateQuestionsJson,
   explainRisk,
   generateQuestions,
+  validatePaperAgainstScheme,
+  buildDeterministicSchemeQuestions,
+  generateBoardPaper,
+  SchemeStructure,
 } from "@/lib/ai";
 
 describe("Phase 13: Deterministic Dropout Risk Model (Invariant 12)", () => {
@@ -272,3 +276,118 @@ describe("Phase 13: LLM Graceful Fallbacks (Missing API Key / Timeout)", () => {
     }
   });
 });
+
+describe("Phase 13 Patch: Board-Aware Pairing Schemes (Invariant 13)", () => {
+  const sampleSchemeStructure: SchemeStructure = {
+    mcq: { count: 12, marksEach: 1 },
+    short: { count: 8, marksEach: 2, attempt: 5 },
+    long: { count: 2, marksEach: 5, attempt: 2 },
+  };
+  const totalMarks = 38; // 12 + 16 + 10 = 38
+
+  it("validates questions strictly conforming to the board scheme", () => {
+    const chapters = [
+      { number: 1, title: "Physical Quantities" },
+      { number: 2, title: "Kinematics" },
+    ];
+    const validQuestions = buildDeterministicSchemeQuestions(
+      "Physics",
+      chapters,
+      sampleSchemeStructure
+    );
+
+    expect(validQuestions).toHaveLength(22); // 12 MCQs + 8 Shorts + 2 Longs
+
+    const validation = validatePaperAgainstScheme(
+      validQuestions,
+      sampleSchemeStructure,
+      totalMarks
+    );
+    expect(validation.valid).toBe(true);
+    expect(validation.error).toBeUndefined();
+  });
+
+  it("rejects tampered question count (e.g. wrong MCQ count)", () => {
+    const chapters = [{ number: 1, title: "Kinematics" }];
+    const questions = buildDeterministicSchemeQuestions(
+      "Physics",
+      chapters,
+      sampleSchemeStructure
+    );
+
+    // Tamper: Remove 1 MCQ (now 11 instead of 12)
+    const tampered = questions.slice(1);
+
+    const validation = validatePaperAgainstScheme(
+      tampered,
+      sampleSchemeStructure,
+      totalMarks
+    );
+    expect(validation.valid).toBe(false);
+    expect(validation.error).toContain("MCQ count mismatch: expected 12, got 11");
+  });
+
+  it("rejects tampered short question count", () => {
+    const chapters = [{ number: 1, title: "Kinematics" }];
+    const questions = buildDeterministicSchemeQuestions(
+      "Physics",
+      chapters,
+      sampleSchemeStructure
+    );
+
+    // Tamper: Add extra short question (now 9 instead of 8)
+    const tampered = [
+      ...questions,
+      {
+        type: "SHORT" as const,
+        text: "Extra short question here?",
+        options: null,
+        correctAnswer: "Key",
+        marks: 2,
+      },
+    ];
+
+    const validation = validatePaperAgainstScheme(
+      tampered,
+      sampleSchemeStructure,
+      totalMarks
+    );
+    expect(validation.valid).toBe(false);
+    expect(validation.error).toContain("Short questions count mismatch: expected 8, got 9");
+  });
+
+  it("generates paper conforming to scheme without crashing when API key is empty", async () => {
+    process.env.LLM_API_KEY = "";
+
+    const result = await generateBoardPaper({
+      boardName: "BISE Lahore",
+      className: "9th",
+      subject: "Physics",
+      chapters: [
+        { number: 1, title: "Physical Quantities" },
+        { number: 2, title: "Kinematics" },
+      ],
+      scheme: {
+        id: "scheme-1",
+        structure: sampleSchemeStructure,
+        totalMarks: 38,
+        timeMinutes: 90,
+        verified: false,
+      },
+      difficulty: "MEDIUM",
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.isFallback).toBe(true);
+    expect(result.questions).toHaveLength(22);
+
+    const mcqs = result.questions.filter((q) => q.type === "MCQ");
+    const shorts = result.questions.filter((q) => q.type === "SHORT");
+    const longs = result.questions.filter((q) => q.type === "LONG");
+
+    expect(mcqs).toHaveLength(12);
+    expect(shorts).toHaveLength(8);
+    expect(longs).toHaveLength(2);
+  });
+});
+

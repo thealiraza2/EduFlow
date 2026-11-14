@@ -31,6 +31,20 @@ export default async function TeacherGenerateTestPage() {
     });
   }
 
+  // Load Boards with subjects, chapters, and schemes
+  const boards = await db.board.findMany({
+    include: {
+      subjects: {
+        include: {
+          chapters: { orderBy: { number: "asc" } },
+          schemes: true,
+        },
+        orderBy: [{ className: "asc" }, { name: "asc" }],
+      },
+    },
+    orderBy: { name: "asc" },
+  });
+
   return (
     <div className="min-h-screen bg-slate-50 p-6 md:p-8">
       <div className="max-w-5xl mx-auto space-y-6">
@@ -48,7 +62,7 @@ export default async function TeacherGenerateTestPage() {
                 AI Test Paper Generator
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">
-                Generate high quality MCQs and short answer questions aligned with Pakistani curricula.
+                Generate high quality examination papers strictly matching official educational board pairing schemes.
               </p>
             </div>
           </div>
@@ -65,6 +79,7 @@ export default async function TeacherGenerateTestPage() {
         ) : (
           <AITestPaperGenerator
             batches={batches}
+            boards={boards as any}
             teacherSubjects={teacher?.subjects || []}
           />
         )}

@@ -221,6 +221,12 @@ export default async function AdminDashboardPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <Link href="/admin/boards">
+            <Button size="sm" variant="outline" className="text-xs">
+              <School className="h-4 w-4 mr-1 text-indigo-600" />
+              Boards & Schemes
+            </Button>
+          </Link>
           <Link href="/admin/fees">
             <Button size="sm" variant="outline" className="text-xs">
               <Banknote className="h-4 w-4 mr-1 text-emerald-600" />

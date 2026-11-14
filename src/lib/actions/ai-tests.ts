@@ -9,7 +9,9 @@ import { revalidatePath } from "next/cache";
 import { TestStatus, QuestionType } from "@prisma/client";
 import {
   generateQuestions,
+  generateBoardPaper,
   GenerateQuestionsInput,
+  GenerateBoardPaperInput,
   questionDraftSchema,
   QuestionDraft,
 } from "@/lib/ai";
@@ -23,6 +25,28 @@ const generateInputSchema = z.object({
   shortCount: z.number().int().min(0).max(10).optional(),
 });
 
+const generateBoardInputSchema = z.object({
+  boardName: z.string().min(1, "Board name is required"),
+  className: z.string().min(1, "Class is required"),
+  subject: z.string().min(1, "Subject is required"),
+  chapters: z
+    .array(
+      z.object({
+        number: z.number().int(),
+        title: z.string(),
+      })
+    )
+    .min(1, "Select at least one chapter"),
+  scheme: z.object({
+    id: z.string(),
+    structure: z.any(),
+    totalMarks: z.number(),
+    timeMinutes: z.number(),
+    verified: z.boolean(),
+  }),
+  difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
+});
+
 const saveDraftSchema = z.object({
   batchId: z.string().min(1, "Batch is required"),
   subject: z.string().min(1, "Subject is required"),
@@ -31,10 +55,26 @@ const saveDraftSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format").optional(),
   durationMinutes: z.number().int().positive().optional().nullable(),
   negativeMarking: z.number().min(0).optional().default(0),
+  schemeId: z.string().optional().nullable(),
   questions: z.array(questionDraftSchema).min(1, "Paper must contain at least one question"),
 });
 
 export type SaveDraftGeneratedTestInput = z.infer<typeof saveDraftSchema>;
+
+/**
+ * Server action to generate test questions using official board pairing scheme
+ */
+export async function generateBoardPaperAction(input: GenerateBoardPaperInput) {
+  const session = await auth();
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  const validated = generateBoardInputSchema.parse(input);
+  const result = await generateBoardPaper(validated as GenerateBoardPaperInput);
+
+  return result;
+}
 
 /**
  * Server action to generate test questions using LLM with deterministic syllabus fallback
@@ -70,6 +110,7 @@ export async function saveDraftGeneratedTestAction(input: SaveDraftGeneratedTest
     date,
     durationMinutes,
     negativeMarking,
+    schemeId,
     questions,
   } = validated;
 
@@ -109,13 +150,19 @@ export async function saveDraftGeneratedTestAction(input: SaveDraftGeneratedTest
         durationMinutes: durationMinutes ?? null,
         negativeMarking: negativeMarking ?? 0,
         shuffleQuestions: false,
+        schemeId: schemeId || undefined,
       },
     });
 
     const questionRows = questions.map((q, idx) => ({
       academyId: tenant.academyId,
       testId: test.id,
-      type: q.type === "SHORT" ? QuestionType.SHORT : QuestionType.MCQ,
+      type:
+        q.type === "LONG"
+          ? QuestionType.LONG
+          : q.type === "SHORT"
+          ? QuestionType.SHORT
+          : QuestionType.MCQ,
       text: q.text,
       options: q.options && q.options.length > 0 ? (q.options as any) : undefined,
       correctAnswer: q.correctAnswer,

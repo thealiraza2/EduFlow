@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
-  generatePaperDraftAction,
+  generateBoardPaperAction,
   saveDraftGeneratedTestAction,
 } from "@/lib/actions/ai-tests";
 import { QuestionDraft } from "@/lib/ai";
-import { CURRICULUM_TOPICS } from "@/lib/risk";
 import {
   Sparkles,
   CheckCircle2,
@@ -20,11 +20,46 @@ import {
   Trash2,
   ArrowRight,
   BookOpen,
-  HelpCircle,
   FileCheck,
-  RotateCcw,
   Loader2,
+  ShieldCheck,
+  ShieldAlert,
+  School,
+  ExternalLink,
 } from "lucide-react";
+
+interface ChapterItem {
+  id: string;
+  number: number;
+  title: string;
+}
+
+interface SchemeItem {
+  id: string;
+  boardId: string;
+  className: string;
+  subjectId: string;
+  structure: any;
+  totalMarks: number;
+  timeMinutes: number;
+  sourceUrl: string | null;
+  verified: boolean;
+}
+
+interface SubjectItem {
+  id: string;
+  className: string;
+  name: string;
+  chapters: ChapterItem[];
+  schemes: SchemeItem[];
+}
+
+interface BoardItem {
+  id: string;
+  name: string;
+  province: string;
+  subjects: SubjectItem[];
+}
 
 interface BatchItem {
   id: string;
@@ -37,28 +72,61 @@ interface BatchItem {
 
 interface Props {
   batches: BatchItem[];
+  boards?: BoardItem[];
   defaultSubject?: string;
   teacherSubjects?: string[];
 }
 
-export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects = [] }: Props) {
+export function AITestPaperGenerator({ batches, boards = [] }: Props) {
   const router = useRouter();
   const [isGenerating, startGenerating] = useTransition();
   const [isSaving, startSaving] = useTransition();
 
-  // Generator inputs
-  const [batchId, setBatchId] = useState<string>(batches[0]?.id || "");
-  const [subject, setSubject] = useState<string>(
-    defaultSubject || teacherSubjects[0] || "Physics"
+  // 1. Chained Selectors: Board -> Class -> Subject -> Chapters
+  const [selectedBoardId, setSelectedBoardId] = useState<string>(boards[0]?.id || "");
+  const currentBoard = useMemo(
+    () => boards.find((b) => b.id === selectedBoardId) || boards[0] || null,
+    [boards, selectedBoardId]
   );
-  const [customSubject, setCustomSubject] = useState("");
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
-  const [topicInput, setTopicInput] = useState("");
-  const [totalMarks, setTotalMarks] = useState<number>(25);
+
+  // Available classes for selected board
+  const availableClasses = useMemo(() => {
+    if (!currentBoard) return [];
+    return Array.from(new Set(currentBoard.subjects.map((s) => s.className)));
+  }, [currentBoard]);
+
+  const [selectedClass, setSelectedClass] = useState<string>(
+    availableClasses[0] || "9th"
+  );
+
+  // Available subjects for selected board & class
+  const availableSubjects = useMemo(() => {
+    if (!currentBoard) return [];
+    return currentBoard.subjects.filter((s) => s.className === selectedClass);
+  }, [currentBoard, selectedClass]);
+
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string>(
+    availableSubjects[0]?.id || ""
+  );
+
+  // Active subject & its pairing scheme
+  const activeSubject = useMemo(
+    () => availableSubjects.find((s) => s.id === selectedSubjectId) || availableSubjects[0] || null,
+    [availableSubjects, selectedSubjectId]
+  );
+
+  const activeScheme = activeSubject?.schemes[0] || null;
+  const availableChapters = activeSubject?.chapters || [];
+
+  // Chapters multi-select state
+  const [selectedChapterIds, setSelectedChapterIds] = useState<string[]>([]);
+
+  // Other form state
+  const [batchId, setBatchId] = useState<string>(batches[0]?.id || "");
   const [difficulty, setDifficulty] = useState<"EASY" | "MEDIUM" | "HARD">("MEDIUM");
-  const [mcqCount, setMcqCount] = useState<number>(4);
-  const [shortCount, setShortCount] = useState<number>(1);
-  const [durationMinutes, setDurationMinutes] = useState<number>(30);
+  const [durationMinutes, setDurationMinutes] = useState<number>(
+    activeScheme?.timeMinutes || 90
+  );
   const [negativeMarking, setNegativeMarking] = useState<number>(0.25);
 
   // Draft review state
@@ -69,19 +137,18 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
   const [error, setError] = useState<string | null>(null);
   const [savedSuccess, setSavedSuccess] = useState<string | null>(null);
 
-  const activeSubject = subject === "OTHER" ? customSubject : subject;
-  const suggestedTopics = CURRICULUM_TOPICS[activeSubject] || [];
-
-  const handleAddTopic = (t: string) => {
-    const trimmed = t.trim();
-    if (trimmed && !selectedTopics.includes(trimmed)) {
-      setSelectedTopics([...selectedTopics, trimmed]);
-      setTopicInput("");
-    }
+  const handleToggleChapter = (chId: string) => {
+    setSelectedChapterIds((prev) =>
+      prev.includes(chId) ? prev.filter((id) => id !== chId) : [...prev, chId]
+    );
   };
 
-  const handleRemoveTopic = (t: string) => {
-    setSelectedTopics(selectedTopics.filter((x) => x !== t));
+  const handleSelectAllChapters = () => {
+    setSelectedChapterIds(availableChapters.map((c) => c.id));
+  };
+
+  const handleClearChapters = () => {
+    setSelectedChapterIds([]);
   };
 
   const handleGenerate = (e: React.FormEvent) => {
@@ -90,39 +157,56 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
     setSavedSuccess(null);
 
     if (!activeSubject) {
-      setError("Please specify a subject.");
+      setError("Please select a subject.");
       return;
     }
 
-    const topicsToUse =
-      selectedTopics.length > 0
-        ? selectedTopics
-        : suggestedTopics.slice(0, 2);
+    if (!activeScheme) {
+      setError("Is board/subject ki scheme save nahi hai — pehle /admin/boards mein scheme add karo.");
+      return;
+    }
 
-    if (topicsToUse.length === 0) {
-      setError("Please add at least one topic or syllabus chapter.");
+    const chosenChapters =
+      selectedChapterIds.length > 0
+        ? availableChapters.filter((c) => selectedChapterIds.includes(c.id))
+        : availableChapters;
+
+    if (chosenChapters.length === 0) {
+      setError("Please select at least one syllabus chapter.");
       return;
     }
 
     startGenerating(async () => {
       try {
-        const result = await generatePaperDraftAction({
-          subject: activeSubject,
-          topics: topicsToUse,
-          totalMarks,
+        const result = await generateBoardPaperAction({
+          boardName: currentBoard?.name || "BISE Lahore",
+          className: activeSubject.className,
+          subject: activeSubject.name,
+          chapters: chosenChapters.map((c) => ({
+            number: c.number,
+            title: c.title,
+          })),
+          scheme: {
+            id: activeScheme.id,
+            structure: activeScheme.structure,
+            totalMarks: activeScheme.totalMarks,
+            timeMinutes: activeScheme.timeMinutes,
+            verified: activeScheme.verified,
+          },
           difficulty,
-          mcqCount,
-          shortCount,
         });
 
         setQuestions(result.questions);
         setIsFallback(result.isFallback);
         setGenerationNotice(
           result.isFallback
-            ? "AI unavailable — showing syllabus template only. You can adjust and customize all questions below."
-            : "AI paper draft generated successfully! Review, edit questions and marks below, then save as DRAFT test."
+            ? "AI unavailable — generated structured questions conforming to the official pairing scheme."
+            : "AI test paper generated successfully according to the official board pairing scheme!"
         );
-        setTestTitle(`${activeSubject} - ${topicsToUse[0] || "Assessment"} (${difficulty})`);
+        setTestTitle(
+          `${currentBoard?.name || "Board"} ${activeSubject.name} (${activeSubject.className}) - ${difficulty}`
+        );
+        setDurationMinutes(activeScheme.timeMinutes);
       } catch (err: any) {
         setError(err.message || "Failed to generate test draft.");
       }
@@ -155,31 +239,19 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
     setQuestions((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleAddQuestion = (type: "MCQ" | "SHORT") => {
-    const marksPerQ = Math.max(1, Math.round(totalMarks / (questions.length + 1)));
-    if (type === "MCQ") {
-      setQuestions((prev) => [
-        ...prev,
-        {
-          type: "MCQ",
-          text: `New ${activeSubject} question?`,
-          options: ["Option A", "Option B", "Option C", "Option D"],
-          correctAnswer: "Option A",
-          marks: marksPerQ,
-        },
-      ]);
-    } else {
-      setQuestions((prev) => [
-        ...prev,
-        {
-          type: "SHORT",
-          text: `Describe key concept in ${activeSubject}:`,
-          options: null,
-          correctAnswer: "Expected key concepts in answer.",
-          marks: marksPerQ,
-        },
-      ]);
-    }
+  const handleAddQuestion = (type: "MCQ" | "SHORT" | "LONG") => {
+    const marks = type === "LONG" ? 5 : type === "SHORT" ? 2 : 1;
+    setQuestions((prev) => [
+      ...prev,
+      {
+        type,
+        text: `New ${activeSubject?.name || "Exam"} ${type} question:`,
+        options: type === "MCQ" ? ["Option A", "Option B", "Option C", "Option D"] : null,
+        correctAnswer: type === "MCQ" ? "Option A" : "Detailed key points.",
+        marks,
+        section: type === "MCQ" ? "A" : type === "SHORT" ? "B" : "C",
+      },
+    ]);
   };
 
   const currentQuestionsMarks = questions.reduce((sum, q) => sum + (q.marks || 0), 0);
@@ -203,11 +275,12 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
       try {
         const res = await saveDraftGeneratedTestAction({
           batchId,
-          subject: activeSubject,
+          subject: activeSubject?.name || "Exam",
           title: testTitle.trim(),
-          totalMarks: currentQuestionsMarks > 0 ? currentQuestionsMarks : totalMarks,
+          totalMarks: activeScheme?.totalMarks || currentQuestionsMarks,
           durationMinutes: durationMinutes > 0 ? durationMinutes : undefined,
           negativeMarking: negativeMarking >= 0 ? negativeMarking : 0,
+          schemeId: activeScheme?.id,
           questions,
         });
 
@@ -226,30 +299,110 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
       {/* Generator Configuration Card */}
       <Card className="shadow-sm border-slate-200">
         <CardHeader className="bg-gradient-to-r from-indigo-50/80 via-white to-blue-50/50 border-b pb-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center space-x-2">
               <div className="p-2 bg-indigo-600 rounded-lg text-white shadow-sm">
                 <Sparkles className="h-5 w-5" />
               </div>
               <div>
                 <CardTitle className="text-lg font-bold text-slate-900">
-                  AI Test Paper Generator
+                  Board-Aware AI Test Paper Generator
                 </CardTitle>
                 <CardDescription className="text-xs text-slate-500">
-                  Configure topics and syllabus objectives. Deterministic code selects curriculum topics; AI drafts questions.
+                  Select Board, Class, Subject, and Chapters. Questions are strictly constructed within stored, verified pairing schemes.
                 </CardDescription>
               </div>
             </div>
-            <Badge variant="outline" className="border-indigo-300 text-indigo-700 bg-indigo-50/50">
-              Groq LLaMA-3.1 / Deterministic Fallback
-            </Badge>
+
+            <div className="flex items-center space-x-2">
+              <Badge variant="outline" className="border-indigo-300 text-indigo-700 bg-indigo-50/50 text-xs">
+                Invariant: AI never invents pairing schemes
+              </Badge>
+            </div>
           </div>
         </CardHeader>
 
         <CardContent className="p-6">
           <form onSubmit={handleGenerate} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Batch Selector */}
+            {/* Chained Selector Row 1: Board -> Class -> Subject -> Target Batch */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* 1. Board Selector */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center">
+                  <School className="h-3.5 w-3.5 mr-1 text-indigo-600" />
+                  Education Board *
+                </label>
+                <select
+                  value={selectedBoardId}
+                  onChange={(e) => {
+                    setSelectedBoardId(e.target.value);
+                    const b = boards.find((x) => x.id === e.target.value);
+                    if (b && b.subjects.length > 0) {
+                      setSelectedClass(b.subjects[0].className);
+                      setSelectedSubjectId(b.subjects[0].id);
+                      setSelectedChapterIds([]);
+                    }
+                  }}
+                  className="w-full h-10 px-3 border rounded-md text-xs bg-white focus:ring-2 focus:ring-indigo-500 font-medium"
+                  required
+                >
+                  {boards.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name} ({b.province})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* 2. Class Selector */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Class Grade *
+                </label>
+                <select
+                  value={selectedClass}
+                  onChange={(e) => {
+                    setSelectedClass(e.target.value);
+                    const sub = currentBoard?.subjects.find((s) => s.className === e.target.value);
+                    if (sub) {
+                      setSelectedSubjectId(sub.id);
+                      setSelectedChapterIds([]);
+                    }
+                  }}
+                  className="w-full h-10 px-3 border rounded-md text-xs bg-white focus:ring-2 focus:ring-indigo-500 font-medium"
+                  required
+                >
+                  {availableClasses.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* 3. Subject Selector */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Subject *
+                </label>
+                <select
+                  value={selectedSubjectId}
+                  onChange={(e) => {
+                    setSelectedSubjectId(e.target.value);
+                    setSelectedChapterIds([]);
+                  }}
+                  className="w-full h-10 px-3 border rounded-md text-xs bg-white focus:ring-2 focus:ring-indigo-500 font-medium"
+                  required
+                >
+                  {availableSubjects.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* 4. Target Batch */}
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                   Target Batch *
@@ -257,7 +410,7 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
                 <select
                   value={batchId}
                   onChange={(e) => setBatchId(e.target.value)}
-                  className="w-full h-10 px-3 border rounded-md text-sm bg-white focus:ring-2 focus:ring-indigo-500"
+                  className="w-full h-10 px-3 border rounded-md text-xs bg-white focus:ring-2 focus:ring-indigo-500 font-medium"
                   required
                 >
                   {batches.map((b) => (
@@ -267,211 +420,186 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
                   ))}
                 </select>
               </div>
-
-              {/* Subject Selector */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Subject *
-                </label>
-                <select
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  className="w-full h-10 px-3 border rounded-md text-sm bg-white focus:ring-2 focus:ring-indigo-500"
-                  required
-                >
-                  <option value="Physics">Physics</option>
-                  <option value="Mathematics">Mathematics</option>
-                  <option value="Chemistry">Chemistry</option>
-                  <option value="Biology">Biology</option>
-                  <option value="English">English</option>
-                  <option value="OTHER">Other / Custom</option>
-                </select>
-                {subject === "OTHER" && (
-                  <Input
-                    placeholder="Enter subject name..."
-                    value={customSubject}
-                    onChange={(e) => setCustomSubject(e.target.value)}
-                    className="mt-2 text-sm"
-                    required
-                  />
-                )}
-              </div>
-
-              {/* Difficulty */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Difficulty Level
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {(["EASY", "MEDIUM", "HARD"] as const).map((diff) => (
-                    <button
-                      key={diff}
-                      type="button"
-                      onClick={() => setDifficulty(diff)}
-                      className={`h-10 text-xs font-semibold rounded-md border transition-all ${
-                        difficulty === diff
-                          ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
-                          : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
-                      }`}
-                    >
-                      {diff}
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
 
-            {/* Topics & Syllabus tags */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Syllabus Topics & Focus Areas
-              </label>
+            {/* Scheme Status Banner */}
+            {activeScheme ? (
+              <div
+                className={`p-4 rounded-xl border text-xs space-y-2 ${
+                  activeScheme.verified
+                    ? "bg-emerald-50/60 border-emerald-200 text-emerald-950"
+                    : "bg-amber-50/60 border-amber-200 text-amber-950"
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center space-x-2">
+                    <span className="font-bold">Loaded Pairing Scheme:</span>
+                    {activeScheme.verified ? (
+                      <Badge className="bg-emerald-600 text-white text-[10px] font-bold py-0.5">
+                        <ShieldCheck className="h-3 w-3 mr-1" />
+                        VERIFIED BOARD SCHEME
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-rose-100 text-rose-800 border-rose-300 text-[10px] font-bold py-0.5">
+                        <ShieldAlert className="h-3 w-3 mr-1" />
+                        UNVERIFIED — confirm before use
+                      </Badge>
+                    )}
 
-              {/* Suggested curriculum chips */}
-              {suggestedTopics.length > 0 && (
-                <div className="mb-2.5 flex flex-wrap items-center gap-1.5">
-                  <span className="text-[11px] font-medium text-slate-400 mr-1">
-                    Standard Curriculum:
+                    {activeScheme.sourceUrl && (
+                      <a
+                        href={activeScheme.sourceUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-indigo-600 hover:underline inline-flex items-center text-[11px]"
+                      >
+                        Source Document <ExternalLink className="h-3 w-3 ml-0.5" />
+                      </a>
+                    )}
+                  </div>
+
+                  <span className="font-mono text-xs font-bold text-slate-700">
+                    Total: {activeScheme.totalMarks} Marks • Duration: {activeScheme.timeMinutes} mins
                   </span>
-                  {suggestedTopics.map((top) => {
-                    const isSelected = selectedTopics.includes(top);
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 font-mono text-[11px]">
+                  <div className="p-2 bg-white rounded border">
+                    <span className="text-slate-400 block text-[10px]">Section A (MCQs):</span>
+                    <span className="font-semibold text-slate-800">
+                      {(activeScheme.structure as any)?.mcq?.count ?? 0} &times; {(activeScheme.structure as any)?.mcq?.marksEach ?? 1} mark
+                    </span>
+                  </div>
+
+                  <div className="p-2 bg-white rounded border">
+                    <span className="text-slate-400 block text-[10px]">Section B (Short Questions):</span>
+                    <span className="font-semibold text-slate-800">
+                      Attempt {(activeScheme.structure as any)?.short?.attempt ?? (activeScheme.structure as any)?.short?.count ?? 0} of {(activeScheme.structure as any)?.short?.count ?? 0} (&times;{(activeScheme.structure as any)?.short?.marksEach ?? 2}m)
+                    </span>
+                  </div>
+
+                  <div className="p-2 bg-white rounded border">
+                    <span className="text-slate-400 block text-[10px]">Section C (Long Questions):</span>
+                    <span className="font-semibold text-slate-800">
+                      Attempt {(activeScheme.structure as any)?.long?.attempt ?? (activeScheme.structure as any)?.long?.count ?? 0} of {(activeScheme.structure as any)?.long?.count ?? 0} (&times;{(activeScheme.structure as any)?.long?.marksEach ?? 5}m)
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 bg-rose-50 border border-rose-200 text-rose-900 rounded-xl text-xs flex items-start space-x-3">
+                <AlertTriangle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="font-bold">
+                    Is board/subject ki scheme save nahi hai — pehle /admin/boards mein scheme add karo.
+                  </p>
+                  <p className="text-[11px] text-rose-700">
+                    AI generation is disabled to prevent fabricating non-compliant exam papers.
+                  </p>
+                  <Link href="/admin/boards" className="text-indigo-600 underline font-medium inline-block mt-1">
+                    Open Boards & Schemes Manager &rarr;
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {/* Chapters Multi-Select */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-xs font-semibold text-slate-700">
+                  Select Chapters to Include in Examination ({selectedChapterIds.length}/{availableChapters.length} Selected)
+                </label>
+                <div className="flex items-center space-x-2">
+                  <button
+                    type="button"
+                    onClick={handleSelectAllChapters}
+                    className="text-[11px] text-indigo-600 hover:underline font-medium"
+                  >
+                    Select All
+                  </button>
+                  <span className="text-slate-300">•</span>
+                  <button
+                    type="button"
+                    onClick={handleClearChapters}
+                    className="text-[11px] text-slate-500 hover:underline"
+                  >
+                    Clear All
+                  </button>
+                </div>
+              </div>
+
+              {availableChapters.length === 0 ? (
+                <div className="p-4 bg-slate-50 border rounded-lg text-xs text-slate-400 text-center">
+                  No syllabus chapters added for this subject yet. Add chapters via /admin/boards.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 p-3 bg-slate-50/70 border rounded-xl">
+                  {availableChapters.map((ch) => {
+                    const isSelected = selectedChapterIds.includes(ch.id);
                     return (
-                      <button
-                        key={top}
-                        type="button"
-                        onClick={() =>
-                          isSelected ? handleRemoveTopic(top) : handleAddTopic(top)
-                        }
-                        className={`text-xs px-2.5 py-1 rounded-full border transition-all ${
+                      <div
+                        key={ch.id}
+                        onClick={() => handleToggleChapter(ch.id)}
+                        className={`p-2.5 rounded-lg border text-xs cursor-pointer transition-all flex items-start space-x-2 ${
                           isSelected
-                            ? "bg-indigo-100 border-indigo-300 text-indigo-800 font-semibold"
-                            : "bg-slate-100 border-slate-200 text-slate-600 hover:bg-slate-200"
+                            ? "bg-indigo-50 border-indigo-300 text-indigo-950 font-medium shadow-xs"
+                            : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
                         }`}
                       >
-                        {isSelected ? `✓ ${top}` : `+ ${top}`}
-                      </button>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => {}} // handled by parent div
+                          className="mt-0.5 text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5 rounded"
+                        />
+                        <span className="text-[11px] leading-tight">
+                          <strong>Ch {ch.number}:</strong> {ch.title}
+                        </span>
+                      </div>
                     );
                   })}
                 </div>
               )}
+            </div>
 
-              {/* Selected topics tags + custom input */}
-              <div className="flex flex-wrap items-center gap-2 p-2.5 border rounded-lg bg-slate-50/50">
-                {selectedTopics.map((top) => (
-                  <Badge
-                    key={top}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white pl-2.5 pr-1.5 py-1 text-xs flex items-center space-x-1"
-                  >
-                    <span>{top}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveTopic(top)}
-                      className="hover:text-rose-200 ml-1"
-                    >
-                      &times;
-                    </button>
-                  </Badge>
-                ))}
-
-                <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-                  <Input
-                    placeholder="Type custom topic and press Enter..."
-                    value={topicInput}
-                    onChange={(e) => setTopicInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleAddTopic(topicInput);
-                      }
-                    }}
-                    className="h-8 text-xs bg-white"
-                  />
-                  <Button
+            {/* Difficulty Level */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                Difficulty Level
+              </label>
+              <div className="grid grid-cols-3 gap-3 max-w-sm">
+                {(["EASY", "MEDIUM", "HARD"] as const).map((diff) => (
+                  <button
+                    key={diff}
                     type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleAddTopic(topicInput)}
-                    className="h-8 text-xs shrink-0"
+                    onClick={() => setDifficulty(diff)}
+                    className={`h-9 text-xs font-semibold rounded-md border transition-all ${
+                      difficulty === diff
+                        ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
+                        : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                    }`}
                   >
-                    Add
-                  </Button>
-                </div>
+                    {diff}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Marks & Question Breakdown */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-lg border border-slate-100">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Target Marks
-                </label>
-                <Input
-                  type="number"
-                  min={5}
-                  max={100}
-                  value={totalMarks}
-                  onChange={(e) => setTotalMarks(parseInt(e.target.value, 10) || 20)}
-                  className="h-9 text-sm bg-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  MCQs Count
-                </label>
-                <Input
-                  type="number"
-                  min={0}
-                  max={20}
-                  value={mcqCount}
-                  onChange={(e) => setMcqCount(parseInt(e.target.value, 10) || 0)}
-                  className="h-9 text-sm bg-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Short Questions
-                </label>
-                <Input
-                  type="number"
-                  min={0}
-                  max={10}
-                  value={shortCount}
-                  onChange={(e) => setShortCount(parseInt(e.target.value, 10) || 0)}
-                  className="h-9 text-sm bg-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Online Duration (mins)
-                </label>
-                <Input
-                  type="number"
-                  min={5}
-                  max={180}
-                  value={durationMinutes}
-                  onChange={(e) => setDurationMinutes(parseInt(e.target.value, 10) || 30)}
-                  className="h-9 text-sm bg-white"
-                />
-              </div>
-            </div>
-
-            {/* Generate Action Button */}
-            <div className="flex items-center justify-between pt-2">
+            {/* Submit Action */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t">
               <p className="text-xs text-slate-500">
-                15-second timeout safety. If LLM is unreachable, deterministic syllabus template is returned.
+                15s timeout safety. LLM strictly respects the stored pairing scheme counts.
               </p>
+
               <Button
                 type="submit"
-                disabled={isGenerating}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-6 h-10 shadow-sm"
+                disabled={isGenerating || !activeScheme}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-6 h-10 shadow-sm shrink-0"
               >
                 {isGenerating ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Generating Draft...
+                    Generating Paper according to Scheme...
                   </>
                 ) : (
                   <>
@@ -485,7 +613,7 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
         </CardContent>
       </Card>
 
-      {/* Error & Notices */}
+      {/* Errors & Notices */}
       {error && (
         <div className="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-lg flex items-center space-x-3 text-sm">
           <AlertTriangle className="h-5 w-5 shrink-0 text-rose-600" />
@@ -517,7 +645,7 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
         </div>
       )}
 
-      {/* Questions Review & Editing Area */}
+      {/* Questions Review & Editing Screen */}
       {questions.length > 0 && (
         <Card className="shadow-md border-indigo-100">
           <CardHeader className="bg-slate-50 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4">
@@ -529,20 +657,13 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
                 </CardTitle>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
-                Edit question wording, correct answers, or marks before finalizing into DRAFT status.
+                Review questions, options, marking keys, or make final adjustments before saving into DRAFT status.
               </p>
             </div>
 
             <div className="flex items-center space-x-3">
-              <Badge
-                variant="outline"
-                className={`text-xs font-mono font-bold px-3 py-1 ${
-                  currentQuestionsMarks === totalMarks
-                    ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                    : "bg-amber-50 text-amber-800 border-amber-300"
-                }`}
-              >
-                Total: {currentQuestionsMarks} / {totalMarks} Marks
+              <Badge variant="outline" className="text-xs font-mono font-bold px-3 py-1 bg-emerald-50 text-emerald-800 border-emerald-300">
+                Target Marks: {activeScheme?.totalMarks || currentQuestionsMarks}
               </Badge>
               <Badge variant="secondary" className="font-mono text-xs">
                 {questions.length} Questions
@@ -551,7 +672,7 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
           </CardHeader>
 
           <CardContent className="p-6 space-y-6">
-            {/* Test Title Input */}
+            {/* Test Title & Online Settings */}
             <div className="p-4 bg-white rounded-lg border space-y-3">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -560,7 +681,7 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
                 <Input
                   value={testTitle}
                   onChange={(e) => setTestTitle(e.target.value)}
-                  placeholder="e.g. Physics Chapter 3 Kinematics Test"
+                  placeholder="e.g. BISE Lahore Physics 9th Midterm"
                   className="font-medium text-sm"
                   required
                 />
@@ -590,14 +711,14 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
                     min="5"
                     max="180"
                     value={durationMinutes}
-                    onChange={(e) => setDurationMinutes(parseInt(e.target.value, 10) || 30)}
+                    onChange={(e) => setDurationMinutes(parseInt(e.target.value, 10) || 60)}
                     className="h-8 text-xs font-mono"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Question Cards List */}
+            {/* Questions List */}
             <div className="space-y-4">
               {questions.map((q, idx) => (
                 <div
@@ -613,9 +734,12 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
                         className={`text-[10px] font-bold ${
                           q.type === "MCQ"
                             ? "bg-blue-100 text-blue-800 border-blue-200"
-                            : "bg-purple-100 text-purple-800 border-purple-200"
+                            : q.type === "SHORT"
+                            ? "bg-purple-100 text-purple-800 border-purple-200"
+                            : "bg-emerald-100 text-emerald-800 border-emerald-200"
                         }`}
                       >
+                        {q.section ? `Section ${q.section}: ` : ""}
                         {q.type}
                       </Badge>
                     </div>
@@ -700,8 +824,8 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
                     </div>
                   )}
 
-                  {/* Short Question Key */}
-                  {q.type === "SHORT" && (
+                  {/* Short / Long Answer Key */}
+                  {(q.type === "SHORT" || q.type === "LONG") && (
                     <div className="pt-1">
                       <label className="block text-[11px] font-semibold text-slate-500 mb-1">
                         Expected Key Points / Answer Key
@@ -720,7 +844,7 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
               ))}
             </div>
 
-            {/* Add Questions Bar */}
+            {/* Actions Bar */}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
               <div className="flex items-center space-x-2">
                 <Button
@@ -739,11 +863,19 @@ export function AITestPaperGenerator({ batches, defaultSubject, teacherSubjects 
                   onClick={() => handleAddQuestion("SHORT")}
                   className="text-xs"
                 >
-                  <Plus className="h-3.5 w-3.5 mr-1" /> Add Short Question
+                  <Plus className="h-3.5 w-3.5 mr-1" /> Add Short
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleAddQuestion("LONG")}
+                  className="text-xs"
+                >
+                  <Plus className="h-3.5 w-3.5 mr-1" /> Add Long
                 </Button>
               </div>
 
-              {/* Save Button */}
               <Button
                 type="button"
                 onClick={handleSaveDraft}
