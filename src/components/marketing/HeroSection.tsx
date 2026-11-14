@@ -70,11 +70,11 @@ export function HeroSection() {
               {/* AI-Generated Real Student Photo */}
               <div className="absolute inset-0">
                 <Image
-                  src="/images/hero-student.png"
-                  alt="Pakistani school student in uniform holding textbooks"
+                  src="/images/hero-student.jpg"
+                  alt="Smiling schoolgirl in uniform holding books in bright classroom"
                   fill
                   priority
-                  quality={85}
+                  quality={90}
                   sizes="(max-width: 1024px) 100vw, 600px"
                   className="object-cover object-top select-none"
                 />

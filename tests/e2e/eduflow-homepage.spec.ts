@@ -44,7 +44,7 @@ test.describe("EduFlow Marketing Homepage — SchulFlow UI, English Only", () =>
 
     // Hero Student Image & Floating JSX Dashboard Mockup
     await expect(
-      page.locator('img[alt="Pakistani school student in uniform holding textbooks"]')
+      page.locator('img[alt="Smiling schoolgirl in uniform holding books in bright classroom"]')
     ).toBeVisible();
     await expect(page.getByText("EduFlow Academy Portal")).toBeVisible();
     await expect(page.getByText("Live Demo Preview")).toBeVisible();
@@ -103,7 +103,7 @@ test.describe("EduFlow Marketing Homepage — SchulFlow UI, English Only", () =>
     // Section 4: Classroom (photo + text)
     await expect(
       page.locator(
-        'img[alt="Pakistani teacher assisting high school students working on a laptop in a modern classroom"]'
+        'img[alt="Teacher guiding teenage students on laptops in bright modern classroom"]'
       )
     ).toBeVisible();
     await expect(page.getByText("FOR A SMARTER SCHOOL")).toBeVisible();

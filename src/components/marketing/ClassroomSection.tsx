@@ -17,10 +17,10 @@ export function ClassroomSection() {
           <div className="lg:col-span-6">
             <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-gray-200 shadow-xl bg-gray-100">
               <Image
-                src="/images/classroom-teacher.png"
-                alt="Pakistani teacher assisting high school students working on a laptop in a modern classroom"
+                src="/images/classroom.jpg"
+                alt="Teacher guiding teenage students on laptops in bright modern classroom"
                 fill
-                quality={85}
+                quality={90}
                 sizes="(max-width: 1024px) 100vw, 600px"
                 className="object-cover select-none"
               />
