@@ -1,14 +1,33 @@
-import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Navbar } from "@/components/marketing/Navbar";
 import { HeroSection } from "@/components/marketing/HeroSection";
 import { TrustStrip } from "@/components/marketing/TrustStrip";
 import { FeaturesBento } from "@/components/marketing/FeaturesBento";
-import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { PhotoStories } from "@/components/marketing/PhotoStories";
-import { PricingSection } from "@/components/marketing/PricingSection";
-import { FaqAccordion } from "@/components/marketing/FaqAccordion";
 import { FinalCta } from "@/components/marketing/FinalCta";
 import { PhotoStrip } from "@/components/marketing/PhotoStrip";
+import { Footer } from "@/components/marketing/Footer";
+
+const HowItWorks = dynamic(
+  () => import("@/components/marketing/HowItWorks").then((m) => m.HowItWorks),
+  { ssr: true }
+);
+const PricingSection = dynamic(
+  () => import("@/components/marketing/PricingSection").then((m) => m.PricingSection),
+  { ssr: true }
+);
+const FaqAccordion = dynamic(
+  () => import("@/components/marketing/FaqAccordion").then((m) => m.FaqAccordion),
+  { ssr: true }
+);
+const TrialSignupForm = dynamic(
+  () => import("@/components/marketing/TrialSignupForm").then((m) => m.TrialSignupForm),
+  { ssr: true }
+);
+const ContactForm = dynamic(
+  () => import("@/components/marketing/ContactForm").then((m) => m.ContactForm),
+  { ssr: true }
+);
 
 export default function MarketingHomePage() {
   const jsonLd = {
@@ -67,11 +86,6 @@ export default function MarketingHomePage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
       <div className="flex flex-col min-h-screen bg-paper text-ink selection:bg-pine selection:text-paper font-sans">
         {/* Sticky Navbar */}
         <Navbar />
@@ -86,13 +100,13 @@ export default function MarketingHomePage() {
           {/* Phase 2: Bento Grid Features */}
           <FeaturesBento />
 
-          {/* Phase 2: How It Works */}
+          {/* Phase 2: How It Works (3 Steps) */}
           <HowItWorks />
 
           {/* Phase 2: Photo-Led Alternating Story Sections */}
           <PhotoStories />
 
-          {/* Phase 3: Pricing Section with Monthly/Annual Toggle */}
+          {/* Phase 3: Pricing Section with Interactive Billing Toggle */}
           <PricingSection />
 
           {/* Phase 3: FAQ Accordion */}
@@ -101,59 +115,43 @@ export default function MarketingHomePage() {
           {/* Phase 3: Final CTA Section */}
           <FinalCta />
 
-          {/* Phase 3: Wide 16:9 Photo Strip */}
-          <PhotoStrip />
-
-          {/* Phase 4 Target: Trial Signup Form Anchor */}
-          <section id="trial" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-[#E8E2D6]">
-            <div className="rounded-2xl bg-[#EFEAE0] border border-[#DDD6C8] p-8 sm:p-12 text-center space-y-6">
-              <span className="text-xs font-semibold text-pine uppercase tracking-wider">14-Day Free Trial</span>
-              <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink">
+          {/* Phase 4: Shared 14-Day Free Trial Signup Form Section */}
+          <section id="trial" className="py-20 md:py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-[#E8E2D6] text-center">
+            <div className="max-w-2xl mx-auto mb-10 space-y-3">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#EAE4D7] text-ink border border-[#D8D1C4]">
+                Instant Provisioning
+              </span>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-ink">
                 Apni academy ko digital karein — aaj hi
               </h2>
-              <p className="text-base text-[#5A5852] max-w-xl mx-auto font-sans">
-                No credit card required. Setup takes under two minutes. 14 days full access with all 288 Punjab pairing schemes and automated fee collection.
+              <p className="text-sm sm:text-base text-[#55534D]">
+                Form fill karein aur foran apna 14-day free trial portal shuru karein. Koi credit card required nahi hai.
               </p>
-              <div className="pt-2">
-                <Link
-                  href="/signup"
-                  className="inline-flex items-center justify-center rounded-lg bg-pine px-8 py-4 text-base font-semibold text-white shadow-sm hover:bg-pine-hover transition-colors"
-                >
-                  Create Trial Academy
-                </Link>
-              </div>
+            </div>
+
+            {/* Real 100% Functional Trial Signup Form Component */}
+            <TrialSignupForm />
+          </section>
+
+          {/* Phase 4: Contact Us Section with Real Submissions & Rate Limiting */}
+          <section id="contact" className="py-20 md:py-28 bg-[#F5F1E9] border-t border-[#E8E2D6]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <ContactForm />
             </div>
           </section>
 
-          {/* Phase 4 Target: Contact Section Anchor */}
-          <section id="contact" className="py-16 bg-[#F5F1E9] border-t border-[#E8E2D6]">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-              <span className="text-xs font-semibold text-pine uppercase tracking-wider">Contact</span>
-              <h2 className="font-display text-2xl font-bold text-ink">
-                Hamaray sath rabta karein
-              </h2>
-              <p className="text-sm text-[#55534D] max-w-md mx-auto">
-                Sawalat ya custom requirement ke liye rabta karein. Hamari team 24 ghante ke andar reply karti hai.
-              </p>
-            </div>
-          </section>
+          {/* Phase 3: Wide 16:9 Photo Strip */}
+          <PhotoStrip />
         </main>
 
-        {/* Footer */}
-        <footer className="border-t border-[#E6E1D8] bg-[#FAF7F2] py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6B6B64]">
-            <p>© {new Date().getFullYear()} AcademyHub. Built for education in Pakistan.</p>
-            <div className="flex gap-6">
-              <a href="#features" className="hover:text-ink">Features</a>
-              <a href="#how-it-works" className="hover:text-ink">How it works</a>
-              <a href="#pricing" className="hover:text-ink">Pricing</a>
-              <a href="#faq" className="hover:text-ink">FAQ</a>
-              <a href="#contact" className="hover:text-ink">Contact</a>
-              <Link href="/login" className="hover:text-ink font-medium text-pine">Portal Login</Link>
-            </div>
-          </div>
-        </footer>
+        {/* Phase 4: Semantic Multi-Column Footer */}
+        <Footer />
       </div>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     </>
   );
 }

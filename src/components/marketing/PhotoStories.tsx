@@ -1,31 +1,11 @@
-"use client";
-
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
 import { QrCode, MessageSquare, BarChart3, Check, AlertCircle } from "lucide-react";
 
 export function PhotoStories() {
-  const shouldReduceMotion = useReducedMotion();
-
-  const sectionVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: shouldReduceMotion ? 0 : 0.6, ease: "easeOut" },
-    },
-  };
-
   return (
     <div className="space-y-24 sm:space-y-32 py-20 md:py-28 overflow-hidden">
       {/* Story (a): teacher-attendance.jpg — Attendance 30 second mein */}
-      <motion.section
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-60px" }}
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-      >
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Photo: on mobile order-1 (stacks above text), on desktop order-1 (left) */}
           <div className="order-1 lg:order-1 lg:col-span-6">
@@ -91,16 +71,10 @@ export function PhotoStories() {
             </ul>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Story (b): parent-phone.jpg — Parents ko WhatsApp par khabar */}
-      <motion.section
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-60px" }}
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-      >
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Photo: on mobile order-1 (stacks above text), on desktop order-2 (right) */}
           <div className="order-1 lg:order-2 lg:col-span-6">
@@ -171,16 +145,10 @@ export function PhotoStories() {
             </div>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Story (c): principal-reports.jpg — Principal ko sab kuch ek screen par */}
-      <motion.section
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-60px" }}
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-      >
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Photo: on mobile order-1 (stacks above text), on desktop order-1 (left) */}
           <div className="order-1 lg:order-1 lg:col-span-6">
@@ -243,7 +211,7 @@ export function PhotoStories() {
             </ul>
           </div>
         </div>
-      </motion.section>
+      </section>
     </div>
   );
 }

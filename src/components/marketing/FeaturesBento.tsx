@@ -1,6 +1,3 @@
-"use client";
-
-import { motion, useReducedMotion } from "framer-motion";
 import {
   Receipt,
   QrCode,
@@ -8,32 +5,10 @@ import {
   Timer,
   BookOpenCheck,
   ShieldAlert,
-  ArrowRight,
   Layers,
 } from "lucide-react";
 
 export function FeaturesBento() {
-  const shouldReduceMotion = useReducedMotion();
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: shouldReduceMotion ? 0 : 0.08,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: shouldReduceMotion ? 0 : 0.4 },
-    },
-  };
-
   return (
     <section id="features" className="py-20 md:py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Section Header */}
@@ -51,18 +26,9 @@ export function FeaturesBento() {
       </div>
 
       {/* Bento Grid */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-50px" }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Card 1: Students & Fees */}
-        <motion.div
-          variants={cardVariants}
-          className="rounded-2xl border border-[#DDD6C8] bg-white p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:border-[#C8BFAD] hover:shadow-md transition-all duration-200"
-        >
+        <div className="rounded-2xl border border-[#DDD6C8] bg-white p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:border-[#C8BFAD] hover:shadow-md transition-all duration-200">
           <div className="space-y-4">
             <div className="w-11 h-11 rounded-xl bg-[#F4EFE6] border border-[#DDD6C8] flex items-center justify-center text-pine">
               <Receipt className="w-5 h-5" />
@@ -78,13 +44,10 @@ export function FeaturesBento() {
             <span className="font-medium text-pine">Defaulters tracking & ledger</span>
             <span>JazzCash & Easypaisa</span>
           </div>
-        </motion.div>
+        </div>
 
         {/* Card 2: Attendance */}
-        <motion.div
-          variants={cardVariants}
-          className="rounded-2xl border border-[#DDD6C8] bg-white p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:border-[#C8BFAD] hover:shadow-md transition-all duration-200"
-        >
+        <div className="rounded-2xl border border-[#DDD6C8] bg-white p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:border-[#C8BFAD] hover:shadow-md transition-all duration-200">
           <div className="space-y-4">
             <div className="w-11 h-11 rounded-xl bg-[#F4EFE6] border border-[#DDD6C8] flex items-center justify-center text-pine">
               <QrCode className="w-5 h-5" />
@@ -100,13 +63,10 @@ export function FeaturesBento() {
             <span className="font-medium text-pine">Instant absence alert</span>
             <span>HMAC-SHA256 Token</span>
           </div>
-        </motion.div>
+        </div>
 
         {/* Card 3: Tests & Results */}
-        <motion.div
-          variants={cardVariants}
-          className="rounded-2xl border border-[#DDD6C8] bg-white p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:border-[#C8BFAD] hover:shadow-md transition-all duration-200"
-        >
+        <div className="rounded-2xl border border-[#DDD6C8] bg-white p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:border-[#C8BFAD] hover:shadow-md transition-all duration-200">
           <div className="space-y-4">
             <div className="w-11 h-11 rounded-xl bg-[#F4EFE6] border border-[#DDD6C8] flex items-center justify-center text-pine">
               <FileSpreadsheet className="w-5 h-5" />
@@ -122,13 +82,10 @@ export function FeaturesBento() {
             <span className="font-medium text-pine">Verification workflow</span>
             <span>Parent portal sync</span>
           </div>
-        </motion.div>
+        </div>
 
         {/* Card 4: Online Test Engine */}
-        <motion.div
-          variants={cardVariants}
-          className="rounded-2xl border border-[#DDD6C8] bg-white p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:border-[#C8BFAD] hover:shadow-md transition-all duration-200"
-        >
+        <div className="rounded-2xl border border-[#DDD6C8] bg-white p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:border-[#C8BFAD] hover:shadow-md transition-all duration-200">
           <div className="space-y-4">
             <div className="w-11 h-11 rounded-xl bg-[#F4EFE6] border border-[#DDD6C8] flex items-center justify-center text-pine">
               <Timer className="w-5 h-5" />
@@ -144,13 +101,10 @@ export function FeaturesBento() {
             <span className="font-medium text-pine">Instant auto-grading</span>
             <span>Batch leaderboard</span>
           </div>
-        </motion.div>
+        </div>
 
         {/* Card 5 (BIG CARD): AI Paper Generator (2 columns on lg) */}
-        <motion.div
-          variants={cardVariants}
-          className="lg:col-span-2 rounded-2xl border border-[#DDD6C8] bg-[#FAF8F4] p-6 sm:p-8 flex flex-col justify-between shadow-sm hover:border-[#C8BFAD] hover:shadow-md transition-all duration-200"
-        >
+        <div className="lg:col-span-2 rounded-2xl border border-[#DDD6C8] bg-[#FAF8F4] p-6 sm:p-8 flex flex-col justify-between shadow-sm hover:border-[#C8BFAD] hover:shadow-md transition-all duration-200">
           <div className="space-y-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="w-11 h-11 rounded-xl bg-pine text-white flex items-center justify-center shadow-sm">
@@ -198,13 +152,10 @@ export function FeaturesBento() {
             <span className="font-medium text-pine">Covering 9th–12th across all 9 Punjab BISE boards</span>
             <span>Deterministic Pairing Logic</span>
           </div>
-        </motion.div>
+        </div>
 
         {/* Card 6: AI Risk Analytics */}
-        <motion.div
-          variants={cardVariants}
-          className="rounded-2xl border border-[#DDD6C8] bg-white p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:border-[#C8BFAD] hover:shadow-md transition-all duration-200"
-        >
+        <div className="rounded-2xl border border-[#DDD6C8] bg-white p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:border-[#C8BFAD] hover:shadow-md transition-all duration-200">
           <div className="space-y-4">
             <div className="w-11 h-11 rounded-xl bg-[#F4EFE6] border border-[#DDD6C8] flex items-center justify-center text-amber-700">
               <ShieldAlert className="w-5 h-5" />
@@ -220,8 +171,8 @@ export function FeaturesBento() {
             <span className="font-medium text-amber-800">Clear LOW / MED / HIGH status</span>
             <span>Plain-language explanation</span>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </section>
   );
 }

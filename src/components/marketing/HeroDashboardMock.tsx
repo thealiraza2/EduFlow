@@ -9,10 +9,10 @@ export function HeroDashboardMock() {
   const [isPaid, setIsPaid] = useState(false);
 
   useEffect(() => {
-    // Flip fee from Unpaid to Paid after 1.8 seconds to demonstrate live webhook callback
+    // Flip fee from Unpaid to Paid after 3.5 seconds to demonstrate live webhook callback
     const timer = setTimeout(() => {
       setIsPaid(true);
-    }, 1800);
+    }, 3500);
     return () => clearTimeout(timer);
   }, []);
 

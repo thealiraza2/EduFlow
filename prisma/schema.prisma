@@ -616,3 +616,14 @@ model PaperScheme {
 
   @@unique([boardId, className, subjectId])
 }
+
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  contact   String   // phone or email
+  message   String
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

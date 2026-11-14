@@ -116,7 +116,8 @@ export default auth((req) => {
     const isPublicApi =
       pathname.startsWith("/api/auth") ||
       pathname.startsWith("/api/health") ||
-      pathname.startsWith("/api/webhooks");
+      pathname.startsWith("/api/webhooks") ||
+      pathname.startsWith("/api/contact");
 
     if (!isPublicApi && !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
