@@ -4,3 +4,24 @@
 .photo-warm {
   filter: sepia(0.06) contrast(1.02) brightness(0.98);
 }
+
+@keyframes heroPhotoZoom {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.06);
+  }
+}
+
+.animate-hero-zoom {
+  animation: heroPhotoZoom 20s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-zoom {
+    animation: none !important;
+    transform: none !important;
+  }
+}

@@ -1,5 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
+import { Navbar } from "@/components/marketing/Navbar";
+import { HeroSection } from "@/components/marketing/HeroSection";
+import { TrustStrip } from "@/components/marketing/TrustStrip";
 
 export default function MarketingHomePage() {
   const jsonLd = {
@@ -63,153 +65,104 @@ export default function MarketingHomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <main className="flex-1">
-        {/* Navigation placeholder */}
-        <header className="border-b border-[#EAE6DE] bg-paper/90 backdrop-blur-sm sticky top-0 z-40">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <Link href="/" className="font-display text-2xl font-bold tracking-tight text-ink">
-              Academy<span className="text-pine">Hub</span>
-            </Link>
-            <nav className="flex items-center gap-6">
-              <Link href="/login" className="text-sm font-medium text-ink hover:text-pine transition-colors">
-                Sign in
-              </Link>
-              <Link
-                href="/signup"
-                className="inline-flex items-center justify-center rounded-md bg-pine px-4 py-2 text-sm font-medium text-white hover:bg-pine-hover transition-colors"
-              >
-                Start free trial
-              </Link>
-            </nav>
-          </div>
-        </header>
+      <div className="flex flex-col min-h-screen bg-paper text-ink">
+        {/* Sticky Navbar */}
+        <Navbar />
 
-        {/* Hero Section Shell */}
-        <section className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Column: Real copy */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center rounded-full border border-[#D5D0C7] bg-[#F2EFE9] px-3.5 py-1 text-xs font-medium text-ink">
-                Built specifically for schools & academies in Pakistan
-              </div>
-              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-ink leading-[1.12]">
-                The complete academy & school management system built for Pakistan.
-              </h1>
-              <p className="text-lg sm:text-xl text-[#4A4A45] leading-relaxed max-w-2xl font-sans">
-                Automate admissions, fee challans with JazzCash and Easypaisa, 10-minute QR attendance, and Punjab BISE pairing scheme test papers — all in one calm, unified platform.
+        <main className="flex-1">
+          {/* Phase 1: Hero Section with Photo + Real JSX Floating Dashboard */}
+          <HeroSection />
+
+          {/* Phase 1: Trust Strip with Honest Product Metrics */}
+          <TrustStrip />
+
+          {/* Features Section Anchor */}
+          <section id="features" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="space-y-4 max-w-2xl">
+              <span className="text-xs font-semibold text-pine uppercase tracking-wider">Features</span>
+              <h2 className="font-display text-3xl font-bold text-ink">
+                Har feature Pakistan ke educational landscape ke mutabiq.
+              </h2>
+              <p className="text-sm text-[#5A5852] leading-relaxed">
+                Attendance, fee challans, parent WhatsApp updates, aur board exams — sab kuch interconnected.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-2">
+            </div>
+          </section>
+
+          {/* How It Works Anchor */}
+          <section id="how-it-works" className="py-16 bg-[#F5F1E9] border-t border-[#E8E2D6]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <span className="text-xs font-semibold text-pine uppercase tracking-wider">Workflow</span>
+              <h2 className="font-display text-2xl font-bold text-ink mt-2">
+                Teen asaan steps mein shuru karein
+              </h2>
+            </div>
+          </section>
+
+          {/* Pricing Anchor */}
+          <section id="pricing" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-[#E8E2D6]">
+            <span className="text-xs font-semibold text-pine uppercase tracking-wider">Pricing</span>
+            <h2 className="font-display text-2xl font-bold text-ink mt-2">
+              Transparent pricing — no hidden fees
+            </h2>
+          </section>
+
+          {/* FAQ Anchor */}
+          <section id="faq" className="py-16 bg-[#F5F1E9] border-t border-[#E8E2D6]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <span className="text-xs font-semibold text-pine uppercase tracking-wider">FAQ</span>
+              <h2 className="font-display text-2xl font-bold text-ink mt-2">
+                Aksar poochay janay walay sawalat
+              </h2>
+            </div>
+          </section>
+
+          {/* Trial / Signup Form Anchor */}
+          <section id="trial" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-[#E8E2D6]">
+            <div className="rounded-2xl bg-[#EFEAE0] border border-[#DDD6C8] p-8 sm:p-12 text-center space-y-6">
+              <span className="text-xs font-semibold text-pine uppercase tracking-wider">14-Day Free Trial</span>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink">
+                Apni academy ko digital karein — aaj hi
+              </h2>
+              <p className="text-base text-[#5A5852] max-w-xl mx-auto">
+                No credit card required. Setup takes under two minutes. 14 days full access with all 288 Punjab pairing schemes and automated fee collection.
+              </p>
+              <div className="pt-2">
                 <Link
                   href="/signup"
-                  className="inline-flex items-center justify-center rounded-md bg-pine px-6 py-3.5 text-base font-medium text-white shadow-sm hover:bg-pine-hover transition-colors"
+                  className="inline-flex items-center justify-center rounded-lg bg-pine px-8 py-4 text-base font-semibold text-white shadow-sm hover:bg-pine-hover transition-colors"
                 >
-                  Start 14-day free trial
-                </Link>
-                <Link
-                  href="/login"
-                  className="inline-flex items-center justify-center rounded-md border border-[#D5D0C7] bg-white px-6 py-3.5 text-base font-medium text-ink hover:bg-[#F2EFE9] transition-colors"
-                >
-                  View demo account
+                  Create Trial Academy
                 </Link>
               </div>
-              <div className="pt-4 flex items-center gap-6 text-xs text-[#6B6B64]">
-                <span>✓ 14-day free trial</span>
-                <span>✓ No credit card required</span>
-                <span>✓ Pay via JazzCash / Easypaisa</span>
-              </div>
             </div>
+          </section>
 
-            {/* Right Column: Hero photo slot */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg border border-[#E6E1D8]">
-                <Image
-                  src="/images/hero-classroom.jpg"
-                  alt="Pakistani classroom with teacher and student"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 500px"
-                  priority
-                  className="object-cover photo-warm"
-                />
-              </div>
+          {/* Contact Anchor */}
+          <section id="contact" className="py-16 bg-[#F5F1E9] border-t border-[#E8E2D6]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <span className="text-xs font-semibold text-pine uppercase tracking-wider">Contact</span>
+              <h2 className="font-display text-2xl font-bold text-ink mt-2">
+                Hamaray sath rabta karein
+              </h2>
             </div>
-          </div>
-        </section>
+          </section>
+        </main>
 
-        {/* Product photo slots strip */}
-        <section className="py-12 border-t border-[#EAE6DE] bg-[#F4F0E8]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="font-display text-2xl font-bold text-ink mb-6 text-center">
-              Field photography verification
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="space-y-2">
-                <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-[#E6E1D8]">
-                  <Image
-                    src="/images/teacher-attendance.jpg"
-                    alt="Teacher assisting students in class"
-                    fill
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                    className="object-cover photo-warm"
-                  />
-                </div>
-                <p className="text-xs font-medium text-[#4A4A45] text-center">teacher-attendance.jpg</p>
-              </div>
-
-              <div className="space-y-2">
-                <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-[#E6E1D8]">
-                  <Image
-                    src="/images/parent-phone.jpg"
-                    alt="Parent checking smartphone for school notifications"
-                    fill
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                    className="object-cover photo-warm"
-                  />
-                </div>
-                <p className="text-xs font-medium text-[#4A4A45] text-center">parent-phone.jpg</p>
-              </div>
-
-              <div className="space-y-2">
-                <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-[#E6E1D8]">
-                  <Image
-                    src="/images/principal-reports.jpg"
-                    alt="Principal administrative desk with reports"
-                    fill
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                    className="object-cover photo-warm"
-                  />
-                </div>
-                <p className="text-xs font-medium text-[#4A4A45] text-center">principal-reports.jpg</p>
-              </div>
-
-              <div className="space-y-2">
-                <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-[#E6E1D8]">
-                  <Image
-                    src="/images/students-class.jpg"
-                    alt="Students studying in class"
-                    fill
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                    className="object-cover photo-warm"
-                  />
-                </div>
-                <p className="text-xs font-medium text-[#4A4A45] text-center">students-class.jpg</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Footer Shell */}
-        <footer className="border-t border-[#EAE6DE] bg-paper py-12">
+        {/* Footer */}
+        <footer className="border-t border-[#E6E1D8] bg-[#FAF7F2] py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6B6B64]">
-            <p>© {new Date().getFullYear()} AcademyHub. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} AcademyHub. Built for education in Pakistan.</p>
             <div className="flex gap-6">
-              <Link href="/pricing" className="hover:text-ink">Pricing</Link>
-              <Link href="/features" className="hover:text-ink">Features</Link>
-              <Link href="/contact" className="hover:text-ink">Contact</Link>
-              <Link href="/login" className="hover:text-ink">Portal Login</Link>
+              <a href="#features" className="hover:text-ink">Features</a>
+              <a href="#pricing" className="hover:text-ink">Pricing</a>
+              <a href="#faq" className="hover:text-ink">FAQ</a>
+              <a href="#contact" className="hover:text-ink">Contact</a>
+              <Link href="/login" className="hover:text-ink font-medium text-pine">Portal Login</Link>
             </div>
           </div>
         </footer>
-      </main>
+      </div>
     </>
   );
 }
