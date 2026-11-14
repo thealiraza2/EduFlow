@@ -19,6 +19,18 @@ export default auth((req) => {
   requestHeaders.set("x-tenant-slug", tenantSlug);
   requestHeaders.set("x-tenant-id", tenantId);
 
+  // Forced Password Change Protection (Fix 3)
+  if (
+    user?.mustChangePassword &&
+    !pathname.startsWith("/change-password") &&
+    !pathname.startsWith("/api/auth") &&
+    !pathname.startsWith("/login") &&
+    !pathname.startsWith("/api/webhooks")
+  ) {
+    const changePwdUrl = new URL("/change-password", req.nextUrl.origin);
+    return NextResponse.redirect(changePwdUrl);
+  }
+
   // Suspended Academy Protection
   if (
     user &&
@@ -86,6 +98,31 @@ export default auth((req) => {
     }
   }
 
+  // Protect /student routes -> requires STUDENT or ADMIN/SUPER_ADMIN
+  if (pathname.startsWith("/student")) {
+    if (!user) {
+      const loginUrl = new URL("/login", req.nextUrl.origin);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (user.role !== "STUDENT" && user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
+      return new NextResponse("Forbidden: Student access required.", { status: 403 });
+    }
+  }
+
+  // Defense-in-depth API route protections (Fix 7)
+  if (pathname.startsWith("/api/")) {
+    const isPublicApi =
+      pathname.startsWith("/api/auth") ||
+      pathname.startsWith("/api/health") ||
+      pathname.startsWith("/api/webhooks");
+
+    if (!isPublicApi && !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
+
   return NextResponse.next({
     request: {
       headers: requestHeaders,
@@ -99,5 +136,8 @@ export const config = {
     "/admin/:path*",
     "/teacher/:path*",
     "/parent/:path*",
+    "/student/:path*",
+    "/change-password",
+    "/api/:path*",
   ],
 };

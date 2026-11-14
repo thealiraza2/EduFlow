@@ -8,6 +8,7 @@ export default defineConfig({
     fileParallelism: false,
     include: ["tests/unit/**/*.test.ts"],
     exclude: ["tests/e2e/**", "node_modules/**"],
+    setupFiles: ["tests/setup.ts"],
   },
   resolve: {
     alias: {

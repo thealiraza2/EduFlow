@@ -37,12 +37,14 @@ export interface QRScanResult {
   studentName?: string;
 }
 
-function getQRSecret(): string {
-  return (
-    process.env.NEXTAUTH_SECRET ||
-    process.env.AUTH_SECRET ||
-    "academyhub_secure_qr_hmac_secret_key"
-  );
+export function getQRSecret(): string {
+  const secret = process.env.QR_HMAC_SECRET?.trim();
+  if (!secret) {
+    throw new Error(
+      "QR_HMAC_SECRET is not configured. QR attendance tokens cannot be minted or verified without a dedicated secret."
+    );
+  }
+  return secret;
 }
 
 /**

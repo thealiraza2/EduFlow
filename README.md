@@ -40,17 +40,19 @@ One academy runs on one installation (or multi-tenant SaaS across many branches)
 
 ## Seed Accounts & Demo Logins
 
-The database seed (`npm run seed`) provisions preconfigured demonstration accounts for each role:
+The database seed (`npm run seed`) provisions local demonstration accounts for testing:
 
-| Role | Email | Password | Primary Access |
-| :--- | :--- | :--- | :--- |
-| **Super Admin** (Platform Owner) | `superadmin@academyhub.test` | `SuperAdmin123!` | `/superadmin` (Cross-tenant SaaS oversight & billing) |
-| **Admin** (Academy Owner) | `admin@academyhub.test` | `Admin123!` | `/admin` (Full administrative control) |
-| **Teacher** (Faculty Lead) | `usman.teacher@academyhub.test` | `Teacher123!` | `/teacher` (Attendance, marks & `/teacher/marking`) |
-| **Parent** (Guardian) | `parent@academyhub.test` | `Parent123!` | `/parent` (Child attendance, dues, results & online payments) |
-| **Student** (Enrolled Pupil) | `student@academyhub.test` | `Student123!` | `/student` (Take timed tests, live score & leaderboard) |
+| Role | Username / Email | Primary Access |
+| :--- | :--- | :--- |
+| **Super Admin** (Platform Owner) | `superadmin@academyhub.test` | `/superadmin` (Cross-tenant SaaS oversight & billing) |
+| **Admin** (Academy Owner) | `admin@academyhub.test` | `/admin` (Full administrative control) |
+| **Teacher** (Faculty Lead) | `usman.teacher@academyhub.test` | `/teacher` (Attendance, marks & `/teacher/marking`) |
+| **Parent** (Guardian) | `parent@academyhub.test` | `/parent` (Child attendance, dues, results & online payments) |
+| **Student** (Enrolled Pupil) | `student@academyhub.test` | `/student` (Take timed tests, live score & leaderboard) |
 
-> *Note: For production deployments (Phase 15), seed passwords must be changed immediately upon first login.*
+> [!WARNING]
+> **Password Policy & Production Notice**:
+> Demo accounts are seeded locally only — never seed them in production (`prisma/seed.ts` automatically skips demo account creation when `NODE_ENV=production`). Passwords are set at seed time and must be changed on first login (`mustChangePassword: true` forces an immediate redirect to `/change-password` upon sign-in).
 
 ---
 
@@ -419,13 +421,53 @@ npm run dev
 | `WHATSAPP_PHONE_NUMBER_ID` | Meta WhatsApp Business Phone Number ID | `""` |
 | `WHATSAPP_VERIFY_TOKEN` | Secret token for Meta webhook subscription verification | `academyhub_wa_verify_token_secret` |
 | `WHATSAPP_APP_SECRET` | Meta App Secret for X-Hub-Signature-256 HMAC validation | `whatsapp_app_secret_12345` |
+| `QR_HMAC_SECRET` | Dedicated secret for HMAC-SHA256 student QR attendance | `change-me-to-a-secure-random-hex-string` |
 
 ---
 
-## Security
+## Security & Hardening Policy
 
 > [!CAUTION]
 > **Credential & Secret Protection**:
 > Never commit `.env` or real credentials to this repository. All secrets must go strictly into environment variables (Vercel Project Settings for production, or a local untracked `.env` file for development, never in git).
 > If a secret is ever committed by mistake, **rotate it immediately** at the provider level — deleting the file does not remove it from git history.
+
+### Security Hardening Audit (Phase 15 Patch)
+An independent security audit reviewed the public codebase and implemented the following hardening measures:
+1. **Fail-Closed WhatsApp Webhook (HIGH)**:
+   - `WHATSAPP_APP_SECRET` is mandatory for all inbound POST webhooks.
+   - Cryptographic `X-Hub-Signature-256` HMAC validation is enforced on every request before payload parsing, preventing unauthorized child data queries.
+   - Missing verify tokens reject challenge requests with HTTP 403.
+2. **Dedicated QR Attendance Secret (HIGH)**:
+   - Replaced public default fallback strings with dedicated `QR_HMAC_SECRET`.
+   - `getQRSecret()` throws immediately if unset; attendance tokens cannot be minted or verified without an explicit secret.
+3. **Forced Password Rotation & Demo Account Protection (MEDIUM)**:
+   - Added `mustChangePassword` flag to `User` schema.
+   - All seeded users are flagged for mandatory rotation; middleware intercepts and forces redirection to `/change-password` upon login.
+   - Seed scripts automatically skip demo user creation in production (`NODE_ENV === "production"`).
+   - Removed all default passwords from public documentation.
+4. **Brute-Force Login Rate Limiting (MEDIUM)**:
+   - Enforced 5-attempt per-account and per-IP lockout (15-minute freeze) in `src/lib/rate-limit.ts`.
+   - Generic error messages prevent user enumeration.
+5. **Next.js Dependency Upgrade (MEDIUM)**:
+   - Upgraded framework from `14.2.5` to patched `14.2.35`.
+6. **Self-Contained Automated Tests (MEDIUM)**:
+   - Unit tests provision their own database fixtures in `beforeAll` hooks, enabling tests to pass on fresh, unseeded databases.
+7. **Defense-in-Depth & PII Redaction (LOW)**:
+   - Added `@@unique([referenceId])` constraint to `NotificationLog` table to guarantee atomic absence notification deduplication at the database level.
+   - Stripped full message bodies containing student names and fee amounts from console output (logs only record IDs and event statuses).
+   - Extended `middleware.ts` to cover `/student/*` and `/api/*` routes.
+   - Eliminated fake `"platform"` fallback academy for SuperAdmins; operations on tenant resources now require an active academy.
+   - Restricted payment gateway sandbox credentials exclusively to non-production environments.
+
+### Production Deployment Security Checklist
+Before launching in production, verify:
+- [ ] `NODE_ENV` is set to `"production"`.
+- [ ] `AUTH_SECRET` and `NEXTAUTH_SECRET` are set via `openssl rand -base64 32`.
+- [ ] `QR_HMAC_SECRET` is set via `openssl rand -hex 32`.
+- [ ] `WHATSAPP_APP_SECRET` and `WHATSAPP_VERIFY_TOKEN` are configured from your Meta App Dashboard.
+- [ ] Payment gateway merchant credentials (`JAZZCASH_*`, `EASYPAISA_*`) are set with approved merchant accounts.
+- [ ] Database migrations are executed (`npx prisma migrate deploy`).
+- [ ] Seed script is run without demo accounts (`prisma db seed` in production skips demo users).
+- [ ] Any initial administrator accounts change their passwords immediately upon first access.
 

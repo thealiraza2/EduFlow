@@ -24,18 +24,31 @@ export interface JazzCashConfig {
 }
 
 export function getJazzCashConfig(): JazzCashConfig {
-  const merchantId = process.env.JAZZCASH_MERCHANT_ID || "MC12345_SANDBOX";
-  const password = process.env.JAZZCASH_PASSWORD || "sandbox_password_123";
-  const integritySalt = process.env.JAZZCASH_INTEGRITY_SALT || "sandbox_salt_secret_9876543210";
-  const returnUrl = process.env.JAZZCASH_RETURN_URL || "http://localhost:3000/api/webhooks/jazzcash";
-  const sandboxUrl = process.env.JAZZCASH_SANDBOX_URL || "http://localhost:3000/sandbox/checkout/jazzcash";
+  const isProduction = process.env.NODE_ENV === "production";
 
+  // Production requires real merchant environment variables — fail loudly if unset
+  if (isProduction) {
+    const merchantId = process.env.JAZZCASH_MERCHANT_ID?.trim();
+    const password = process.env.JAZZCASH_PASSWORD?.trim();
+    const integritySalt = process.env.JAZZCASH_INTEGRITY_SALT?.trim();
+    const returnUrl = process.env.JAZZCASH_RETURN_URL?.trim();
+    const sandboxUrl = process.env.JAZZCASH_SANDBOX_URL?.trim() || "";
+
+    if (!merchantId || !password || !integritySalt || !returnUrl) {
+      throw new Error(
+        "Production JazzCash configuration error: JAZZCASH_MERCHANT_ID, JAZZCASH_PASSWORD, JAZZCASH_INTEGRITY_SALT, and JAZZCASH_RETURN_URL must all be set in production."
+      );
+    }
+    return { merchantId, password, integritySalt, returnUrl, sandboxUrl };
+  }
+
+  // Non-production: Sandbox defaults for local testing ONLY
   return {
-    merchantId,
-    password,
-    integritySalt,
-    returnUrl,
-    sandboxUrl,
+    merchantId: process.env.JAZZCASH_MERCHANT_ID || "MC12345_SANDBOX",
+    password: process.env.JAZZCASH_PASSWORD || "sandbox_password_123",
+    integritySalt: process.env.JAZZCASH_INTEGRITY_SALT || "sandbox_salt_secret_9876543210",
+    returnUrl: process.env.JAZZCASH_RETURN_URL || "http://localhost:3000/api/webhooks/jazzcash",
+    sandboxUrl: process.env.JAZZCASH_SANDBOX_URL || "http://localhost:3000/sandbox/checkout/jazzcash",
   };
 }
 

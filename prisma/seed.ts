@@ -15,6 +15,12 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("Starting AcademyHub Multi-Tenant Seed...");
 
+  // In production, NEVER seed demo accounts or test users
+  if (process.env.NODE_ENV === "production") {
+    console.log("ℹ️ Production environment detected (NODE_ENV=production). Skipping all demo accounts.");
+    return;
+  }
+
   // 1. Seed Default Academy (Main Campus)
   const seedAcademy = await prisma.academy.upsert({
     where: { id: "seed-academy-id" },
@@ -45,6 +51,7 @@ async function main() {
       passwordHash: superAdminPassword,
       role: Role.SUPER_ADMIN,
       name: "Platform Owner",
+      mustChangePassword: true,
       academyId: null,
     },
     create: {
@@ -53,6 +60,7 @@ async function main() {
       role: Role.SUPER_ADMIN,
       name: "Platform Owner",
       phone: "03000000000",
+      mustChangePassword: true,
       academyId: null,
     },
   });
@@ -66,6 +74,7 @@ async function main() {
       passwordHash: adminPasswordHash,
       role: Role.ADMIN,
       name: "Academy Director",
+      mustChangePassword: true,
       academyId: seedAcademy.id,
     },
     create: {
@@ -74,6 +83,7 @@ async function main() {
       role: Role.ADMIN,
       name: "Academy Director",
       phone: "03001234567",
+      mustChangePassword: true,
       academyId: seedAcademy.id,
     },
   });
@@ -87,6 +97,7 @@ async function main() {
       passwordHash: teacher1Hash,
       role: Role.TEACHER,
       name: "Sir Usman Farooq",
+      mustChangePassword: true,
       academyId: seedAcademy.id,
     },
     create: {
@@ -95,6 +106,7 @@ async function main() {
       role: Role.TEACHER,
       name: "Sir Usman Farooq",
       phone: "03339998877",
+      mustChangePassword: true,
       academyId: seedAcademy.id,
     },
   });
@@ -122,6 +134,7 @@ async function main() {
       passwordHash: teacher2Hash,
       role: Role.TEACHER,
       name: "Miss Fatima Zahra",
+      mustChangePassword: true,
       academyId: seedAcademy.id,
     },
     create: {
@@ -130,6 +143,7 @@ async function main() {
       role: Role.TEACHER,
       name: "Miss Fatima Zahra",
       phone: "03451122334",
+      mustChangePassword: true,
       academyId: seedAcademy.id,
     },
   });
@@ -159,6 +173,7 @@ async function main() {
       passwordHash: parentHash,
       role: Role.PARENT,
       name: "Muhammad Tariq",
+      mustChangePassword: true,
       academyId: seedAcademy.id,
     },
     create: {
@@ -167,6 +182,7 @@ async function main() {
       role: Role.PARENT,
       name: "Muhammad Tariq",
       phone: "03009876543",
+      mustChangePassword: true,
       academyId: seedAcademy.id,
     },
   });
@@ -304,6 +320,7 @@ async function main() {
       passwordHash: studentHash,
       role: Role.STUDENT,
       name: "Hamza Tariq",
+      mustChangePassword: true,
       academyId: seedAcademy.id,
     },
     create: {
@@ -312,6 +329,7 @@ async function main() {
       role: Role.STUDENT,
       name: "Hamza Tariq",
       phone: "03009876543",
+      mustChangePassword: true,
       academyId: seedAcademy.id,
     },
   });

@@ -46,18 +46,15 @@ export async function requireTenant(): Promise<TenantContext> {
       academy = await db.academy.findUnique({ where: { id: targetAcademyId } });
     }
     if (!academy) {
-      // Default to first active academy or seed academy for platform testing
-      academy = (await db.academy.findFirst({ where: { status: AcademyStatus.ACTIVE } })) || {
-        id: "platform",
-        name: "Platform Administration",
-        slug: "platform",
-        subdomain: "platform",
-        plan: "PRO",
-        status: "ACTIVE",
-        trialEndsAt: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      // Look up first active academy
+      academy = await db.academy.findFirst({ where: { status: AcademyStatus.ACTIVE } });
+    }
+
+    if (!academy) {
+      throw new AuthorizationError(
+        "No active academy tenant found. Super admin operations on tenant-specific resources require at least one active academy.",
+        400
+      );
     }
 
     return {

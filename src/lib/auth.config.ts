@@ -15,6 +15,7 @@ export const authConfig: NextAuthConfig = {
       if (user) {
         token.id = user.id as string;
         token.role = user.role as Role;
+        token.mustChangePassword = user.mustChangePassword;
         token.phone = user.phone;
         token.teacherId = user.teacherId;
         token.academyId = user.academyId;
@@ -27,6 +28,7 @@ export const authConfig: NextAuthConfig = {
       if (session.user && token) {
         session.user.id = token.id;
         session.user.role = token.role;
+        session.user.mustChangePassword = token.mustChangePassword;
         session.user.phone = token.phone;
         session.user.teacherId = token.teacherId;
         session.user.academyId = token.academyId;

@@ -9,6 +9,8 @@ import {
 } from "@/lib/qr";
 import { AttendanceStatus, TestStatus } from "@prisma/client";
 
+process.env.QR_HMAC_SECRET = process.env.QR_HMAC_SECRET || "test_qr_hmac_secret_key_1234567890abcdef";
+
 describe("Phase 14: WhatsApp Inbound Webhook & Signature Verification", () => {
   const secret = "test_meta_app_secret_12345";
   const body = JSON.stringify({

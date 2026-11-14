@@ -23,16 +23,29 @@ export interface EasypaisaConfig {
 }
 
 export function getEasypaisaConfig(): EasypaisaConfig {
-  const storeId = process.env.EASYPAISA_STORE_ID || "12345";
-  const hashKey = process.env.EASYPAISA_HASH_KEY || "easypaisa_sandbox_hash_key_12345";
-  const returnUrl = process.env.EASYPAISA_RETURN_URL || "http://localhost:3000/api/webhooks/easypaisa";
-  const sandboxUrl = process.env.EASYPAISA_SANDBOX_URL || "http://localhost:3000/sandbox/checkout/easypaisa";
+  const isProduction = process.env.NODE_ENV === "production";
 
+  // Production requires real merchant environment variables — fail loudly if unset
+  if (isProduction) {
+    const storeId = process.env.EASYPAISA_STORE_ID?.trim();
+    const hashKey = process.env.EASYPAISA_HASH_KEY?.trim();
+    const returnUrl = process.env.EASYPAISA_RETURN_URL?.trim();
+    const sandboxUrl = process.env.EASYPAISA_SANDBOX_URL?.trim() || "";
+
+    if (!storeId || !hashKey || !returnUrl) {
+      throw new Error(
+        "Production Easypaisa configuration error: EASYPAISA_STORE_ID, EASYPAISA_HASH_KEY, and EASYPAISA_RETURN_URL must all be set in production."
+      );
+    }
+    return { storeId, hashKey, returnUrl, sandboxUrl };
+  }
+
+  // Non-production: Sandbox defaults for local testing ONLY
   return {
-    storeId,
-    hashKey,
-    returnUrl,
-    sandboxUrl,
+    storeId: process.env.EASYPAISA_STORE_ID || "12345",
+    hashKey: process.env.EASYPAISA_HASH_KEY || "easypaisa_sandbox_hash_key_12345",
+    returnUrl: process.env.EASYPAISA_RETURN_URL || "http://localhost:3000/api/webhooks/easypaisa",
+    sandboxUrl: process.env.EASYPAISA_SANDBOX_URL || "http://localhost:3000/sandbox/checkout/easypaisa",
   };
 }
 

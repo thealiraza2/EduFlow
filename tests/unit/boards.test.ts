@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeAll } from "vitest";
 import { db } from "@/lib/db";
 import {
   createBoardAction,
@@ -58,6 +58,22 @@ vi.mock("@/lib/permissions", async (importOriginal) => {
 });
 
 describe("Phase 13 Patch: Boards, Schemes & Invariant 13 Rules", () => {
+  beforeAll(async () => {
+    let karachi = await db.board.findUnique({ where: { name: "BISE Karachi" } });
+    if (!karachi) {
+      await db.board.create({
+        data: { name: "BISE Karachi", province: "Sindh" },
+      });
+    }
+
+    // Self-contained fixture: ensure Punjab boards and 288 pairing schemes exist
+    const punjabCount = await db.paperScheme.count();
+    if (punjabCount < 288) {
+      const { seedSchemes } = await import("../../prisma/seed-schemes");
+      await seedSchemes();
+    }
+  });
+
   it("verifies seeded boards and unverified schemes exist", async () => {
     const lahoreBoard = await db.board.findUnique({
       where: { name: "BISE Lahore" },
@@ -147,8 +163,38 @@ describe("Phase 13 Patch: Boards, Schemes & Invariant 13 Rules", () => {
       },
     });
 
-    // Find a batch to associate with the test
-    const batch = await db.batch.findFirst();
+    // Find or create a batch to associate with the test
+    let batch = await db.batch.findFirst();
+    if (!batch) {
+      let academy = await db.academy.findFirst();
+      if (!academy) {
+        academy = await db.academy.create({
+          data: {
+            id: "seed-academy-id",
+            name: "Test Academy Campus",
+            slug: "main",
+            subdomain: "main",
+            plan: "PRO",
+            status: "ACTIVE",
+          },
+        });
+      }
+      let cls = await db.class.findFirst({ where: { academyId: academy.id } });
+      if (!cls) {
+        cls = await db.class.create({
+          data: { academyId: academy.id, name: "9th Matric", section: "A" },
+        });
+      }
+      batch = await db.batch.create({
+        data: {
+          academyId: academy.id,
+          classId: cls.id,
+          name: "Test Batch",
+          timing: "05:00 PM - 07:00 PM",
+          feeMinor: 500000,
+        },
+      });
+    }
     expect(batch).toBeDefined();
 
     // 2. Generate a test linked to this scheme

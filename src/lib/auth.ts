@@ -5,6 +5,7 @@ import { z } from "zod";
 import { db } from "./db";
 import { Role } from "@prisma/client";
 import { authConfig } from "./auth.config";
+import { checkLoginRateLimit, recordFailedLogin, resetLoginRateLimit } from "./rate-limit";
 
 const loginSchema = z.object({
   email: z.string().trim().toLowerCase().email("Invalid email address"),
@@ -27,20 +28,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         const { email, password } = parsed.data;
+        const normalizedEmail = email.toLowerCase().trim();
+
+        // 1. Rate Limiting Check (5 failed attempts -> 15 min lock)
+        const rateLimit = checkLoginRateLimit(normalizedEmail);
+        if (!rateLimit.allowed) {
+          throw new Error("Invalid credentials or account temporarily locked");
+        }
 
         const user = await db.user.findUnique({
-          where: { email },
+          where: { email: normalizedEmail },
           include: { teacher: true, academy: true },
         });
 
+        // Fail-safe check against account enumeration: record failed attempt even if user doesn't exist
         if (!user || !user.passwordHash) {
+          recordFailedLogin(normalizedEmail);
           return null;
         }
 
         const isValid = await bcrypt.compare(password, user.passwordHash);
         if (!isValid) {
+          recordFailedLogin(normalizedEmail);
           return null;
         }
+
+        // Reset rate limiter on successful authentication
+        resetLoginRateLimit(normalizedEmail);
 
         return {
           id: user.id,
@@ -48,6 +62,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.name,
           role: user.role,
           phone: user.phone,
+          mustChangePassword: user.mustChangePassword,
           teacherId: user.teacher?.id ?? null,
           academyId: user.academyId ?? null,
           academySlug: user.academy?.slug ?? null,

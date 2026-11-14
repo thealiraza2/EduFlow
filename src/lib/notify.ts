@@ -65,9 +65,8 @@ export class LogNotificationService implements NotificationService {
     }
 
     console.log(
-      `[NOTIFY LOG DRIVER] [${timestamp}] [${channel}] To: ${payload.recipientPhone} | Template: ${template} | Trigger: ${trigger}`
+      `[NOTIFY LOG DRIVER] [${timestamp}] [${channel}] To: ${payload.recipientPhone} | Template: ${template} | Trigger: ${trigger} | StudentId: ${payload.studentId || "N/A"} | Status: ${status}`
     );
-    console.log(`[NOTIFY MESSAGE] ${payload.message}`);
 
     // Persist to NotificationLog table in database
     const logRecord = await db.notificationLog.create({
@@ -188,9 +187,8 @@ export class WhatsAppNotificationService implements NotificationService {
       // Default / fallback driver: log driver
       const timestamp = new Date().toISOString();
       console.log(
-        `[NOTIFY LOG DRIVER] [${timestamp}] [WHATSAPP] To: ${formattedPhone} (${payload.recipientPhone}) | Template: ${template} | Trigger: ${trigger}`
+        `[NOTIFY LOG DRIVER] [${timestamp}] [WHATSAPP] To: ${formattedPhone} (${payload.recipientPhone}) | Template: ${template} | Trigger: ${trigger} | StudentId: ${payload.studentId || "N/A"} | Status: ${status}`
       );
-      console.log(`[NOTIFY MESSAGE] ${payload.message}`);
     }
 
     // Always log to NotificationLog table in database
