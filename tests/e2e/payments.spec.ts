@@ -11,7 +11,7 @@ test.describe("E2E Phase 11: Real Payments (JazzCash + Easypaisa Sandbox)", () =
     await page.click('button[type="submit"]');
 
     await expect(page).toHaveURL(/\/parent/);
-    await expect(page.getByText("Parent Portal")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Parent Portal" })).toBeVisible();
 
     // 2. Switch to "Fee Status & Challans" tab
     const feesTab = page.getByRole("button", { name: /Fee Status/i }).first();
@@ -34,7 +34,7 @@ test.describe("E2E Phase 11: Real Payments (JazzCash + Easypaisa Sandbox)", () =
 
       // 6. Expect redirect back to parent portal with payment=success
       await page.waitForURL(/\/parent\?payment=success/, { timeout: 10000 });
-      await expect(page.getByText("Parent Portal")).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Parent Portal" })).toBeVisible();
 
       // Ensure Fee tab is active
       const feeTab = page.getByRole("button", { name: /Fee Status/i }).first();

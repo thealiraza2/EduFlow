@@ -21,11 +21,12 @@ test("teacher can sign in and reaches /teacher", async ({ page }) => {
 });
 
 test("parent can sign in and reaches /parent", async ({ page }) => {
+  await page.context().clearCookies();
   await page.goto("/login");
   await page.fill('input[name="email"]', "parent@academyhub.test");
   await page.fill('input[name="password"]', "Parent123!");
   await page.click('button[type="submit"]');
 
   await page.waitForURL("**/parent", { timeout: 15000 });
-  await expect(page.getByText("Parent Portal")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Parent Portal" })).toBeVisible();
 });
