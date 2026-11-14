@@ -1,92 +1,90 @@
-import dynamic from "next/dynamic";
+import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Check, Play } from "lucide-react";
-
-const HeroDashboardMock = dynamic(
-  () => import("./HeroDashboardMock").then((m) => m.HeroDashboardMock),
-  { ssr: true }
-);
+import { Check, ArrowRight, Sparkles } from "lucide-react";
+import { DashboardPreview } from "./DashboardPreview";
 
 export function HeroSection() {
+  const checkmarks = ["Easy to Use", "Secure & Reliable", "24/7 Support"];
+
   return (
-    <section className="relative overflow-hidden pt-8 pb-16 sm:pt-12 sm:pb-20 lg:pt-16 lg:pb-24">
+    <section className="relative overflow-hidden pt-10 pb-16 sm:pt-16 sm:pb-24 lg:pt-20 lg:pb-28 bg-white">
+      {/* Background Decorative Accents */}
+      <div className="absolute top-0 right-0 -z-10 w-96 h-96 bg-[#FFF9E6] rounded-full blur-3xl opacity-70" />
+      <div className="absolute bottom-10 left-10 -z-10 w-80 h-80 bg-amber-50/50 rounded-full blur-2xl opacity-60" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          {/* Left Column: Headline, subhead, CTAs */}
-          <div className="lg:col-span-6 space-y-6 sm:space-y-7">
-            {/* Eyebrow badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#D8D1C4] bg-[#F1ECE2] px-3.5 py-1 text-xs font-semibold text-ink tracking-wide">
-              <span className="w-1.5 h-1.5 rounded-full bg-pine" />
-              <span>For Academies & Schools in Pakistan</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
+          {/* Left Column: Eyebrow, H1, Copy, Checkmarks, Buttons */}
+          <div className="lg:col-span-6 space-y-6 sm:space-y-8">
+            {/* Eyebrow */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#F5B800]/40 bg-[#FFF9E6] px-4 py-1.5 text-xs font-bold text-[#0F2040] uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-[#F5B800]" />
+              <span>SMARTER SCHOOLS • BETTER TOMORROW</span>
             </div>
 
-            {/* H1 (serif) */}
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-ink leading-[1.12]">
-              Poora academy, ek hi <span className="text-pine">jagah.</span>
+            {/* H1 with one word highlighted in yellow */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#0F2040] tracking-tight leading-[1.14]">
+              Complete School Management{" "}
+              <span className="text-[#F5B800]">System</span>
             </h1>
 
-            {/* Subhead */}
-            <p className="text-lg sm:text-xl text-[#42413C] leading-relaxed max-w-xl font-sans">
-              Attendance, fees, tests, results aur parents — sab kuch ek dashboard mein.
+            {/* Subhead / Copy */}
+            <p className="text-lg sm:text-xl text-[#4B5563] leading-relaxed max-w-xl">
+              Streamline your school operations with an all-in-one platform. Manage students, teachers, classes, attendance, fees, exams and more — all in one place.
             </p>
 
-            {/* Action CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-1">
-              <a
-                href="#trial"
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-pine px-6 py-3.5 text-base font-semibold text-white shadow-sm hover:bg-pine-hover active:scale-[0.99] transition-all cursor-pointer min-h-[48px]"
+            {/* 3 Checkmarks */}
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2.5 pt-1">
+              {checkmarks.map((item) => (
+                <div key={item} className="flex items-center gap-2 text-sm font-semibold text-[#0F2040]">
+                  <div className="w-5 h-5 rounded-full bg-[#FFF9E6] border border-[#F5B800]/50 flex items-center justify-center text-[#F5B800] shrink-0">
+                    <Check className="w-3.5 h-3.5 stroke-[3]" />
+                  </div>
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* CTAs: Get Started Free + Learn More */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
+              <Link
+                href="/signup"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#F5B800] px-7 py-3.5 text-base font-bold text-[#0F2040] hover:bg-[#DF9E00] shadow-md transition-all active:scale-[0.99] min-h-[48px]"
               >
-                <span>Start 14-Day Free Trial</span>
+                <span>Get Started Free</span>
                 <ArrowRight className="w-4 h-4" />
-              </a>
+              </Link>
 
               <a
                 href="#features"
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#D5CEC2] bg-white px-6 py-3.5 text-base font-medium text-ink hover:bg-[#F3EFE7] active:scale-[0.99] transition-all cursor-pointer min-h-[48px]"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-7 py-3.5 text-base font-semibold text-[#0F2040] hover:bg-gray-50 hover:border-[#0F2040] shadow-sm transition-all min-h-[48px]"
               >
-                <Play className="w-4 h-4 text-pine fill-pine/20" />
-                <span>See how it works</span>
+                <span>Learn More</span>
               </a>
-            </div>
-
-            {/* Micro reassurance trust items */}
-            <div className="pt-2 flex flex-wrap items-center gap-y-2 gap-x-5 text-xs text-[#5E5C55]">
-              <span className="flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5 text-pine stroke-[2.5]" />
-                <span>14-day free trial</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5 text-pine stroke-[2.5]" />
-                <span>No credit card required</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5 text-pine stroke-[2.5]" />
-                <span>JazzCash & Easypaisa ready</span>
-              </span>
             </div>
           </div>
 
-          {/* Right Column: Real classroom photo + floating dashboard mock */}
+          {/* Right Column: Hero student photo + floating dashboard mockup */}
           <div className="lg:col-span-6 relative">
-            <div className="relative rounded-2xl overflow-hidden border border-[#DCD5C8] shadow-xl bg-[#EBE5D9] min-h-[420px] sm:min-h-[500px] flex items-center justify-center p-3 sm:p-6 lg:p-7">
-              {/* Background authentic classroom photo */}
-              <div className="absolute inset-0 overflow-hidden">
+            <div className="relative rounded-3xl overflow-hidden border border-gray-200/80 shadow-xl bg-gray-100 min-h-[420px] sm:min-h-[520px] flex items-center justify-center p-3 sm:p-6 lg:p-7">
+              {/* AI-Generated Real Student Photo */}
+              <div className="absolute inset-0">
                 <Image
-                  src="/images/hero-classroom.jpg"
-                  alt="Pakistani classroom with teacher and student"
+                  src="/images/hero-student.png"
+                  alt="Pakistani school student in uniform holding textbooks"
                   fill
                   priority
-                  quality={70}
-                  sizes="(max-width: 768px) 100vw, 600px"
-                  className="object-cover photo-warm select-none"
+                  quality={85}
+                  sizes="(max-width: 1024px) 100vw, 600px"
+                  className="object-cover object-top select-none"
                 />
-                {/* Contrast overlay so the floating dashboard mock is always readable */}
-                <div className="absolute inset-0 bg-black/25 sm:bg-black/20 backdrop-brightness-95" />
+                {/* Contrast gradient overlay for crisp readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent sm:bg-black/25" />
               </div>
 
-              {/* Floating Real JSX Dashboard Mock */}
+              {/* Floating Real JSX Dashboard Mockup */}
               <div className="relative z-10 w-full flex justify-center">
-                <HeroDashboardMock />
+                <DashboardPreview />
               </div>
             </div>
           </div>

@@ -15,6 +15,6 @@ export default function robots(): MetadataRoute.Robots {
         "/change-password",
       ],
     },
-    sitemap: "https://academyhub.app/sitemap.xml",
+    sitemap: "https://eduflow.app/sitemap.xml",
   };
 }

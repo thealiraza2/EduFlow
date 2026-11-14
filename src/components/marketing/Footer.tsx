@@ -1,113 +1,50 @@
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import Image from "next/image";
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="border-t border-[#DDD6C8] bg-[#FAF7F2] text-ink pt-16 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 pb-12 border-b border-[#E6E0D4]">
-          {/* Brand & Purpose (2 cols on lg) */}
-          <div className="lg:col-span-2 space-y-4">
-            <Link href="/" className="inline-block font-display text-2xl font-bold tracking-tight text-ink">
-              <span>Academy</span>
-              <span className="text-pine">Hub</span>
+    <footer className="bg-white border-t border-gray-100 text-[#0F2040]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8 pb-10 border-b border-gray-100">
+          {/* Brand & Tagline */}
+          <div className="flex flex-col items-center md:items-start gap-2.5 text-center md:text-left">
+            <Link href="/" className="inline-block focus:outline-none">
+              <Image
+                src="/images/logo.svg"
+                alt="EduFlow Logo"
+                width={150}
+                height={38}
+                className="h-9 w-auto"
+              />
             </Link>
-            <p className="text-xs sm:text-sm text-[#55534D] leading-relaxed max-w-sm font-sans">
-              The complete academy & school management system built for tuition centres, coaching institutes, and schools across Pakistan.
+            <p className="text-sm text-[#4B5563] max-w-sm">
+              Modern, all-in-one school management software designed for Pakistani academies and schools.
             </p>
-            <div className="flex items-center gap-2 text-xs text-pine font-medium pt-1">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Strict Multi-Tenant Database Isolation</span>
-            </div>
           </div>
 
-          {/* Column 1: Product */}
-          <div className="space-y-3">
-            <h4 className="font-display text-sm font-bold text-ink uppercase tracking-wider">
-              Product
-            </h4>
-            <ul className="space-y-2 text-xs sm:text-sm text-[#55534D]">
-              <li>
-                <a href="#features" className="hover:text-ink transition-colors">
-                  Features
-                </a>
-              </li>
-              <li>
-                <a href="#pricing" className="hover:text-ink transition-colors">
-                  Pricing Plans
-                </a>
-              </li>
-              <li>
-                <a href="#faq" className="hover:text-ink transition-colors">
-                  FAQ
-                </a>
-              </li>
-              <li>
-                <a href="#trial" className="hover:text-ink transition-colors">
-                  14-Day Free Trial
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 2: AcademyHub */}
-          <div className="space-y-3">
-            <h4 className="font-display text-sm font-bold text-ink uppercase tracking-wider">
-              AcademyHub
-            </h4>
-            <ul className="space-y-2 text-xs sm:text-sm text-[#55534D]">
-              <li>
-                <a href="#how-it-works" className="hover:text-ink transition-colors">
-                  How it works
-                </a>
-              </li>
-              <li>
-                <a href="#contact" className="hover:text-ink transition-colors">
-                  Contact Support
-                </a>
-              </li>
-              <li>
-                <Link href="/login" className="hover:text-ink transition-colors font-medium text-pine">
-                  Portal Login
-                </Link>
-              </li>
-              <li>
-                <Link href="/signup" className="hover:text-ink transition-colors">
-                  Create Account
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3: Legal */}
-          <div className="space-y-3">
-            <h4 className="font-display text-sm font-bold text-ink uppercase tracking-wider">
-              Legal
-            </h4>
-            <ul className="space-y-2 text-xs sm:text-sm text-[#55534D]">
-              <li>
-                <Link href="/privacy" className="hover:text-ink transition-colors">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="hover:text-ink transition-colors">
-                  Terms of Service
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Nav links (Only pages that actually exist) */}
+          <nav className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm font-semibold text-[#0F2040]">
+            <Link href="/" className="hover:text-[#F5B800] transition-colors">
+              Home
+            </Link>
+            <Link href="/login" className="hover:text-[#F5B800] transition-colors">
+              Login
+            </Link>
+            <Link href="/signup" className="hover:text-[#F5B800] transition-colors">
+              Sign Up
+            </Link>
+            <Link href="/privacy" className="hover:text-[#F5B800] transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-[#F5B800] transition-colors">
+              Terms of Service
+            </Link>
+          </nav>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#78756F]">
-          <p>© {currentYear} AcademyHub. All rights reserved. Built for education in Pakistan.</p>
-          <div className="flex items-center gap-6">
-            <span>288 Punjab Pairing Schemes</span>
-            <span>JazzCash & Easypaisa Ready</span>
-          </div>
+        {/* Bottom Bar: Copyright only, no fake social links */}
+        <div className="pt-8 text-center text-xs text-[#6B7280]">
+          <p>© 2026 EduFlow. All rights reserved.</p>
         </div>
       </div>
     </footer>

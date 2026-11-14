@@ -2,33 +2,33 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://academyhub.app"),
-  title: "AcademyHub — Academy & School Management Software",
+  metadataBase: new URL("https://eduflow.app"),
+  title: "EduFlow — Complete School Management System",
   description:
-    "The complete academy & school management platform built for Pakistan. Automate admissions, fee challans with JazzCash and Easypaisa, 10-minute QR attendance, and Punjab BISE pairing scheme test papers.",
+    "Streamline your school operations with an all-in-one platform. Manage students, teachers, classes, attendance, fees, exams and more — all in one place.",
   openGraph: {
-    title: "AcademyHub — Academy & School Management Software",
+    title: "EduFlow — Complete School Management System",
     description:
-      "Run your school or tuition academy with clarity. Admissions, fee challans, parent WhatsApp updates, 10-minute QR attendance, and Punjab BISE pairing schemes.",
-    url: "https://academyhub.app",
-    siteName: "AcademyHub",
+      "Streamline your school operations with an all-in-one platform. Manage students, teachers, classes, attendance, fees, exams and more.",
+    url: "https://eduflow.app",
+    siteName: "EduFlow",
     images: [
       {
-        url: "/images/hero-classroom.jpg",
+        url: "/images/hero-student.png",
         width: 1200,
-        height: 900,
-        alt: "Pakistani classroom with teacher and students",
+        height: 675,
+        alt: "EduFlow School Management System",
       },
     ],
-    locale: "en_PK",
+    locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AcademyHub — Academy & School Management Software",
+    title: "EduFlow — Complete School Management System",
     description:
-      "The complete academy and school management system built for Pakistan.",
-    images: ["/images/hero-classroom.jpg"],
+      "Streamline your school operations with an all-in-one platform. Manage students, teachers, classes, attendance, fees, exams and more.",
+    images: ["/images/hero-student.png"],
   },
 };
 
@@ -38,17 +38,11 @@ export default function MarketingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-paper text-ink selection:bg-pine selection:text-paper font-sans">
-      {/* Header slot */}
-      <div id="marketing-header" />
-      
+    <div className="min-h-screen flex flex-col bg-white text-[#0F2040] selection:bg-[#F5B800] selection:text-[#0F2040] font-sans">
       {/* Main content slot */}
       <div className="flex-1 flex flex-col">
         {children}
       </div>
-
-      {/* Footer slot */}
-      <div id="marketing-footer" />
     </div>
   );
 }

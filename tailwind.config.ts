@@ -19,6 +19,14 @@ const config: Config = {
       colors: {
         paper: "#FAF7F2",
         ink: "#1A1A18",
+        brand: {
+          yellow: "#F5B800",
+          "yellow-hover": "#DF9E00",
+          navy: "#0F2040",
+          "navy-light": "#1B3466",
+          cream: "#FFF9E6",
+          grey: "#4B5563",
+        },
         pine: {
           DEFAULT: "#1E5B3F",
           hover: "#174630",

@@ -54,9 +54,9 @@ test.describe("Marketing Landing Page — Phase 4: Trial Signup, Contact, Legal,
     });
     expect(createdUser).not.toBeNull();
     expect(createdUser?.role).toBe("ADMIN");
-    expect(createdUser?.academy.name).toBe(testAcademy);
-    expect(createdUser?.academy.plan).toBe("PRO");
-    expect(createdUser?.academy.status).toBe("ACTIVE");
+    expect(createdUser?.academy?.name).toBe(testAcademy);
+    expect(createdUser?.academy?.plan).toBe("PRO");
+    expect(createdUser?.academy?.status).toBe("ACTIVE");
 
     // 5. Click Login button and verify redirect
     const loginLink = page.locator('a:has-text("Login Karein")');
