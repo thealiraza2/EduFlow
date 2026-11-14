@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 
 export const metadata = {
-  title: "Change Password | AcademyHub",
+  title: "Change Password | EduFlow",
   description: "Update your account password",
 };
 

@@ -15,8 +15,8 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "AcademyHub — Academy & School Management Software",
-  description: "The complete academy and school management system built for Pakistan.",
+  title: "EduFlow — School Management System",
+  description: "The complete school management system built for schools and academies.",
 };
 
 export default function RootLayout({
