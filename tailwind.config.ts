@@ -17,6 +17,18 @@ const config: Config = {
     },
     extend: {
       colors: {
+        paper: "#FAF7F2",
+        ink: "#1A1A18",
+        pine: {
+          DEFAULT: "#1E5B3F",
+          hover: "#174630",
+          light: "#EBF3EE",
+        },
+        amber: {
+          DEFAULT: "#D97706",
+          hover: "#B45309",
+          light: "#FEF3C7",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -55,6 +67,10 @@ const config: Config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        display: ["var(--font-fraunces)", "serif"],
+        sans: ["var(--font-inter)", "sans-serif"],
       },
     },
   },

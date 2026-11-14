@@ -1,0 +1,6 @@
+@import "../globals.css";
+
+/* Warm editorial styling & photo color grading */
+.photo-warm {
+  filter: sepia(0.06) contrast(1.02) brightness(0.98);
+}

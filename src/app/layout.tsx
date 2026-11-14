@@ -1,9 +1,22 @@
 import type { Metadata } from "next";
+import { Inter, Fraunces } from "next/font/google";
 import "./globals.css";
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "AcademyHub — Academy Management System",
-  description: "Complete management system for tuition academies and coaching centres in Pakistan",
+  title: "AcademyHub — Academy & School Management Software",
+  description: "The complete academy and school management system built for Pakistan.",
 };
 
 export default function RootLayout({
@@ -12,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${fraunces.variable}`}>
       <body className="min-h-screen bg-background font-sans antialiased">
         {children}
       </body>
