@@ -6,12 +6,19 @@ node_modules/
 # Next.js build output
 .next/
 out/
+.vercel
 
 # Environment files
 .env
-.env*.local
-.env.production
-.env.development
+.env.*
+!.env.example
+
+# Credentials and certificates
+*.pem
+*.key
+*.p12
+credentials*.json
+*secret*.json
 
 # Debug and test outputs
 npm-debug.log*
@@ -25,7 +32,6 @@ test-results/
 # System and IDE
 *.tsbuildinfo
 .DS_Store
-*.pem
 .idea/
 .vscode/
 *.suo

@@ -419,3 +419,13 @@ npm run dev
 | `WHATSAPP_PHONE_NUMBER_ID` | Meta WhatsApp Business Phone Number ID | `""` |
 | `WHATSAPP_VERIFY_TOKEN` | Secret token for Meta webhook subscription verification | `academyhub_wa_verify_token_secret` |
 | `WHATSAPP_APP_SECRET` | Meta App Secret for X-Hub-Signature-256 HMAC validation | `whatsapp_app_secret_12345` |
+
+---
+
+## Security
+
+> [!CAUTION]
+> **Credential & Secret Protection**:
+> Never commit `.env` or real credentials to this repository. All secrets must go strictly into environment variables (Vercel Project Settings for production, or a local untracked `.env` file for development, never in git).
+> If a secret is ever committed by mistake, **rotate it immediately** at the provider level — deleting the file does not remove it from git history.
+
