@@ -2,6 +2,7 @@ import { requireRole } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { TeacherAttendanceSheet } from "@/components/teacher/TeacherAttendanceSheet";
+import { TeacherQRModal } from "@/components/teacher/TeacherQRModal";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -55,8 +56,23 @@ export default async function TeacherAttendancePage() {
             </div>
           </div>
 
-          <div className="text-xs text-slate-500 bg-white border px-3 py-1.5 rounded-md">
-            Logged in as <strong>{user.name}</strong> ({user.role})
+          <div className="flex items-center gap-3">
+            {batches.length > 0 && (
+              <TeacherQRModal
+                batches={batches.map((b) => ({
+                  id: b.id,
+                  name: b.name,
+                  timing: b.timing,
+                  class: {
+                    name: b.class.name,
+                    section: b.class.section,
+                  },
+                }))}
+              />
+            )}
+            <div className="text-xs text-slate-500 bg-white border px-3 py-1.5 rounded-md">
+              Logged in as <strong>{user.name}</strong> ({user.role})
+            </div>
           </div>
         </div>
 

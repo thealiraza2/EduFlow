@@ -26,8 +26,8 @@ One academy runs on one installation. The academy owner (admin) oversees student
 | **Phase 10** | Multi-branch SaaS: multi-tenancy, tenant isolation & SuperAdmin dashboard | **DONE** |
 | **Phase 11** | Real payments: JazzCash + Easypaisa (sandbox + idempotent webhooks) | **DONE** |
 | **Phase 12** | Online test engine: timed MCQs, auto-grading, leaderboard | **DONE** |
-| **Phase 13** | AI analytics (dropout prediction, weak subjects) + test paper generator | Not built yet |
-| **Phase 14** | WhatsApp Business bot + QR attendance | Not built yet |
+| **Phase 13** | AI analytics (dropout prediction, weak subjects) + test paper generator | **DONE** |
+| **Phase 14** | WhatsApp Business bot + QR attendance | **DONE** |
 | **Phase 15** | Final verification & production deployment (Vercel + Supabase) | Not built yet |
 
 ---
@@ -190,13 +190,19 @@ npm run test:e2e
 > However, **LIVE payments require an approved commercial merchant account** with JazzCash (Mobilink Microfinance Bank) or Easypaisa (Telenor Microfinance Bank), requiring verified corporate NTN, commercial business bank accounts, and merchant agreement paperwork.
 > Until merchant credentials are provisioned, the academy operates in **sandbox mode** and **manual collection mode** (CASH / BANK). Never claim live payments work without an approved merchant account.
 
-### 2. SMS & WhatsApp Notifications (Simulated Log Driver)
-- Real bulk SMS in Pakistan requires registering a branded alphanumeric sender ID with local telecommunication operators via an aggregator (e.g. standard telco shortcodes). WhatsApp bot integration requires an approved Meta WhatsApp Business Account.
-- By default, AcademyHub runs with `SMS_PROVIDER="log"`.
-- All notifications are routed through `NotificationService` (`src/lib/notify.ts`), which writes outgoing SMS payloads to `stdout` and logs them to the `NotificationLog` database table for audit purposes.
-- Real SMS/WhatsApp integration is slated for **Phase 14**.
+### 2. SMS & WhatsApp Notifications (Simulated Log Driver & Meta Cloud API)
+- Real bulk SMS in Pakistan requires registering a branded alphanumeric sender ID with local telecommunication operators via an aggregator (e.g. standard telco shortcodes).
+- WhatsApp bot integration is supported via the **Meta WhatsApp Business Cloud API** driver (`SMS_PROVIDER="whatsapp"`, with `WHATSAPP_TOKEN` and `WHATSAPP_PHONE_NUMBER_ID`).
+- Until official Meta business verification is completed by the academy, the **LOG driver** stays the default (`SMS_PROVIDER="log"`).
+- All outbound messages and bot interactions are recorded in the `NotificationLog` table with timestamp, recipient, and status.
 
-### 3. Teacher Salaries & Payroll
+### 3. Biometric Devices Honesty Note (Hardware Scope & QR Alternative)
+> [!NOTE]
+> **Biometric Hardware Disclosure (Phase 14)**:
+> External fingerprint-device integration is **NOT** included in AcademyHub. In Pakistan tuition academies, dedicated USB biometric fingerprint readers introduce frequent hardware faults, proprietary driver lock-in, and severe hallway queuing bottlenecks during 5-minute batch shift transitions.
+> Instead, AcademyHub implements **time-limited, cryptographically signed QR code attendance** (`src/lib/qr.ts`). The faculty dashboard projects a 10-minute HMAC-SHA256 signed QR code on the classroom monitor or whiteboard. Students scan the code with the camera hardware they already carry (their smartphone) to confirm attendance with instant server-side verification and duplicate-scan prevention. **Do not claim biometric fingerprint support.**
+
+### 4. Teacher Salaries & Payroll
 - The `/admin/salaries` module allows academy owners to track monthly salary disbursement status (`PAID` vs `UNPAID`) and cross-reference contracted salaries against weekly timetable hours.
 - **AcademyHub does NOT execute direct bank-to-bank transfers or 1Link integration.** Disbursal occurs through external commercial banking channels or cash, and is recorded in the system for bookkeeping.
 
@@ -237,3 +243,9 @@ npm run test:e2e
 | `EASYPAISA_STORE_ID` | Easypaisa Merchant Store Identifier | `12345` |
 | `EASYPAISA_HASH_KEY` | Easypaisa HMAC-SHA256 Secret Hash Key | `easypaisa_sandbox_hash_key_12345` |
 | `EASYPAISA_RETURN_URL` | Callback IPN / Webhook URL for Easypaisa | `http://localhost:3000/api/webhooks/easypaisa` |
+| `LLM_API_KEY` | Groq API Key for AI paper generator & Urdu explanations | `""` (falls back safely if omitted) |
+| `LLM_MODEL` | Groq model identifier | `llama-3.1-70b-versatile` |
+| `WHATSAPP_TOKEN` | Meta WhatsApp Cloud API permanent system user token | `""` |
+| `WHATSAPP_PHONE_NUMBER_ID` | Meta WhatsApp Business Phone Number ID | `""` |
+| `WHATSAPP_VERIFY_TOKEN` | Secret token for Meta webhook subscription verification | `academyhub_wa_verify_token_secret` |
+| `WHATSAPP_APP_SECRET` | Meta App Secret for X-Hub-Signature-256 HMAC validation | `whatsapp_app_secret_12345` |

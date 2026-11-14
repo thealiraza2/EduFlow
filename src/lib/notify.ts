@@ -94,11 +94,138 @@ export class LogNotificationService implements NotificationService {
   }
 }
 
+/**
+ * Normalizes phone numbers to Pakistan WhatsApp Cloud API international format
+ * Examples:
+ *   "03001234567" -> "923001234567"
+ *   "+923001234567" -> "923001234567"
+ *   "0300-1234567" -> "923001234567"
+ */
+export function formatPhoneForWhatsApp(phone: string): string {
+  // Strip non-digits
+  const digits = phone.replace(/\D/g, "");
+  if (digits.startsWith("92")) {
+    return digits;
+  }
+  if (digits.startsWith("03")) {
+    return `92${digits.slice(1)}`;
+  }
+  return digits;
+}
+
+export class WhatsAppNotificationService implements NotificationService {
+  private token: string;
+  private phoneNumberId: string;
+  private apiVersion: string;
+
+  constructor(token?: string, phoneNumberId?: string, apiVersion: string = "v18.0") {
+    this.token = token ?? process.env.WHATSAPP_TOKEN?.trim() ?? "";
+    this.phoneNumberId = phoneNumberId ?? process.env.WHATSAPP_PHONE_NUMBER_ID?.trim() ?? "";
+    this.apiVersion = apiVersion;
+  }
+
+  async send(payload: NotificationPayload): Promise<NotificationResult> {
+    const channel: NotificationChannel = "WHATSAPP";
+    const template = payload.template || "WHATSAPP_BOT";
+    const trigger = payload.trigger || "CUSTOM";
+    const status = payload.status || "SENT";
+    const formattedPhone = formatPhoneForWhatsApp(payload.recipientPhone);
+
+    let academyId = payload.academyId;
+    if (!academyId && payload.studentId) {
+      const student = await db.student.findUnique({
+        where: { id: payload.studentId },
+        select: { academyId: true },
+      });
+      if (student?.academyId) {
+        academyId = student.academyId;
+      }
+    }
+    if (!academyId) {
+      academyId = "seed-academy-id";
+    }
+
+    let externalMessageId: string | undefined;
+    let sendError: string | undefined;
+    let driverUsed: "gateway" | "log" = "log";
+
+    // If Meta WhatsApp Business credentials exist, send via Cloud API
+    if (this.token && this.phoneNumberId) {
+      try {
+        const url = `https://graph.facebook.com/${this.apiVersion}/${this.phoneNumberId}/messages`;
+        const res = await fetch(url, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messaging_product: "whatsapp",
+            recipient_type: "individual",
+            to: formattedPhone,
+            type: "text",
+            text: {
+              preview_url: false,
+              body: payload.message,
+            },
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          externalMessageId = data.messages?.[0]?.id;
+          driverUsed = "gateway";
+        } else {
+          const errText = await res.text();
+          sendError = `WhatsApp API error ${res.status}: ${errText.slice(0, 150)}`;
+          console.warn(`[WHATSAPP GATEWAY ERROR] ${sendError}`);
+        }
+      } catch (err: any) {
+        sendError = err.message || "Failed to reach WhatsApp Cloud API";
+        console.warn(`[WHATSAPP GATEWAY EXCEPTION] ${sendError}`);
+      }
+    } else {
+      // Default / fallback driver: log driver
+      const timestamp = new Date().toISOString();
+      console.log(
+        `[NOTIFY LOG DRIVER] [${timestamp}] [WHATSAPP] To: ${formattedPhone} (${payload.recipientPhone}) | Template: ${template} | Trigger: ${trigger}`
+      );
+      console.log(`[NOTIFY MESSAGE] ${payload.message}`);
+    }
+
+    // Always log to NotificationLog table in database
+    const logRecord = await db.notificationLog.create({
+      data: {
+        academyId,
+        channel,
+        recipientPhone: formattedPhone,
+        recipient: payload.recipientPhone,
+        template,
+        message: payload.message,
+        status: sendError ? "FAILED" : status,
+        sentAt: sendError ? null : new Date(),
+        studentId: payload.studentId || null,
+        trigger,
+        referenceId: externalMessageId || payload.referenceId || null,
+      },
+    });
+
+    return {
+      success: !sendError,
+      messageId: logRecord.id,
+      error: sendError,
+      driver: driverUsed,
+    };
+  }
+}
+
 // Singleton factory based on SMS_PROVIDER env
 export function getNotificationService(): NotificationService {
-  const provider = process.env.SMS_PROVIDER || "log";
+  const provider = (process.env.SMS_PROVIDER || "log").toLowerCase();
 
-  switch (provider.toLowerCase()) {
+  switch (provider) {
+    case "whatsapp":
+      return new WhatsAppNotificationService();
     case "log":
     default:
       return new LogNotificationService();
