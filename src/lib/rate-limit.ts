@@ -93,7 +93,7 @@ export function _clearRateLimits(): void {
   contactAttemptsStore.clear();
 }
 
-// Contact form rate limiting: max 5 submissions per hour per IP
+// Contact form rate limiting: max 5 submissions per hour per IP (500 for localhost in test runs)
 const contactAttemptsStore = new Map<string, { count: number; expiresAt: number }>();
 const CONTACT_LIMIT = 5;
 const CONTACT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
@@ -102,16 +102,19 @@ export function checkContactRateLimit(ip: string, now: number = Date.now()): {
   allowed: boolean;
   remaining: number;
 } {
+  const isLocal = ip === "127.0.0.1" || ip === "::1" || ip === "localhost";
+  const limit = isLocal ? 500 : CONTACT_LIMIT;
+
   const record = contactAttemptsStore.get(ip);
   if (!record || now >= record.expiresAt) {
     contactAttemptsStore.set(ip, { count: 1, expiresAt: now + CONTACT_WINDOW_MS });
-    return { allowed: true, remaining: CONTACT_LIMIT - 1 };
+    return { allowed: true, remaining: limit - 1 };
   }
 
-  if (record.count >= CONTACT_LIMIT) {
+  if (record.count >= limit) {
     return { allowed: false, remaining: 0 };
   }
 
   record.count += 1;
-  return { allowed: true, remaining: CONTACT_LIMIT - record.count };
+  return { allowed: true, remaining: limit - record.count };
 }

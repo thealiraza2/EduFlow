@@ -25,7 +25,7 @@ test.describe("Phase 15: Full System End-to-End User Journey", () => {
     // A. Academy Signup
     // -------------------------------------------------------------------------
     await page.goto("/signup");
-    await expect(page.locator("text=Create Your Academy Platform")).toBeVisible();
+    await expect(page.locator("text=Create Your School Platform")).toBeVisible();
 
     await page.fill("#academyName", testAcademyName);
     await page.fill("#slug", testAcademySlug);

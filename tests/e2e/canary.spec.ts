@@ -9,6 +9,6 @@ test("health check API returns ok", async ({ request }) => {
 
 test("login page renders successfully in headless chrome", async ({ page }) => {
   await page.goto("/login");
-  await expect(page.getByText("AcademyHub Secure Portal")).toBeVisible();
+  await expect(page.getByText("EduFlow Secure Portal")).toBeVisible();
   await expect(page.getByRole("button", { name: "Sign In" })).toBeVisible();
 });

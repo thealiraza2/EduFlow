@@ -19,7 +19,7 @@ test.describe("E2E Phase 10: Multi-Branch SaaS & Super Admin", () => {
     await page.goto("/signup");
 
     // Form should render with title and 14-day PRO trial badge
-    await expect(page.locator("text=Create Your Academy Platform")).toBeVisible();
+    await expect(page.locator("text=Create Your School Platform")).toBeVisible();
     await expect(page.getByText("14-Day Free PRO Trial • No Credit Card Required")).toBeVisible();
 
     // Fill form
@@ -31,7 +31,7 @@ test.describe("E2E Phase 10: Multi-Branch SaaS & Super Admin", () => {
     await page.fill("#adminPhone", "03001234567");
 
     // Live subdomain preview
-    await expect(page.locator("text=.academyhub.app")).toBeVisible();
+    await expect(page.locator("text=.eduflow.app")).toBeVisible();
     await expect(page.locator("#slug")).toHaveValue(slug);
 
     // Submit
