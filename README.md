@@ -8,8 +8,8 @@ One academy runs on one installation. The academy owner (admin) manages students
 
 ## Project Status
 
-> **Current Milestone: Phase 0 Complete**  
-> All subsequent phases (1 through 15) are **NOT built yet**.
+> **Current Milestone: Phase 4 Complete**  
+> All subsequent phases (5 through 15) are **NOT built yet**.
 
 | Phase | Description | Status |
 | :--- | :--- | :--- |
@@ -17,8 +17,7 @@ One academy runs on one installation. The academy owner (admin) manages students
 | **Phase 1** | Auth + roles (Admin, Teacher, Parent) + middleware protection | **DONE** |
 | **Phase 2** | Students, teachers, classes & batches | **DONE** |
 | **Phase 3** | Timetable management | **DONE** |
-| **Phase 4** | Attendance + parent absence notifications | Not built yet |
-| **Phase 4** | Attendance + parent absence notifications | Not built yet |
+| **Phase 4** | Attendance + parent absence notifications | **DONE** |
 | **Phase 5** | Fees: plans, monthly invoices, append-only payments, challans | Not built yet |
 | **Phase 6** | Tests, marks, result cards & publishing | Not built yet |
 | **Phase 7** | Parent portal (strict child data isolation) | Not built yet |

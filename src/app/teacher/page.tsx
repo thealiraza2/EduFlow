@@ -4,7 +4,9 @@ import { Role } from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DAYS_OF_WEEK } from "@/lib/constants";
-import { Clock, MapPin, School, Calendar, BookOpen } from "lucide-react";
+import { Clock, MapPin, School, Calendar, BookOpen, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default async function TeacherDashboardPage() {
   const user = await requireRole([Role.TEACHER, Role.ADMIN]);
@@ -62,11 +64,19 @@ export default async function TeacherDashboardPage() {
               {teacher && ` • Subjects: ${teacher.subjects.join(", ")}`}
             </p>
           </div>
-          {teacher && (
-            <Badge variant="outline" className="text-xs px-3 py-1 font-mono">
-              {teacher.batches.length} Assigned Batches
-            </Badge>
-          )}
+          <div className="flex items-center space-x-3">
+            {teacher && (
+              <Badge variant="outline" className="text-xs px-3 py-1 font-mono">
+                {teacher.batches.length} Assigned Batches
+              </Badge>
+            )}
+            <Link href="/teacher/attendance">
+              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center">
+                <CheckCircle2 className="h-4 w-4 mr-1.5" />
+                Mark Attendance
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* My Timetable This Week */}

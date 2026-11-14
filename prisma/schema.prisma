@@ -68,6 +68,13 @@ enum NotificationStatus {
   FAILED
 }
 
+enum NotificationTrigger {
+  ABSENCE
+  FEE_REMINDER
+  RESULT
+  CUSTOM
+}
+
 model User {
   id           String    @id @default(cuid())
   email        String    @unique
@@ -114,6 +121,7 @@ model Student {
   enrollments    Enrollment[]
   invoices       FeeInvoice[]
   testResults    TestResult[]
+  notifications  NotificationLog[]
 
   @@index([guardianPhone])
   @@index([guardianUserId])
@@ -287,13 +295,21 @@ model TestResult {
 model NotificationLog {
   id             String              @id @default(cuid())
   recipientPhone String
+  recipient      String?
   channel        NotificationChannel @default(SMS)
-  template       String
+  template       String              @default("ABSENCE_NOTIFICATION")
   message        String
   status         NotificationStatus  @default(QUEUED)
   sentAt         DateTime?
+  studentId      String?
+  student        Student?            @relation(fields: [studentId], references: [id], onDelete: SetNull)
+  trigger        NotificationTrigger @default(CUSTOM)
+  referenceId    String?
   createdAt      DateTime            @default(now())
 
   @@index([recipientPhone])
   @@index([status])
+  @@index([studentId])
+  @@index([trigger])
+  @@index([referenceId])
 }
