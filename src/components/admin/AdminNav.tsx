@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Users, GraduationCap, School, LayoutDashboard, LogOut, Calendar, CheckCircle2 } from "lucide-react";
+import { Users, GraduationCap, School, LayoutDashboard, LogOut, Calendar, CheckCircle2, Banknote } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 const navItems = [
@@ -14,6 +14,7 @@ const navItems = [
   { href: "/admin/classes", label: "Classes & Batches", icon: School },
   { href: "/admin/timetable", label: "Timetable", icon: Calendar },
   { href: "/admin/attendance", label: "Attendance", icon: CheckCircle2 },
+  { href: "/admin/fees", label: "Fees", icon: Banknote },
 ];
 
 export function AdminNav() {
