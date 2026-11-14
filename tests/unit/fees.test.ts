@@ -145,8 +145,8 @@ describe("Phase 5: Fees, Invoices, Append-Only Payments & Status Derivation", ()
     });
 
     // 1st run: should create invoice
-    const run1 = await generateMonthlyInvoices(testMonth, new Date(2026, 10, 5)); // 5th Nov (before due date)
-    expect(run1.createdCount).toBeGreaterThanOrEqual(1);
+    const run1 = await generateMonthlyInvoices(testMonth, new Date(2026, 10, 5), db, { studentId: testStudentId }); // 5th Nov (before due date)
+    expect(run1.createdCount).toBe(1);
 
     const invoicesAfterRun1 = await db.feeInvoice.findMany({
       where: {
@@ -163,8 +163,9 @@ describe("Phase 5: Fees, Invoices, Append-Only Payments & Status Derivation", ()
     const firstInvoiceId = invoicesAfterRun1[0].id;
 
     // 2nd run: should skip existing invoice (idempotent)
-    const run2 = await generateMonthlyInvoices(testMonth, new Date(2026, 10, 5));
-    expect(run2.skippedCount).toBeGreaterThanOrEqual(1);
+    const run2 = await generateMonthlyInvoices(testMonth, new Date(2026, 10, 5), db, { studentId: testStudentId });
+    expect(run2.skippedCount).toBe(1);
+    expect(run2.createdCount).toBe(0);
 
     const invoicesAfterRun2 = await db.feeInvoice.findMany({
       where: {

@@ -111,19 +111,30 @@ export function deriveInvoiceStatus(
 export async function generateMonthlyInvoices(
   month: string, // YYYY-MM
   currentDate: Date = new Date(),
-  client: Prisma.TransactionClient | typeof db = db
+  client: Prisma.TransactionClient | typeof db = db,
+  filter?: { batchId?: string; studentId?: string }
 ) {
   // Validate month format YYYY-MM
   if (!/^\d{4}-\d{2}$/.test(month)) {
     throw new Error("Invalid month format. Expected YYYY-MM (e.g. 2026-11)");
   }
 
+  // Base enrollment where clause
+  const whereClause: Prisma.EnrollmentWhereInput = {
+    status: "ACTIVE",
+    student: { status: "ACTIVE" },
+  };
+
+  if (filter?.batchId) {
+    whereClause.batchId = filter.batchId;
+  }
+  if (filter?.studentId) {
+    whereClause.studentId = filter.studentId;
+  }
+
   // Fetch all active enrollments of active students
   const activeEnrollments = await client.enrollment.findMany({
-    where: {
-      status: "ACTIVE",
-      student: { status: "ACTIVE" },
-    },
+    where: whereClause,
     include: {
       student: true,
       batch: {
