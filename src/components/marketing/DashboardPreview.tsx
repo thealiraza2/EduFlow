@@ -60,42 +60,42 @@ export function DashboardPreview() {
   ];
 
   return (
-    <div className="w-full max-w-lg bg-white/95 backdrop-blur-md rounded-2xl border border-gray-200/80 shadow-2xl p-5 sm:p-6 text-[#0F2040] space-y-4 select-none">
+    <div className="w-full max-w-lg bg-white/95 backdrop-blur-md rounded-2xl border border-gray-200/90 shadow-2xl p-4 sm:p-5 text-[#0F2040] space-y-3 select-none">
       {/* Top Bar with Demo Indicator */}
-      <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+      <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
         <div className="flex items-center gap-2">
           <div className="w-2.5 h-2.5 rounded-full bg-[#F5B800] animate-pulse" />
-          <span className="font-bold text-sm tracking-tight text-[#0F2040]">
+          <span className="font-bold text-xs sm:text-sm tracking-tight text-[#0F2040]">
             EduFlow Academy Portal
           </span>
         </div>
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FFF9E6] text-[#0F2040] border border-[#F5B800]/40">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-[#FFF9E6] text-[#0F2040] border border-[#F5B800]/40">
           Live Demo Preview
         </span>
       </div>
 
       {/* 4 Stat Tiles */}
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-2 gap-2">
         {stats.map((s) => {
           const Icon = s.icon;
           return (
             <div
               key={s.label}
-              className="bg-[#FAFAFA] rounded-xl p-3 border border-gray-100 flex flex-col justify-between"
+              className="bg-[#FAFAFA] rounded-xl p-2 sm:p-2.5 border border-gray-100/90 flex flex-col justify-between"
             >
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-medium text-gray-500 truncate mr-1">
+                <span className="text-[10px] sm:text-[11px] font-medium text-gray-500 truncate mr-1">
                   {s.label}
                 </span>
-                <div className={`p-1.5 rounded-lg ${s.iconBg}`}>
-                  <Icon className="w-3.5 h-3.5" />
+                <div className={`p-1 sm:p-1.5 rounded-lg ${s.iconBg}`}>
+                  <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </div>
               </div>
-              <div className="mt-1.5">
-                <span className="text-lg font-extrabold text-[#0F2040] tracking-tight">
+              <div className="mt-1">
+                <span className="text-base sm:text-lg font-extrabold text-[#0F2040] tracking-tight">
                   {s.value}
                 </span>
-                <p className="text-[10px] text-gray-400 mt-0.5">{s.change}</p>
+                <p className="text-[9px] sm:text-[10px] text-gray-400 mt-0.5">{s.change}</p>
               </div>
             </div>
           );
@@ -103,29 +103,29 @@ export function DashboardPreview() {
       </div>
 
       {/* Recent Activity (3 Lines) */}
-      <div className="pt-1">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
+      <div className="pt-0.5">
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-gray-500">
             Recent Activity (Demo)
           </span>
-          <span className="text-[10px] text-gray-400">Real-time sync</span>
+          <span className="text-[9px] sm:text-[10px] text-gray-400">Real-time sync</span>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           {activities.map((act) => {
             const Icon = act.icon;
             return (
               <div
                 key={act.id}
-                className="flex items-center justify-between p-2 rounded-lg bg-gray-50/70 border border-gray-100 text-xs"
+                className="flex items-center justify-between p-1.5 sm:p-2 rounded-lg bg-gray-50/80 border border-gray-100 text-xs"
               >
                 <div className="flex items-center gap-2 min-w-0 pr-2">
-                  <Icon className={`w-3.5 h-3.5 shrink-0 ${act.iconColor}`} />
-                  <span className="text-gray-700 font-medium truncate text-[11px] sm:text-xs">
+                  <Icon className={`w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 ${act.iconColor}`} />
+                  <span className="text-gray-700 font-medium truncate text-[10px] sm:text-xs">
                     {act.title}
                   </span>
                 </div>
-                <span className="text-[10px] text-gray-400 shrink-0 font-mono">
+                <span className="text-[9px] sm:text-[10px] text-gray-400 shrink-0 font-mono">
                   {act.timestamp}
                 </span>
               </div>
