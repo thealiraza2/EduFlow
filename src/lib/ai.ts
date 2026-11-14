@@ -47,7 +47,7 @@ export interface GenerateBoardPaperInput {
     id: string;
     structure: SchemeStructure;
     totalMarks: number;
-    timeMinutes: number;
+    timeMinutes?: number | null;
     verified: boolean;
   };
   difficulty: "EASY" | "MEDIUM" | "HARD";
@@ -450,6 +450,19 @@ export async function generateBoardPaper(input: GenerateBoardPaperInput): Promis
 }> {
   const { boardName, className, subject, chapters, scheme, difficulty } = input;
   const structure = scheme.structure;
+
+  // Strict guard: Never generate a paper from a partial scheme lacking short or long sections
+  const lacksShort = !structure?.short || !structure?.short?.count;
+  const lacksLong = !structure?.long || !structure?.long?.count;
+  if (lacksShort || lacksLong) {
+    return {
+      success: false,
+      questions: [],
+      isFallback: false,
+      error:
+        "Is scheme ka mukammal structure save nahi hai — admin se /admin/boards mein complete karwao.",
+    };
+  }
 
   const fallbackQuestions = buildDeterministicSchemeQuestions(
     subject,

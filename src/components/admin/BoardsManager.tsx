@@ -53,10 +53,11 @@ interface SchemeItem {
   subjectId: string;
   structure: any;
   totalMarks: number;
-  timeMinutes: number;
+  timeMinutes: number | null;
   sourceUrl: string | null;
   verified: boolean;
   verifiedAt: string | Date | null;
+  notes?: string | null;
 }
 
 interface SubjectItem {
@@ -116,6 +117,7 @@ export function BoardsManager({ boards }: Props) {
   const [totalMarks, setTotalMarks] = useState<number>(38);
   const [timeMinutes, setTimeMinutes] = useState<number>(90);
   const [sourceUrl, setSourceUrl] = useState("");
+  const [notes, setNotes] = useState("");
 
   const handleCreateBoard = (e: React.FormEvent) => {
     e.preventDefault();
@@ -227,8 +229,9 @@ export function BoardsManager({ boards }: Props) {
       setLongMarks(st.long?.marksEach ?? 5);
       setLongAttempt(st.long?.attempt ?? 2);
       setTotalMarks(existing.totalMarks);
-      setTimeMinutes(existing.timeMinutes);
+      setTimeMinutes(existing.timeMinutes ?? 90);
       setSourceUrl(existing.sourceUrl || "");
+      setNotes(existing.notes || "");
     } else {
       setMcqCount(12);
       setMcqMarks(1);
@@ -241,6 +244,7 @@ export function BoardsManager({ boards }: Props) {
       setTotalMarks(38);
       setTimeMinutes(90);
       setSourceUrl("");
+      setNotes("");
     }
     setSchemeModalOpen(true);
   };
@@ -263,8 +267,9 @@ export function BoardsManager({ boards }: Props) {
           longMarks,
           longAttempt,
           totalMarks,
-          timeMinutes,
+          timeMinutes: timeMinutes || undefined,
           sourceUrl,
+          notes: notes.trim() || undefined,
         });
         setSchemeModalOpen(false);
         router.refresh();
@@ -482,6 +487,12 @@ export function BoardsManager({ boards }: Props) {
                                     </Badge>
                                   )}
 
+                                  {scheme.notes?.startsWith("PARTIAL:") && (
+                                    <Badge className="bg-amber-100 text-amber-900 border-amber-300 text-[10px] font-bold">
+                                      PARTIAL
+                                    </Badge>
+                                  )}
+
                                   {scheme.sourceUrl && (
                                     <a
                                       href={scheme.sourceUrl}
@@ -545,10 +556,17 @@ export function BoardsManager({ boards }: Props) {
                                 <div className="p-2 bg-white rounded border">
                                   <span className="text-slate-400 block text-[10px]">Total & Time:</span>
                                   <span className="font-semibold text-indigo-700">
-                                    {scheme.totalMarks} Marks ({scheme.timeMinutes} mins)
+                                    {scheme.totalMarks} Marks ({scheme.timeMinutes ? `${scheme.timeMinutes} mins` : "Time unconfirmed"})
                                   </span>
                                 </div>
                               </div>
+
+                              {scheme.notes && (
+                                <p className="text-[11px] text-slate-600 italic bg-white p-2 rounded border border-slate-200">
+                                  <span className="font-semibold text-slate-700 not-italic">Notes: </span>
+                                  {scheme.notes}
+                                </p>
+                              )}
                             </div>
                           ) : (
                             <div className="p-2.5 bg-amber-50/50 rounded-lg border border-amber-200/60 text-xs text-amber-900 flex items-center justify-between">
@@ -874,6 +892,18 @@ export function BoardsManager({ boards }: Props) {
                 placeholder="https://biselahore.com/pairing-schemes/9th-physics.pdf"
                 value={sourceUrl}
                 onChange={(e) => setSourceUrl(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                Notes / Gaps Information (e.g. PARTIAL: details)
+              </label>
+              <Input
+                type="text"
+                placeholder="e.g. PARTIAL: short/long breakdown unconfirmed — see SOURCES.md"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
               />
             </div>
 

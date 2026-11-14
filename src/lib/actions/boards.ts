@@ -35,8 +35,9 @@ const saveSchemeSchema = z.object({
   longMarks: z.number().positive(),
   longAttempt: z.number().int().min(0).optional(),
   totalMarks: z.number().int().positive("Total marks must be positive"),
-  timeMinutes: z.number().int().positive("Time must be positive"),
+  timeMinutes: z.number().int().positive("Time must be positive").optional().nullable(),
   sourceUrl: z.string().url("Invalid URL").optional().or(z.literal("")),
+  notes: z.string().optional().nullable(),
 });
 
 export async function createBoardAction(input: z.infer<typeof createBoardSchema>) {
@@ -158,8 +159,9 @@ export async function savePaperSchemeAction(input: z.infer<typeof saveSchemeSche
     update: {
       structure,
       totalMarks: val.totalMarks,
-      timeMinutes: val.timeMinutes,
+      timeMinutes: val.timeMinutes ?? null,
       sourceUrl: val.sourceUrl && val.sourceUrl.trim() ? val.sourceUrl.trim() : null,
+      notes: val.notes ?? null,
     },
     create: {
       boardId: val.boardId,
@@ -167,8 +169,9 @@ export async function savePaperSchemeAction(input: z.infer<typeof saveSchemeSche
       subjectId: val.subjectId,
       structure,
       totalMarks: val.totalMarks,
-      timeMinutes: val.timeMinutes,
+      timeMinutes: val.timeMinutes ?? null,
       sourceUrl: val.sourceUrl && val.sourceUrl.trim() ? val.sourceUrl.trim() : null,
+      notes: val.notes ?? null,
       verified: false,
     },
   });

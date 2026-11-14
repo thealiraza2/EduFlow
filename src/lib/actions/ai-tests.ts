@@ -41,7 +41,7 @@ const generateBoardInputSchema = z.object({
     id: z.string(),
     structure: z.any(),
     totalMarks: z.number(),
-    timeMinutes: z.number(),
+    timeMinutes: z.number().nullable().optional(),
     verified: z.boolean(),
   }),
   difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
@@ -71,6 +71,15 @@ export async function generateBoardPaperAction(input: GenerateBoardPaperInput) {
   }
 
   const validated = generateBoardInputSchema.parse(input);
+  const structure = validated.scheme.structure;
+  const lacksShort = !structure?.short || !structure?.short?.count;
+  const lacksLong = !structure?.long || !structure?.long?.count;
+  if (lacksShort || lacksLong) {
+    throw new Error(
+      "Is scheme ka mukammal structure save nahi hai — admin se /admin/boards mein complete karwao."
+    );
+  }
+
   const result = await generateBoardPaper(validated as GenerateBoardPaperInput);
 
   return result;

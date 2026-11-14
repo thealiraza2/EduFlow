@@ -602,10 +602,11 @@ model PaperScheme {
   // e.g. { "mcq": { "count": 12, "marksEach": 1 }, "short": { "count": 9, "marksEach": 2, "attempt": 6 }, "long": { "count": 3, "marksEach": 5, "attempt": 2 } }
   structure   Json
   totalMarks  Int
-  timeMinutes Int
+  timeMinutes Int?
   sourceUrl   String?   // link to the board's official pairing-scheme document
   verified    Boolean   @default(false)
   verifiedAt  DateTime?
+  notes       String?   // e.g. "PARTIAL: short/long breakdown unconfirmed — see SOURCES.md"
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 

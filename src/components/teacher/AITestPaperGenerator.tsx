@@ -41,9 +41,10 @@ interface SchemeItem {
   subjectId: string;
   structure: any;
   totalMarks: number;
-  timeMinutes: number;
+  timeMinutes: number | null;
   sourceUrl: string | null;
   verified: boolean;
+  notes?: string | null;
 }
 
 interface SubjectItem {
@@ -116,6 +117,12 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
   );
 
   const activeScheme = activeSubject?.schemes[0] || null;
+  const lacksShort = !activeScheme?.structure?.short || !activeScheme?.structure?.short?.count;
+  const lacksLong = !activeScheme?.structure?.long || !activeScheme?.structure?.long?.count;
+  const isPartialScheme = Boolean(
+    activeScheme &&
+      (lacksShort || lacksLong || activeScheme.notes?.startsWith("PARTIAL:"))
+  );
   const availableChapters = activeSubject?.chapters || [];
 
   // Chapters multi-select state
@@ -166,6 +173,15 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
       return;
     }
 
+    const lacksShort = !activeScheme.structure?.short || !activeScheme.structure?.short?.count;
+    const lacksLong = !activeScheme.structure?.long || !activeScheme.structure?.long?.count;
+    const isPartial = lacksShort || lacksLong || Boolean(activeScheme.notes?.startsWith("PARTIAL:"));
+
+    if (isPartial) {
+      setError("Is scheme ka mukammal structure save nahi hai — admin se /admin/boards mein complete karwao.");
+      return;
+    }
+
     const chosenChapters =
       selectedChapterIds.length > 0
         ? availableChapters.filter((c) => selectedChapterIds.includes(c.id))
@@ -190,7 +206,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
             id: activeScheme.id,
             structure: activeScheme.structure,
             totalMarks: activeScheme.totalMarks,
-            timeMinutes: activeScheme.timeMinutes,
+            timeMinutes: activeScheme.timeMinutes ?? null,
             verified: activeScheme.verified,
           },
           difficulty,
@@ -206,7 +222,9 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
         setTestTitle(
           `${currentBoard?.name || "Board"} ${activeSubject.name} (${activeSubject.className}) - ${difficulty}`
         );
-        setDurationMinutes(activeScheme.timeMinutes);
+        if (activeScheme.timeMinutes) {
+          setDurationMinutes(activeScheme.timeMinutes);
+        }
       } catch (err: any) {
         setError(err.message || "Failed to generate test draft.");
       }
@@ -424,67 +442,96 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
 
             {/* Scheme Status Banner */}
             {activeScheme ? (
-              <div
-                className={`p-4 rounded-xl border text-xs space-y-2 ${
-                  activeScheme.verified
-                    ? "bg-emerald-50/60 border-emerald-200 text-emerald-950"
-                    : "bg-amber-50/60 border-amber-200 text-amber-950"
-                }`}
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex items-center space-x-2">
-                    <span className="font-bold">Loaded Pairing Scheme:</span>
-                    {activeScheme.verified ? (
-                      <Badge className="bg-emerald-600 text-white text-[10px] font-bold py-0.5">
-                        <ShieldCheck className="h-3 w-3 mr-1" />
-                        VERIFIED BOARD SCHEME
-                      </Badge>
-                    ) : (
-                      <Badge className="bg-rose-100 text-rose-800 border-rose-300 text-[10px] font-bold py-0.5">
-                        <ShieldAlert className="h-3 w-3 mr-1" />
-                        UNVERIFIED — confirm before use
-                      </Badge>
-                    )}
+              <div className="space-y-3">
+                <div
+                  className={`p-4 rounded-xl border text-xs space-y-2 ${
+                    activeScheme.verified
+                      ? "bg-emerald-50/60 border-emerald-200 text-emerald-950"
+                      : "bg-amber-50/60 border-amber-200 text-amber-950"
+                  }`}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center space-x-2">
+                      <span className="font-bold">Loaded Pairing Scheme:</span>
+                      {activeScheme.verified ? (
+                        <Badge className="bg-emerald-600 text-white text-[10px] font-bold py-0.5">
+                          <ShieldCheck className="h-3 w-3 mr-1" />
+                          VERIFIED BOARD SCHEME
+                        </Badge>
+                      ) : (
+                        <Badge className="bg-rose-100 text-rose-800 border-rose-300 text-[10px] font-bold py-0.5">
+                          <ShieldAlert className="h-3 w-3 mr-1" />
+                          UNVERIFIED — confirm before use
+                        </Badge>
+                      )}
 
-                    {activeScheme.sourceUrl && (
-                      <a
-                        href={activeScheme.sourceUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-indigo-600 hover:underline inline-flex items-center text-[11px]"
-                      >
-                        Source Document <ExternalLink className="h-3 w-3 ml-0.5" />
-                      </a>
-                    )}
+                      {/* PARTIAL Badge */}
+                      {isPartialScheme && (
+                        <Badge className="bg-amber-100 text-amber-900 border-amber-300 text-[10px] font-bold py-0.5">
+                          PARTIAL SCHEME
+                        </Badge>
+                      )}
+
+                      {activeScheme.sourceUrl && (
+                        <a
+                          href={activeScheme.sourceUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-indigo-600 hover:underline inline-flex items-center text-[11px]"
+                        >
+                          Source Document <ExternalLink className="h-3 w-3 ml-0.5" />
+                        </a>
+                      )}
+                    </div>
+
+                    <span className="font-mono text-xs font-bold text-slate-700">
+                      Total: {activeScheme.totalMarks} Marks • Duration: {activeScheme.timeMinutes ? `${activeScheme.timeMinutes} mins` : "Time unconfirmed"}
+                    </span>
                   </div>
 
-                  <span className="font-mono text-xs font-bold text-slate-700">
-                    Total: {activeScheme.totalMarks} Marks • Duration: {activeScheme.timeMinutes} mins
-                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 font-mono text-[11px]">
+                    <div className="p-2 bg-white rounded border">
+                      <span className="text-slate-400 block text-[10px]">Section A (MCQs):</span>
+                      <span className="font-semibold text-slate-800">
+                        {(activeScheme.structure as any)?.mcq?.count ?? 0} &times; {(activeScheme.structure as any)?.mcq?.marksEach ?? 1} mark
+                      </span>
+                    </div>
+
+                    <div className="p-2 bg-white rounded border">
+                      <span className="text-slate-400 block text-[10px]">Section B (Short Questions):</span>
+                      <span className="font-semibold text-slate-800">
+                        Attempt {(activeScheme.structure as any)?.short?.attempt ?? (activeScheme.structure as any)?.short?.count ?? 0} of {(activeScheme.structure as any)?.short?.count ?? 0} (&times;{(activeScheme.structure as any)?.short?.marksEach ?? 2}m)
+                      </span>
+                    </div>
+
+                    <div className="p-2 bg-white rounded border">
+                      <span className="text-slate-400 block text-[10px]">Section C (Long Questions):</span>
+                      <span className="font-semibold text-slate-800">
+                        Attempt {(activeScheme.structure as any)?.long?.attempt ?? (activeScheme.structure as any)?.long?.count ?? 0} of {(activeScheme.structure as any)?.long?.count ?? 0} (&times;{(activeScheme.structure as any)?.long?.marksEach ?? 5}m)
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 font-mono text-[11px]">
-                  <div className="p-2 bg-white rounded border">
-                    <span className="text-slate-400 block text-[10px]">Section A (MCQs):</span>
-                    <span className="font-semibold text-slate-800">
-                      {(activeScheme.structure as any)?.mcq?.count ?? 0} &times; {(activeScheme.structure as any)?.mcq?.marksEach ?? 1} mark
-                    </span>
+                {/* Partial Scheme Guard Notice */}
+                {isPartialScheme && (
+                  <div className="p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs flex items-start space-x-3">
+                    <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="font-bold">
+                        Is scheme ka mukammal structure save nahi hai — admin se /admin/boards mein complete karwao.
+                      </p>
+                      <p className="text-[11px] text-amber-700">
+                        Paper generation is disabled for partial schemes to prevent creating non-compliant exam papers. Short or long section breakdown is unconfirmed.
+                      </p>
+                      {activeScheme.notes && (
+                        <p className="text-[11px] text-slate-600 italic bg-white/80 p-2 rounded border border-amber-200 mt-1">
+                          Notes: {activeScheme.notes}
+                        </p>
+                      )}
+                    </div>
                   </div>
-
-                  <div className="p-2 bg-white rounded border">
-                    <span className="text-slate-400 block text-[10px]">Section B (Short Questions):</span>
-                    <span className="font-semibold text-slate-800">
-                      Attempt {(activeScheme.structure as any)?.short?.attempt ?? (activeScheme.structure as any)?.short?.count ?? 0} of {(activeScheme.structure as any)?.short?.count ?? 0} (&times;{(activeScheme.structure as any)?.short?.marksEach ?? 2}m)
-                    </span>
-                  </div>
-
-                  <div className="p-2 bg-white rounded border">
-                    <span className="text-slate-400 block text-[10px]">Section C (Long Questions):</span>
-                    <span className="font-semibold text-slate-800">
-                      Attempt {(activeScheme.structure as any)?.long?.attempt ?? (activeScheme.structure as any)?.long?.count ?? 0} of {(activeScheme.structure as any)?.long?.count ?? 0} (&times;{(activeScheme.structure as any)?.long?.marksEach ?? 5}m)
-                    </span>
-                  </div>
-                </div>
+                )}
               </div>
             ) : (
               <div className="p-4 bg-rose-50 border border-rose-200 text-rose-900 rounded-xl text-xs flex items-start space-x-3">
@@ -587,14 +634,22 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
 
             {/* Submit Action */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t">
-              <p className="text-xs text-slate-500">
-                15s timeout safety. LLM strictly respects the stored pairing scheme counts.
-              </p>
+              <div className="space-y-1">
+                <p className="text-xs text-slate-500">
+                  15s timeout safety. LLM strictly respects the stored pairing scheme counts.
+                </p>
+                {isPartialScheme && (
+                  <p className="text-xs text-amber-700 font-semibold flex items-center">
+                    <AlertTriangle className="h-3.5 w-3.5 mr-1 shrink-0" />
+                    Is scheme ka mukammal structure save nahi hai — admin se /admin/boards mein complete karwao.
+                  </p>
+                )}
+              </div>
 
               <Button
                 type="submit"
-                disabled={isGenerating || !activeScheme}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-6 h-10 shadow-sm shrink-0"
+                disabled={isGenerating || !activeScheme || isPartialScheme}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-6 h-10 shadow-sm shrink-0 disabled:opacity-50"
               >
                 {isGenerating ? (
                   <>

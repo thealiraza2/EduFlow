@@ -88,6 +88,9 @@ npx prisma migrate dev
 
 # 4. Seed initial academy data & test accounts
 npm run seed
+
+# 5. Seed Punjab pairing schemes (288 rows across 9 boards)
+npm run seed:schemes
 ```
 
 ### 4. Start the Application
@@ -183,6 +186,14 @@ npm run test:e2e
     - The paper structure (MCQ count and marks, Short question count/marks/attempts, Long question count/marks/attempts, total marks, time limit) always comes strictly from a stored `PaperScheme` database record.
     - The LLM only writes questions inside that verified structure, using only the instructor-selected syllabus chapters.
     - Output validation strictly rejects and retries any LLM response with mismatched question counts or marks. Unverified schemes are prominently labeled everywhere with `"UNVERIFIED — confirm before use"`.
+
+### Pairing Schemes (Punjab Unified PECTAA 2026–2027)
+- **32 Punjab Schemes Seeded**: Unified pairing schemes covering 9th, 10th, 11th, and 12th grades for all 9 Punjab BISE boards (Lahore, Gujranwala, Multan, Faisalabad, Sargodha, Rawalpindi, Bahawalpur, D.G. Khan, and Sahiwal) based on official PECTAA notifications (2026–2027 ALP).
+- **288 Database Rows**: Each unified scheme is imported per board (32 × 9 = 288 rows), enabling board-specific adjustments while retaining unified defaults.
+- **All Unverified Until Teacher Confirmation**: All imported schemes default to `verified: false`. Instructors must confirm the scheme via `/admin/boards` before relying on it in high-stakes testing.
+- **15 Partial Schemes**: Schemes where section breakdowns (short/long question counts) could not be definitively verified from available sources are tagged with a `PARTIAL:` notes prefix.
+- **Generator Guard**: The test paper generator is strictly disabled for partial schemes with the prompt: *"Is scheme ka mukammal structure save nahi hai — admin se /admin/boards mein complete karwao."*
+- **Gaps & Sources**: Documented in detail in `SOURCES.md` and `punjab-pairing-schemes.json`.
 
 ---
 
