@@ -130,9 +130,9 @@ test.describe("Marketing Landing Page — Phase 1: Navbar, Hero, Trust Strip", (
     await expect(page.getByText("PAID", { exact: true })).toBeVisible();
 
     // 5. Verify Trust Strip 3 Honest Items
-    await expect(page.locator("text=288 Punjab board pairing schemes built in")).toBeVisible();
-    await expect(page.locator("text=QR attendance in 10-minute secure tokens")).toBeVisible();
-    await expect(page.locator("text=JazzCash & Easypaisa fee collection")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "288 Punjab board pairing schemes built in" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "QR attendance in 10-minute secure tokens" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "JazzCash & Easypaisa fee collection" })).toBeVisible();
 
     // 6. Screenshot 1440px
     await page.screenshot({

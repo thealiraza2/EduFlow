@@ -5,6 +5,10 @@ import { TrustStrip } from "@/components/marketing/TrustStrip";
 import { FeaturesBento } from "@/components/marketing/FeaturesBento";
 import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { PhotoStories } from "@/components/marketing/PhotoStories";
+import { PricingSection } from "@/components/marketing/PricingSection";
+import { FaqAccordion } from "@/components/marketing/FaqAccordion";
+import { FinalCta } from "@/components/marketing/FinalCta";
+import { PhotoStrip } from "@/components/marketing/PhotoStrip";
 
 export default function MarketingHomePage() {
   const jsonLd = {
@@ -29,7 +33,7 @@ export default function MarketingHomePage() {
           "@type": "AggregateOffer",
           "priceCurrency": "PKR",
           "lowPrice": "2500",
-          "highPrice": "9000",
+          "highPrice": "90000",
           "offerCount": "3",
           "offers": [
             {
@@ -37,21 +41,21 @@ export default function MarketingHomePage() {
               "name": "Starter",
               "price": "2500",
               "priceCurrency": "PKR",
-              "description": "For up to 100 students",
+              "description": "For up to 100 students (or PKR 25,000/year)",
             },
             {
               "@type": "Offer",
               "name": "Growth",
               "price": "5000",
               "priceCurrency": "PKR",
-              "description": "For 101 to 500 students",
+              "description": "For 101 to 500 students (or PKR 50,000/year)",
             },
             {
               "@type": "Offer",
               "name": "Pro",
               "price": "9000",
               "priceCurrency": "PKR",
-              "description": "For 500+ students and multi-branch networks",
+              "description": "For 500+ students and multi-branch networks (or PKR 90,000/year)",
             },
           ],
         },
@@ -82,37 +86,26 @@ export default function MarketingHomePage() {
           {/* Phase 2: Bento Grid Features */}
           <FeaturesBento />
 
-          {/* Phase 2: How It Works (3 Steps) */}
+          {/* Phase 2: How It Works */}
           <HowItWorks />
 
           {/* Phase 2: Photo-Led Alternating Story Sections */}
           <PhotoStories />
 
-          {/* Pricing Anchor */}
-          <section id="pricing" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-[#E8E2D6]">
-            <div className="max-w-2xl mb-12">
-              <span className="text-xs font-semibold text-pine uppercase tracking-wider">Pricing</span>
-              <h2 className="font-display text-3xl font-bold text-ink mt-2">
-                Transparent pricing — no hidden fees
-              </h2>
-              <p className="mt-2 text-sm text-[#55534D]">
-                Starter (PKR 2,500/mo), Growth (PKR 5,000/mo), and Pro (PKR 9,000/mo). Pay 10 months on annual billing and get 12 months.
-              </p>
-            </div>
-          </section>
+          {/* Phase 3: Pricing Section with Monthly/Annual Toggle */}
+          <PricingSection />
 
-          {/* FAQ Anchor */}
-          <section id="faq" className="py-20 bg-[#F5F1E9] border-t border-[#E8E2D6]">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <span className="text-xs font-semibold text-pine uppercase tracking-wider">FAQ</span>
-              <h2 className="font-display text-3xl font-bold text-ink mt-2">
-                Aksar poochay janay walay sawalat
-              </h2>
-            </div>
-          </section>
+          {/* Phase 3: FAQ Accordion */}
+          <FaqAccordion />
 
-          {/* Trial / Signup Form Anchor */}
-          <section id="trial" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-[#E8E2D6]">
+          {/* Phase 3: Final CTA Section */}
+          <FinalCta />
+
+          {/* Phase 3: Wide 16:9 Photo Strip */}
+          <PhotoStrip />
+
+          {/* Phase 4 Target: Trial Signup Form Anchor */}
+          <section id="trial" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-[#E8E2D6]">
             <div className="rounded-2xl bg-[#EFEAE0] border border-[#DDD6C8] p-8 sm:p-12 text-center space-y-6">
               <span className="text-xs font-semibold text-pine uppercase tracking-wider">14-Day Free Trial</span>
               <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink">
@@ -132,13 +125,16 @@ export default function MarketingHomePage() {
             </div>
           </section>
 
-          {/* Contact Anchor */}
-          <section id="contact" className="py-20 bg-[#F5F1E9] border-t border-[#E8E2D6]">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Phase 4 Target: Contact Section Anchor */}
+          <section id="contact" className="py-16 bg-[#F5F1E9] border-t border-[#E8E2D6]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
               <span className="text-xs font-semibold text-pine uppercase tracking-wider">Contact</span>
-              <h2 className="font-display text-3xl font-bold text-ink mt-2">
+              <h2 className="font-display text-2xl font-bold text-ink">
                 Hamaray sath rabta karein
               </h2>
+              <p className="text-sm text-[#55534D] max-w-md mx-auto">
+                Sawalat ya custom requirement ke liye rabta karein. Hamari team 24 ghante ke andar reply karti hai.
+              </p>
             </div>
           </section>
         </main>

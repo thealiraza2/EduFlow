@@ -115,12 +115,12 @@ test.describe("Marketing Landing Page — Phase 2: Features Bento, How it works,
     expect(hasHorizontalOverflow).toBe(false);
 
     // 1. Verify Bento Grid Cards
-    await expect(page.locator("text=Students & Fee Challans")).toBeVisible();
-    await expect(page.locator("text=10-Minute QR Attendance")).toBeVisible();
-    await expect(page.locator("text=Tests & Printable Result Cards")).toBeVisible();
-    await expect(page.locator("text=Online Test Engine")).toBeVisible();
-    await expect(page.locator("text=Board-Aware AI Paper Generator")).toBeVisible();
-    await expect(page.locator("text=Deterministic Dropout Risk")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Students & Fee Challans" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "10-Minute QR Attendance" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Tests & Printable Result Cards" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Online Test Engine" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Board-Aware AI Paper Generator" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Deterministic Dropout Risk" })).toBeVisible();
 
     // Verify Mini Scheme Chips in Big Card
     await expect(page.locator("text=12 MCQs (12 Marks)")).toBeVisible();
