@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { formatPKR } from "@/lib/money";
 import { AddClassModal } from "@/components/admin/AddClassModal";
@@ -11,9 +12,11 @@ import { Clock, GraduationCap, DollarSign, School } from "lucide-react";
 
 export default async function ClassesPage() {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const [classes, teachers] = await Promise.all([
     db.class.findMany({
+      where: { academyId: tenant.academyId },
       include: {
         batches: {
           include: {
@@ -34,7 +37,10 @@ export default async function ClassesPage() {
       orderBy: { name: "asc" },
     }),
     db.teacher.findMany({
-      where: { status: "ACTIVE" },
+      where: {
+        academyId: tenant.academyId,
+        status: "ACTIVE",
+      },
       include: { user: true },
       orderBy: { createdAt: "desc" },
     }),

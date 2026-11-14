@@ -19,6 +19,7 @@ export async function GET(
     const invoice = await db.feeInvoice.findUnique({
       where: { id: invoiceId },
       include: {
+        academy: true,
         student: true,
         batch: {
           include: {
@@ -32,6 +33,11 @@ export async function GET(
 
     if (!invoice) {
       return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
+    }
+
+    // Multi-tenant check: if user belongs to an academy, invoice must match
+    if (session.user.academyId && invoice.academyId !== session.user.academyId) {
+      return NextResponse.json({ error: "Forbidden: Access denied" }, { status: 403 });
     }
 
     // Role-based authorization
@@ -56,7 +62,7 @@ export async function GET(
 
     const pdfBytes = await generateFeeChallanPdf({
       challanNo: `CH-${invoice.month.replace("-", "")}-${invoice.student.admissionNo.replace(/[^a-zA-Z0-9]/g, "")}`,
-      academyName: "AcademyHub Coaching Centre",
+      academyName: invoice.academy?.name || "AcademyHub Coaching Centre",
       studentName: invoice.student.name,
       admissionNo: invoice.student.admissionNo,
       className: invoice.batch.class.name,

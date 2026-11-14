@@ -17,27 +17,45 @@ vi.mock("next/cache", () => ({
 
 vi.mock("@/lib/auth", () => ({
   auth: vi.fn().mockResolvedValue({
-    user: { id: "mock-admin-id", name: "Admin User", email: "admin@test.local", role: "ADMIN" },
+    user: {
+      id: "mock-admin-id",
+      name: "Admin User",
+      email: "admin@test.local",
+      role: "ADMIN",
+      academyId: "seed-academy-id",
+      academySlug: "main",
+      academyStatus: "ACTIVE",
+    },
   }),
   requireRole: vi.fn().mockResolvedValue({
     id: "mock-admin-id",
     name: "Admin User",
     email: "admin@test.local",
     role: "ADMIN",
+    academyId: "seed-academy-id",
+    academySlug: "main",
+    academyStatus: "ACTIVE",
   }),
   requireUser: vi.fn(),
 }));
 
-vi.mock("@/lib/permissions", () => ({
-  requireAdmin: vi.fn().mockResolvedValue({
-    id: "mock-admin-id",
-    name: "Admin User",
-    email: "admin@test.local",
-    role: "ADMIN",
-  }),
-  requireTeacher: vi.fn(),
-  requireParent: vi.fn(),
-}));
+vi.mock("@/lib/permissions", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/permissions")>();
+  return {
+    ...actual,
+    requireAdmin: vi.fn().mockResolvedValue({
+      id: "mock-admin-id",
+      name: "Admin User",
+      email: "admin@test.local",
+      role: "ADMIN",
+      academyId: "seed-academy-id",
+      academySlug: "main",
+      academyStatus: "ACTIVE",
+    }),
+    requireTeacher: vi.fn(),
+    requireParent: vi.fn(),
+  };
+});
 
 describe("Phase 8: Admin Dashboard, Reports & Teacher Salaries", () => {
   const timestamp = Date.now();
@@ -58,6 +76,7 @@ describe("Phase 8: Admin Dashboard, Reports & Teacher Salaries", () => {
     // 1. Create Teacher User & Profile
     const teacherUser = await db.user.create({
       data: {
+        academyId: "seed-academy-id",
         email: `teacher.phase8.${timestamp}@test.local`,
         passwordHash: "hash",
         name: "Professor Phase 8",
@@ -69,6 +88,7 @@ describe("Phase 8: Admin Dashboard, Reports & Teacher Salaries", () => {
 
     const teacher = await db.teacher.create({
       data: {
+        academyId: "seed-academy-id",
         userId: testTeacherUserId,
         salaryMinor: 5000000, // PKR 50,000
         subjects: ["Physics", "Mathematics"],
@@ -79,6 +99,7 @@ describe("Phase 8: Admin Dashboard, Reports & Teacher Salaries", () => {
     // 2. Create Class & Batch
     const cls = await db.class.create({
       data: {
+        academyId: "seed-academy-id",
         name: `Class-Phase8-${timestamp}`,
         section: "A",
         capacity: 40,
@@ -88,6 +109,7 @@ describe("Phase 8: Admin Dashboard, Reports & Teacher Salaries", () => {
 
     const batch = await db.batch.create({
       data: {
+        academyId: "seed-academy-id",
         classId: testClassId,
         name: "Morning Batch",
         timing: "09:00 - 11:00",
@@ -100,6 +122,7 @@ describe("Phase 8: Admin Dashboard, Reports & Teacher Salaries", () => {
     // 3. Create Timetable Slot (09:00 - 11:00 = 2 hours)
     const slot = await db.timetableSlot.create({
       data: {
+        academyId: "seed-academy-id",
         batchId: testBatchId,
         dayOfWeek: 1, // Monday
         startTime: "09:00",
@@ -114,6 +137,7 @@ describe("Phase 8: Admin Dashboard, Reports & Teacher Salaries", () => {
     // 4. Create Student & Enrollment
     const student = await db.student.create({
       data: {
+        academyId: "seed-academy-id",
         admissionNo: `AH-TEST-${timestamp.toString().slice(-4)}`,
         name: "Test Student Phase 8",
         guardianName: "Guardian Phase 8",
@@ -124,6 +148,7 @@ describe("Phase 8: Admin Dashboard, Reports & Teacher Salaries", () => {
 
     const enrollment = await db.enrollment.create({
       data: {
+        academyId: "seed-academy-id",
         studentId: testStudentId,
         batchId: testBatchId,
       },
@@ -133,6 +158,7 @@ describe("Phase 8: Admin Dashboard, Reports & Teacher Salaries", () => {
     // 5. Create Attendance for testing report
     await db.attendance.create({
       data: {
+        academyId: "seed-academy-id",
         enrollmentId: testEnrollmentId,
         date: new Date(Date.UTC(2027, 0, 5)),
         status: AttendanceStatus.PRESENT,
@@ -142,6 +168,7 @@ describe("Phase 8: Admin Dashboard, Reports & Teacher Salaries", () => {
     // 6. Create Invoice & Payment
     const invoice = await db.feeInvoice.create({
       data: {
+        academyId: "seed-academy-id",
         studentId: testStudentId,
         batchId: testBatchId,
         month: testMonth,
@@ -157,6 +184,7 @@ describe("Phase 8: Admin Dashboard, Reports & Teacher Salaries", () => {
 
     await db.feePayment.create({
       data: {
+        academyId: "seed-academy-id",
         invoiceId: testInvoiceId,
         amountMinor: 500000,
         method: "CASH",
@@ -167,6 +195,7 @@ describe("Phase 8: Admin Dashboard, Reports & Teacher Salaries", () => {
     // 7. Create Test & Test Result
     const testRecord = await db.test.create({
       data: {
+        academyId: "seed-academy-id",
         batchId: testBatchId,
         title: "Mid-Term Physics",
         subject: "Physics",
@@ -180,6 +209,7 @@ describe("Phase 8: Admin Dashboard, Reports & Teacher Salaries", () => {
 
     await db.testResult.create({
       data: {
+        academyId: "seed-academy-id",
         testId: testTestId,
         studentId: testStudentId,
         obtainedMarks: 88,

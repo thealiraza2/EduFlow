@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import Link from "next/link";
 import { AddSlotModal } from "@/components/admin/AddSlotModal";
@@ -13,9 +14,11 @@ export default async function AdminTimetablePage({
   searchParams: { batchId?: string };
 }) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const [batches, teachers] = await Promise.all([
     db.batch.findMany({
+      where: { academyId: tenant.academyId },
       include: {
         class: true,
         teacher: { include: { user: true } },
@@ -23,7 +26,10 @@ export default async function AdminTimetablePage({
       orderBy: { createdAt: "asc" },
     }),
     db.teacher.findMany({
-      where: { status: "ACTIVE" },
+      where: {
+        academyId: tenant.academyId,
+        status: "ACTIVE",
+      },
       include: { user: true },
       orderBy: { createdAt: "desc" },
     }),
@@ -34,7 +40,10 @@ export default async function AdminTimetablePage({
 
   const slots = selectedBatch
     ? await db.timetableSlot.findMany({
-        where: { batchId: selectedBatch.id },
+        where: {
+          batchId: selectedBatch.id,
+          academyId: tenant.academyId,
+        },
         include: {
           teacher: {
             include: { user: true },

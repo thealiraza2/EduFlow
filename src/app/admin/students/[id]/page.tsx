@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -24,9 +25,10 @@ export default async function StudentProfilePage({
   params: { id: string };
 }) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
-  const student = await db.student.findUnique({
-    where: { id: params.id },
+  const student = await db.student.findFirst({
+    where: { id: params.id, academyId: tenant.academyId },
     include: {
       guardianUser: true,
       enrollments: {
@@ -57,6 +59,7 @@ export default async function StudentProfilePage({
 
   // Fetch all batches for enrollment selection
   const allBatches = await db.batch.findMany({
+    where: { academyId: tenant.academyId },
     include: {
       class: true,
       teacher: {

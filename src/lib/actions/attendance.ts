@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { requireAdmin, requireTeacher } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { sendAbsenceNotification } from "@/lib/notify";
 import { AttendanceStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
@@ -48,6 +49,7 @@ export async function saveBatchAttendanceAction(input: SaveBatchAttendanceInput)
   if (!session?.user) {
     throw new Error("Unauthorized: Please sign in");
   }
+  const tenant = await requireTenant();
 
   const validated = saveBatchAttendanceSchema.parse(input);
   const { batchId, date, records } = validated;
@@ -58,8 +60,8 @@ export async function saveBatchAttendanceAction(input: SaveBatchAttendanceInput)
     throw new Error("Cannot mark attendance for future dates.");
   }
 
-  const batch = await db.batch.findUnique({
-    where: { id: batchId },
+  const batch = await db.batch.findFirst({
+    where: { id: batchId, academyId: tenant.academyId },
     include: {
       class: true,
       teacher: true,
@@ -82,7 +84,7 @@ export async function saveBatchAttendanceAction(input: SaveBatchAttendanceInput)
         "Attendance for dates older than 7 days can only be updated by an administrator."
       );
     }
-  } else if (session.user.role !== "ADMIN") {
+  } else if (session.user.role !== "ADMIN" && session.user.role !== "SUPER_ADMIN") {
     throw new Error("Forbidden: Only teachers and administrators can mark attendance.");
   }
 
@@ -101,6 +103,7 @@ export async function saveBatchAttendanceAction(input: SaveBatchAttendanceInput)
           },
         },
         create: {
+          academyId: tenant.academyId,
           enrollmentId: record.enrollmentId,
           date: targetDate,
           status: record.status as AttendanceStatus,
@@ -123,6 +126,7 @@ export async function saveBatchAttendanceAction(input: SaveBatchAttendanceInput)
     const enrollments = await db.enrollment.findMany({
       where: {
         id: { in: absentRecords.map((r) => r.enrollmentId) },
+        academyId: tenant.academyId,
         status: "ACTIVE",
       },
       include: {
@@ -141,6 +145,7 @@ export async function saveBatchAttendanceAction(input: SaveBatchAttendanceInput)
           guardianPhone: student.guardianPhone,
           batchName: `${batch.class.name} ${batch.name}`,
           date,
+          academyId: tenant.academyId,
         });
 
         if (notifyResult.sent) {
@@ -169,9 +174,10 @@ export async function getBatchRosterWithAttendanceAction(batchId: string, dateSt
   if (!session?.user) {
     throw new Error("Unauthorized");
   }
+  const tenant = await requireTenant();
 
-  const batch = await db.batch.findUnique({
-    where: { id: batchId },
+  const batch = await db.batch.findFirst({
+    where: { id: batchId, academyId: tenant.academyId },
     include: {
       class: true,
       teacher: { include: { user: true } },
@@ -196,6 +202,7 @@ export async function getBatchRosterWithAttendanceAction(batchId: string, dateSt
   const enrollments = await db.enrollment.findMany({
     where: {
       batchId,
+      academyId: tenant.academyId,
       status: "ACTIVE",
       student: {
         status: "ACTIVE",
@@ -251,6 +258,7 @@ export async function getMonthlyAttendanceStatsAction(params: {
   if (!session?.user) {
     throw new Error("Unauthorized");
   }
+  const tenant = await requireTenant();
 
   const { batchId, monthStr } = params;
   const [yearStr, monthNumStr] = monthStr.split("-");
@@ -263,6 +271,7 @@ export async function getMonthlyAttendanceStatsAction(params: {
 
   // Base filter for active enrollments
   const enrollmentWhere: Record<string, unknown> = {
+    academyId: tenant.academyId,
     status: "ACTIVE",
     student: { status: "ACTIVE" },
   };

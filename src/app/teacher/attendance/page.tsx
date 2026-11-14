@@ -10,8 +10,11 @@ export default async function TeacherAttendancePage() {
   const user = await requireRole([Role.TEACHER, Role.ADMIN]);
 
   // Find the teacher profile
-  let teacher = await db.teacher.findUnique({
-    where: { userId: user.id },
+  let teacher = await db.teacher.findFirst({
+    where: {
+      userId: user.id,
+      ...(user.academyId ? { academyId: user.academyId } : {}),
+    },
     include: {
       batches: {
         include: { class: true },
@@ -22,8 +25,9 @@ export default async function TeacherAttendancePage() {
 
   // If viewing as admin without direct teacher profile, fetch all batches
   let batches = teacher ? teacher.batches : [];
-  if (!teacher && user.role === Role.ADMIN) {
+  if (!teacher && (user.role === Role.ADMIN || (user.role as string) === "SUPER_ADMIN")) {
     batches = await db.batch.findMany({
+      where: user.academyId ? { academyId: user.academyId } : {},
       include: { class: true },
       orderBy: [{ class: { name: "asc" } }, { name: "asc" }],
     });

@@ -20,6 +20,7 @@ describe("Phase 4: Attendance & Parent Absence Notifications", () => {
     // Setup clean test fixture
     const cls = await db.class.create({
       data: {
+        academyId: "seed-academy-id",
         name: "Test-9th",
         section: "Z",
         capacity: 30,
@@ -29,6 +30,7 @@ describe("Phase 4: Attendance & Parent Absence Notifications", () => {
 
     const batch = await db.batch.create({
       data: {
+        academyId: "seed-academy-id",
         classId: testClassId,
         name: "Test Morning Batch",
         timing: "8-10 AM",
@@ -39,6 +41,7 @@ describe("Phase 4: Attendance & Parent Absence Notifications", () => {
 
     const student = await db.student.create({
       data: {
+        academyId: "seed-academy-id",
         admissionNo: `TEST-ATT-${Date.now()}`,
         name: "Zaid Khan",
         guardianName: "Tariq Khan",
@@ -49,6 +52,7 @@ describe("Phase 4: Attendance & Parent Absence Notifications", () => {
 
     const enrollment = await db.enrollment.create({
       data: {
+        academyId: "seed-academy-id",
         studentId: testStudentId,
         batchId: testBatchId,
       },
@@ -89,6 +93,7 @@ describe("Phase 4: Attendance & Parent Absence Notifications", () => {
         },
       },
       create: {
+        academyId: "seed-academy-id",
         enrollmentId: testEnrollmentId,
         date: testDate,
         status: AttendanceStatus.PRESENT,
@@ -120,6 +125,7 @@ describe("Phase 4: Attendance & Parent Absence Notifications", () => {
         },
       },
       create: {
+        academyId: "seed-academy-id",
         enrollmentId: testEnrollmentId,
         date: testDate,
         status: AttendanceStatus.ABSENT,
@@ -203,6 +209,7 @@ describe("Phase 4: Attendance & Parent Absence Notifications", () => {
   it("manual verification check: mark 1 absent -> NotificationLog has exactly 1 entry with the right phone", async () => {
     const freshStudent = await db.student.create({
       data: {
+        academyId: "seed-academy-id",
         admissionNo: `TEST-SINGLE-${Date.now()}`,
         name: "Bilal Ahmed",
         guardianName: "Ahmed Raza",

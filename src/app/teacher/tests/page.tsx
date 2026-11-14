@@ -17,8 +17,11 @@ export default async function TeacherTestsPage({
   const user = await requireRole([Role.TEACHER, Role.ADMIN]);
 
   // Find teacher profile
-  let teacher = await db.teacher.findUnique({
-    where: { userId: user.id },
+  let teacher = await db.teacher.findFirst({
+    where: {
+      userId: user.id,
+      ...(user.academyId ? { academyId: user.academyId } : {}),
+    },
     include: {
       batches: {
         include: { class: true },
@@ -28,8 +31,9 @@ export default async function TeacherTestsPage({
 
   // Admin fallback
   let batches = teacher ? teacher.batches : [];
-  if (!teacher && user.role === Role.ADMIN) {
+  if (!teacher && (user.role === Role.ADMIN || (user.role as string) === "SUPER_ADMIN")) {
     batches = await db.batch.findMany({
+      where: user.academyId ? { academyId: user.academyId } : {},
       include: { class: true },
     });
   }
@@ -38,7 +42,10 @@ export default async function TeacherTestsPage({
 
   // Load tests for these batches
   const tests = await db.test.findMany({
-    where: { batchId: { in: batchIds } },
+    where: {
+      batchId: { in: batchIds },
+      ...(user.academyId ? { academyId: user.academyId } : {}),
+    },
     include: {
       batch: {
         include: { class: true },
@@ -60,6 +67,7 @@ export default async function TeacherTestsPage({
       const enrollments = await db.enrollment.findMany({
         where: {
           batchId: selectedTest.batchId,
+          ...(user.academyId ? { academyId: user.academyId } : {}),
           status: "ACTIVE",
           student: { status: "ACTIVE" },
         },

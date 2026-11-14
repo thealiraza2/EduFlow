@@ -112,7 +112,7 @@ export async function generateMonthlyInvoices(
   month: string, // YYYY-MM
   currentDate: Date = new Date(),
   client: Prisma.TransactionClient | typeof db = db,
-  filter?: { batchId?: string; studentId?: string }
+  filter?: { batchId?: string; studentId?: string; academyId?: string }
 ) {
   // Validate month format YYYY-MM
   if (!/^\d{4}-\d{2}$/.test(month)) {
@@ -125,6 +125,9 @@ export async function generateMonthlyInvoices(
     student: { status: "ACTIVE" },
   };
 
+  if (filter?.academyId) {
+    whereClause.academyId = filter.academyId;
+  }
   if (filter?.batchId) {
     whereClause.batchId = filter.batchId;
   }
@@ -188,6 +191,7 @@ export async function generateMonthlyInvoices(
     // 3. Create FeeInvoice
     const invoice = await client.feeInvoice.create({
       data: {
+        academyId: enrollment.academyId,
         studentId,
         batchId,
         month,

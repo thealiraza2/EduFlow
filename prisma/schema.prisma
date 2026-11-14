@@ -11,9 +11,20 @@ datasource db {
 }
 
 enum Role {
+  SUPER_ADMIN
   ADMIN
   TEACHER
   PARENT
+}
+
+enum AcademyPlan {
+  FREE
+  PRO
+}
+
+enum AcademyStatus {
+  ACTIVE
+  SUSPENDED
 }
 
 enum TeacherStatus {
@@ -86,8 +97,42 @@ enum AnnouncementAudience {
   PARENTS
 }
 
+model Academy {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  subdomain   String?       @unique
+  plan        AcademyPlan   @default(PRO)
+  status      AcademyStatus @default(ACTIVE)
+  trialEndsAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  users           User[]
+  teachers        Teacher[]
+  students        Student[]
+  classes         Class[]
+  batches         Batch[]
+  enrollments     Enrollment[]
+  attendances     Attendance[]
+  feePlans        FeePlan[]
+  feeInvoices     FeeInvoice[]
+  feePayments     FeePayment[]
+  tests           Test[]
+  testResults     TestResult[]
+  notifications   NotificationLog[]
+  timetableSlots  TimetableSlot[]
+  teacherSalaries TeacherSalary[]
+  announcements   Announcement[]
+
+  @@index([slug])
+  @@index([status])
+}
+
 model User {
   id           String    @id @default(cuid())
+  academyId    String?
+  academy      Academy?  @relation(fields: [academyId], references: [id], onDelete: Cascade)
   email        String    @unique
   passwordHash String
   role         Role
@@ -98,10 +143,14 @@ model User {
 
   teacher      Teacher?
   children     Student[] @relation("ParentGuardianUser")
+
+  @@index([academyId])
 }
 
 model Teacher {
   id          String        @id @default(cuid())
+  academyId   String
+  academy     Academy       @relation(fields: [academyId], references: [id], onDelete: Cascade)
   userId      String        @unique
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   subjects    String[]      // e.g. ["Maths", "Physics"]
@@ -114,11 +163,15 @@ model Teacher {
   batches        Batch[]
   timetableSlots TimetableSlot[]
   salaries       TeacherSalary[]
+
+  @@index([academyId])
 }
 
 model Student {
   id             String        @id @default(cuid())
-  admissionNo    String        @unique
+  academyId      String
+  academy        Academy       @relation(fields: [academyId], references: [id], onDelete: Cascade)
+  admissionNo    String
   name           String
   guardianName   String
   guardianPhone  String
@@ -135,12 +188,16 @@ model Student {
   testResults    TestResult[]
   notifications  NotificationLog[]
 
+  @@unique([academyId, admissionNo])
+  @@index([academyId])
   @@index([guardianPhone])
   @@index([guardianUserId])
 }
 
 model Class {
   id        String   @id @default(cuid())
+  academyId String
+  academy   Academy  @relation(fields: [academyId], references: [id], onDelete: Cascade)
   name      String   // e.g. "9th", "10th"
   section   String   // e.g. "A", "B"
   capacity  Int      @default(40)
@@ -148,10 +205,15 @@ model Class {
   updatedAt DateTime @updatedAt
 
   batches   Batch[]
+
+  @@unique([academyId, name, section])
+  @@index([academyId])
 }
 
 model Batch {
   id        String   @id @default(cuid())
+  academyId String
+  academy   Academy  @relation(fields: [academyId], references: [id], onDelete: Cascade)
   classId   String
   class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
   name      String   // e.g. "Evening Batch"
@@ -168,12 +230,15 @@ model Batch {
   tests          Test[]
   timetableSlots TimetableSlot[]
 
+  @@index([academyId])
   @@index([classId])
   @@index([teacherId])
 }
 
 model TimetableSlot {
   id        String   @id @default(cuid())
+  academyId String
+  academy   Academy  @relation(fields: [academyId], references: [id], onDelete: Cascade)
   batchId   String
   batch     Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
   dayOfWeek Int      // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
@@ -186,7 +251,8 @@ model TimetableSlot {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([batchId, dayOfWeek, startTime])
+  @@unique([academyId, batchId, dayOfWeek, startTime])
+  @@index([academyId])
   @@index([batchId])
   @@index([teacherId])
   @@index([dayOfWeek])
@@ -194,6 +260,8 @@ model TimetableSlot {
 
 model Enrollment {
   id         String           @id @default(cuid())
+  academyId  String
+  academy    Academy          @relation(fields: [academyId], references: [id], onDelete: Cascade)
   studentId  String
   student    Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
   batchId    String
@@ -205,12 +273,16 @@ model Enrollment {
 
   attendance Attendance[]
 
+  @@unique([academyId, studentId, batchId])
   @@unique([studentId, batchId])
+  @@index([academyId])
   @@index([batchId])
 }
 
 model Attendance {
   id           String           @id @default(cuid())
+  academyId    String
+  academy      Academy          @relation(fields: [academyId], references: [id], onDelete: Cascade)
   enrollmentId String
   enrollment   Enrollment       @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
   date         DateTime         @db.Date
@@ -219,24 +291,32 @@ model Attendance {
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
 
+  @@unique([academyId, enrollmentId, date])
   @@unique([enrollmentId, date])
+  @@index([academyId])
   @@index([date])
 }
 
 model FeePlan {
-  id               String   @id @default(cuid())
-  batchId          String   @unique
-  batch            Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  monthlyFeeMinor  Int      // in paisa
-  admissionFeeMinor Int     @default(0) // in paisa
-  lateFineMinor    Int      @default(0) // in paisa
-  dueDayOfMonth    Int      @default(10)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                String   @id @default(cuid())
+  academyId         String
+  academy           Academy  @relation(fields: [academyId], references: [id], onDelete: Cascade)
+  batchId           String   @unique
+  batch             Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  monthlyFeeMinor   Int      // in paisa
+  admissionFeeMinor Int      @default(0) // in paisa
+  lateFineMinor     Int      @default(0) // in paisa
+  dueDayOfMonth     Int      @default(10)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([academyId])
 }
 
 model FeeInvoice {
   id            String        @id @default(cuid())
+  academyId     String
+  academy       Academy       @relation(fields: [academyId], references: [id], onDelete: Cascade)
   studentId     String
   student       Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
   batchId       String
@@ -253,7 +333,9 @@ model FeeInvoice {
 
   payments      FeePayment[]
 
+  @@unique([academyId, studentId, batchId, month])
   @@unique([studentId, batchId, month])
+  @@index([academyId])
   @@index([studentId])
   @@index([batchId])
   @@index([status])
@@ -261,6 +343,8 @@ model FeeInvoice {
 
 model FeePayment {
   id          String        @id @default(cuid())
+  academyId   String
+  academy     Academy       @relation(fields: [academyId], references: [id], onDelete: Cascade)
   invoiceId   String
   invoice     FeeInvoice    @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   amountMinor Int           // in paisa (append-only)
@@ -269,11 +353,14 @@ model FeePayment {
   paidAt      DateTime      @default(now())
   createdAt   DateTime      @default(now())
 
+  @@index([academyId])
   @@index([invoiceId])
 }
 
 model Test {
   id          String     @id @default(cuid())
+  academyId   String
+  academy     Academy    @relation(fields: [academyId], references: [id], onDelete: Cascade)
   batchId     String
   batch       Batch      @relation(fields: [batchId], references: [id], onDelete: Cascade)
   subject     String     // e.g. "Maths"
@@ -287,12 +374,15 @@ model Test {
 
   results     TestResult[]
 
+  @@index([academyId])
   @@index([batchId])
   @@index([status])
 }
 
 model TestResult {
   id            String   @id @default(cuid())
+  academyId     String
+  academy       Academy  @relation(fields: [academyId], references: [id], onDelete: Cascade)
   testId        String
   test          Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
   studentId     String
@@ -303,12 +393,16 @@ model TestResult {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  @@unique([academyId, testId, studentId])
   @@unique([testId, studentId])
+  @@index([academyId])
   @@index([studentId])
 }
 
 model NotificationLog {
   id             String              @id @default(cuid())
+  academyId      String
+  academy        Academy             @relation(fields: [academyId], references: [id], onDelete: Cascade)
   recipientPhone String
   recipient      String?
   channel        NotificationChannel @default(SMS)
@@ -322,6 +416,7 @@ model NotificationLog {
   referenceId    String?
   createdAt      DateTime            @default(now())
 
+  @@index([academyId])
   @@index([recipientPhone])
   @@index([status])
   @@index([studentId])
@@ -331,6 +426,8 @@ model NotificationLog {
 
 model TeacherSalary {
   id          String       @id @default(cuid())
+  academyId   String
+  academy     Academy      @relation(fields: [academyId], references: [id], onDelete: Cascade)
   teacherId   String
   teacher     Teacher      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   month       String       // "YYYY-MM"
@@ -341,19 +438,24 @@ model TeacherSalary {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
+  @@unique([academyId, teacherId, month])
   @@unique([teacherId, month])
+  @@index([academyId])
   @@index([month])
   @@index([status])
 }
 
 model Announcement {
   id        String               @id @default(cuid())
+  academyId String
+  academy   Academy              @relation(fields: [academyId], references: [id], onDelete: Cascade)
   title     String
   content   String
   audience  AnnouncementAudience @default(ALL)
   createdAt DateTime             @default(now())
   updatedAt DateTime             @updatedAt
 
+  @@index([academyId])
   @@index([audience])
   @@index([createdAt])
 }

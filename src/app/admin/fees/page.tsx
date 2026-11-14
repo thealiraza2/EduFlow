@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { FeeInvoiceManager } from "@/components/admin/FeeInvoiceManager";
 import { Banknote, AlertTriangle } from "lucide-react";
@@ -7,11 +8,13 @@ import { Button } from "@/components/ui/button";
 
 export default async function AdminFeesPage() {
   const admin = await requireAdmin();
+  const tenant = await requireTenant();
 
   const now = new Date();
   const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
   const invoices = await db.feeInvoice.findMany({
+    where: { academyId: tenant.academyId },
     include: {
       student: true,
       batch: {

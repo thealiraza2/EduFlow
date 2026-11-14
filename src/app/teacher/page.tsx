@@ -13,8 +13,11 @@ export default async function TeacherDashboardPage() {
   const user = await requireRole([Role.TEACHER, Role.ADMIN]);
 
   // Find the teacher profile
-  let teacher = await db.teacher.findUnique({
-    where: { userId: user.id },
+  let teacher = await db.teacher.findFirst({
+    where: {
+      userId: user.id,
+      ...(user.academyId ? { academyId: user.academyId } : {}),
+    },
     include: {
       user: true,
       batches: {
@@ -24,8 +27,9 @@ export default async function TeacherDashboardPage() {
   });
 
   // If viewing as admin without a direct teacher profile, fetch the first available teacher for demonstration
-  if (!teacher && user.role === Role.ADMIN) {
+  if (!teacher && (user.role === Role.ADMIN || (user.role as string) === "SUPER_ADMIN")) {
     teacher = await db.teacher.findFirst({
+      where: user.academyId ? { academyId: user.academyId } : {},
       include: {
         user: true,
         batches: {
@@ -37,7 +41,10 @@ export default async function TeacherDashboardPage() {
 
   const slots = teacher
     ? await db.timetableSlot.findMany({
-        where: { teacherId: teacher.id },
+        where: {
+          teacherId: teacher.id,
+          ...(user.academyId ? { academyId: user.academyId } : {}),
+        },
         include: {
           batch: {
             include: {
@@ -54,6 +61,7 @@ export default async function TeacherDashboardPage() {
   const announcements = await db.announcement.findMany({
     where: {
       audience: { in: ["ALL", "TEACHERS"] },
+      ...(user.academyId ? { academyId: user.academyId } : {}),
     },
     orderBy: { createdAt: "desc" },
     take: 5,

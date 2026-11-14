@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { DefaultersManager, DefaulterItem } from "@/components/admin/DefaultersManager";
 import { calculateRemainingBalance } from "@/lib/fees";
@@ -8,11 +9,13 @@ import { Button } from "@/components/ui/button";
 
 export default async function DefaultersPage() {
   const admin = await requireAdmin();
+  const tenant = await requireTenant();
   const now = new Date();
 
   // Find all unpaid or partially paid invoices
   const unpaidInvoices = await db.feeInvoice.findMany({
     where: {
+      academyId: tenant.academyId,
       status: { in: ["UNPAID", "PARTIAL"] },
     },
     include: {

@@ -27,6 +27,7 @@ describe("Phase 7: Parent Portal & Strict Child Isolation (Invariant 5)", () => 
     // 1. Create Class and Batch
     const cls = await db.class.create({
       data: {
+        academyId: "seed-academy-id",
         name: "Test-Parent-Class",
         section: "A",
         capacity: 30,
@@ -36,6 +37,7 @@ describe("Phase 7: Parent Portal & Strict Child Isolation (Invariant 5)", () => 
 
     const batch = await db.batch.create({
       data: {
+        academyId: "seed-academy-id",
         classId: testClassId,
         name: "Evening Batch",
         timing: "4-6 PM",
@@ -47,6 +49,7 @@ describe("Phase 7: Parent Portal & Strict Child Isolation (Invariant 5)", () => 
     // 2. Create Parent A and Student A
     const parentA = await db.user.create({
       data: {
+        academyId: "seed-academy-id",
         email: `parentA.${Date.now()}@test.local`,
         passwordHash: "hash",
         name: "Parent A",
@@ -58,6 +61,7 @@ describe("Phase 7: Parent Portal & Strict Child Isolation (Invariant 5)", () => 
 
     const studentA = await db.student.create({
       data: {
+        academyId: "seed-academy-id",
         admissionNo: `TEST-STUDENT-A-${Date.now()}`,
         name: "Child of Parent A",
         guardianName: "Parent A",
@@ -69,6 +73,7 @@ describe("Phase 7: Parent Portal & Strict Child Isolation (Invariant 5)", () => 
 
     await db.enrollment.create({
       data: {
+        academyId: "seed-academy-id",
         studentId: studentAId,
         batchId: testBatchId,
       },
@@ -77,6 +82,7 @@ describe("Phase 7: Parent Portal & Strict Child Isolation (Invariant 5)", () => 
     // 3. Create Parent B and Student B
     const parentB = await db.user.create({
       data: {
+        academyId: "seed-academy-id",
         email: `parentB.${Date.now()}@test.local`,
         passwordHash: "hash",
         name: "Parent B",
@@ -88,6 +94,7 @@ describe("Phase 7: Parent Portal & Strict Child Isolation (Invariant 5)", () => 
 
     const studentB = await db.student.create({
       data: {
+        academyId: "seed-academy-id",
         admissionNo: `TEST-STUDENT-B-${Date.now()}`,
         name: "Child of Parent B",
         guardianName: "Parent B",
@@ -99,6 +106,7 @@ describe("Phase 7: Parent Portal & Strict Child Isolation (Invariant 5)", () => 
 
     await db.enrollment.create({
       data: {
+        academyId: "seed-academy-id",
         studentId: studentBId,
         batchId: testBatchId,
       },

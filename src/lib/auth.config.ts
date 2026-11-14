@@ -17,6 +17,9 @@ export const authConfig: NextAuthConfig = {
         token.role = user.role as Role;
         token.phone = user.phone;
         token.teacherId = user.teacherId;
+        token.academyId = user.academyId;
+        token.academySlug = user.academySlug;
+        token.academyStatus = user.academyStatus;
       }
       return token;
     },
@@ -26,6 +29,9 @@ export const authConfig: NextAuthConfig = {
         session.user.role = token.role;
         session.user.phone = token.phone;
         session.user.teacherId = token.teacherId;
+        session.user.academyId = token.academyId;
+        session.user.academySlug = token.academySlug;
+        session.user.academyStatus = token.academyStatus;
       }
       return session;
     },

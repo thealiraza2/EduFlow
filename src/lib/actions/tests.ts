@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { requireAdmin, requireTeacher } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { revalidatePath } from "next/cache";
 import { TestStatus } from "@prisma/client";
 
@@ -25,12 +26,13 @@ export async function createTestAction(input: CreateTestInput) {
   if (!session?.user) {
     throw new Error("Unauthorized");
   }
+  const tenant = await requireTenant();
 
   const validated = createTestSchema.parse(input);
   const { batchId, subject, title, totalMarks, date } = validated;
 
-  const batch = await db.batch.findUnique({
-    where: { id: batchId },
+  const batch = await db.batch.findFirst({
+    where: { id: batchId, academyId: tenant.academyId },
   });
 
   if (!batch) {
@@ -43,12 +45,13 @@ export async function createTestAction(input: CreateTestInput) {
     if (batch.teacherId !== teacher.id) {
       throw new Error("Forbidden: You can only create tests for your assigned batches.");
     }
-  } else if (session.user.role !== "ADMIN") {
+  } else if (session.user.role !== "ADMIN" && session.user.role !== "SUPER_ADMIN") {
     throw new Error("Forbidden");
   }
 
   const test = await db.test.create({
     data: {
+      academyId: tenant.academyId,
       batchId,
       subject,
       title,
@@ -90,12 +93,13 @@ export async function submitTestMarksAction(input: SubmitMarksInput) {
   if (!session?.user) {
     throw new Error("Unauthorized");
   }
+  const tenant = await requireTenant();
 
   const validated = submitMarksSchema.parse(input);
   const { testId, results, adminReason } = validated;
 
-  const test = await db.test.findUnique({
-    where: { id: testId },
+  const test = await db.test.findFirst({
+    where: { id: testId, academyId: tenant.academyId },
     include: {
       batch: true,
       results: true,
@@ -161,6 +165,7 @@ export async function submitTestMarksAction(input: SubmitMarksInput) {
           },
         },
         create: {
+          academyId: tenant.academyId,
           testId,
           studentId: r.studentId,
           obtainedMarks: r.obtainedMarks,
@@ -190,9 +195,10 @@ export async function submitTestMarksAction(input: SubmitMarksInput) {
  */
 export async function publishTestAction(testId: string) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
-  const test = await db.test.findUnique({
-    where: { id: testId },
+  const test = await db.test.findFirst({
+    where: { id: testId, academyId: tenant.academyId },
     include: {
       results: true,
     },
@@ -238,12 +244,13 @@ export type CorrectStudentMarkInput = z.infer<typeof correctStudentMarkSchema>;
  */
 export async function correctStudentMarkAction(input: CorrectStudentMarkInput) {
   const admin = await requireAdmin();
+  const tenant = await requireTenant();
 
   const validated = correctStudentMarkSchema.parse(input);
   const { testId, studentId, newObtainedMarks, reason, remarks } = validated;
 
-  const test = await db.test.findUnique({
-    where: { id: testId },
+  const test = await db.test.findFirst({
+    where: { id: testId, academyId: tenant.academyId },
   });
 
   if (!test) {
@@ -254,12 +261,11 @@ export async function correctStudentMarkAction(input: CorrectStudentMarkInput) {
     throw new Error(`Marks cannot exceed test total marks (${test.totalMarks})`);
   }
 
-  const existing = await db.testResult.findUnique({
+  const existing = await db.testResult.findFirst({
     where: {
-      testId_studentId: {
-        testId,
-        studentId,
-      },
+      testId,
+      studentId,
+      academyId: tenant.academyId,
     },
   });
 
@@ -275,10 +281,7 @@ export async function correctStudentMarkAction(input: CorrectStudentMarkInput) {
 
   await db.testResult.update({
     where: {
-      testId_studentId: {
-        testId,
-        studentId,
-      },
+      id: existing.id,
     },
     data: {
       obtainedMarks: newObtainedMarks,

@@ -23,25 +23,26 @@ export async function GET(req: NextRequest) {
     const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
     const month = searchParams.get("month") || currentMonth;
     const batchId = searchParams.get("batchId") || undefined;
+    const academyId = session.user.academyId || undefined;
 
     let csvContent = "";
     let filename = `report-${type}-${month}.csv`;
 
     switch (type) {
       case "fees":
-        csvContent = await generateMonthlyFeeCollectionReportCsv(month);
+        csvContent = await generateMonthlyFeeCollectionReportCsv(month, academyId);
         filename = `fee-collection-${month}.csv`;
         break;
       case "attendance":
-        csvContent = await generateBatchAttendanceReportCsv(month, batchId);
+        csvContent = await generateBatchAttendanceReportCsv(month, batchId, academyId);
         filename = `attendance-${month}.csv`;
         break;
       case "performance":
-        csvContent = await generateStudentPerformanceReportCsv(batchId);
+        csvContent = await generateStudentPerformanceReportCsv(batchId, academyId);
         filename = `student-performance-${Date.now()}.csv`;
         break;
       case "teachers":
-        csvContent = await generateTeacherWorkloadReportCsv();
+        csvContent = await generateTeacherWorkloadReportCsv(academyId);
         filename = `teacher-workload-${Date.now()}.csv`;
         break;
       default:

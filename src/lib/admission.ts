@@ -1,23 +1,27 @@
 /**
  * AcademyHub - Admission Number Generator
- * INVARIANT: Sequential, year-scoped, never reused (e.g. AH-2026-0001)
+ * INVARIANT: Sequential, year-scoped, never reused within an academy (e.g. AH-2026-0001)
  */
 
 import { Prisma } from "@prisma/client";
 
 export async function generateNextAdmissionNumber(
   tx: Prisma.TransactionClient,
-  year: number = new Date().getFullYear()
+  year: number = new Date().getFullYear(),
+  academyId?: string
 ): Promise<string> {
   const prefix = `AH-${year}-`;
 
-  // Find the highest admission number issued in the specified year
-  const lastStudent = await tx.student.findFirst({
-    where: {
-      admissionNo: {
-        startsWith: prefix,
-      },
+  const whereClause: Prisma.StudentWhereInput = {
+    admissionNo: {
+      startsWith: prefix,
     },
+    ...(academyId ? { academyId } : {}),
+  };
+
+  // Find the highest admission number issued in the specified year for this academy
+  const lastStudent = await tx.student.findFirst({
+    where: whereClause,
     orderBy: {
       admissionNo: "desc",
     },

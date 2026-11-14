@@ -30,7 +30,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const user = await db.user.findUnique({
           where: { email },
-          include: { teacher: true },
+          include: { teacher: true, academy: true },
         });
 
         if (!user || !user.passwordHash) {
@@ -49,6 +49,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           role: user.role,
           phone: user.phone,
           teacherId: user.teacher?.id ?? null,
+          academyId: user.academyId ?? null,
+          academySlug: user.academy?.slug ?? null,
+          academyStatus: user.academy?.status ?? null,
         };
       },
     }),

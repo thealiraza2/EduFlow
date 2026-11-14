@@ -1,12 +1,15 @@
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { AdminResultsManager } from "@/components/admin/AdminResultsManager";
 import { Award } from "lucide-react";
 
 export default async function AdminResultsPage() {
   const admin = await requireAdmin();
+  const tenant = await requireTenant();
 
   const tests = await db.test.findMany({
+    where: { academyId: tenant.academyId },
     include: {
       batch: {
         include: {

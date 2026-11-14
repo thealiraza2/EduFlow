@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { generateNextAdmissionNumber } from "@/lib/admission";
 import { EnrollmentStatus, Role, StudentStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
@@ -23,6 +24,7 @@ export type AdmitStudentInput = z.input<typeof admitStudentSchema>;
 
 export async function admitStudentAction(data: AdmitStudentInput) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const validated = admitStudentSchema.safeParse(data);
   if (!validated.success) {
@@ -65,6 +67,7 @@ export async function admitStudentAction(data: AdmitStudentInput) {
           const passwordHash = await bcrypt.hash(parentPassword, 10);
           parentUser = await tx.user.create({
             data: {
+              academyId: tenant.academyId,
               email: normalizedEmail,
               passwordHash,
               name: guardianName,
@@ -76,12 +79,13 @@ export async function admitStudentAction(data: AdmitStudentInput) {
         }
       }
 
-      // Generate sequential, un-reused admission number
-      const admissionNo = await generateNextAdmissionNumber(tx);
+      // Generate sequential, un-reused admission number scoped to this academy
+      const admissionNo = await generateNextAdmissionNumber(tx, undefined, tenant.academyId);
 
       // Create student record
       const student = await tx.student.create({
         data: {
+          academyId: tenant.academyId,
           admissionNo,
           name,
           guardianName,
@@ -117,6 +121,7 @@ const updateStatusSchema = z.object({
 
 export async function updateStudentStatusAction(data: { studentId: string; status: StudentStatus }) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const validated = updateStatusSchema.safeParse(data);
   if (!validated.success) {
@@ -127,8 +132,8 @@ export async function updateStudentStatusAction(data: { studentId: string; statu
 
   try {
     const updated = await db.$transaction(async (tx) => {
-      const student = await tx.student.findUnique({
-        where: { id: studentId },
+      const student = await tx.student.findFirst({
+        where: { id: studentId, academyId: tenant.academyId },
       });
 
       if (!student) {
@@ -138,7 +143,7 @@ export async function updateStudentStatusAction(data: { studentId: string; statu
       // If status changed to LEFT or STRUCK_OFF, mark their active enrollments as LEFT
       if (status === StudentStatus.LEFT || status === StudentStatus.STRUCK_OFF) {
         await tx.enrollment.updateMany({
-          where: { studentId, status: EnrollmentStatus.ACTIVE },
+          where: { studentId, academyId: tenant.academyId, status: EnrollmentStatus.ACTIVE },
           data: { status: EnrollmentStatus.LEFT },
         });
       }
@@ -165,6 +170,7 @@ const enrollSchema = z.object({
 
 export async function enrollStudentAction(data: { studentId: string; batchId: string }) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const validated = enrollSchema.safeParse(data);
   if (!validated.success) {
@@ -175,9 +181,9 @@ export async function enrollStudentAction(data: { studentId: string; batchId: st
 
   try {
     const enrollment = await db.$transaction(async (tx) => {
-      // 1. Verify student exists and is active
-      const student = await tx.student.findUnique({
-        where: { id: studentId },
+      // 1. Verify student exists in this tenant and is active
+      const student = await tx.student.findFirst({
+        where: { id: studentId, academyId: tenant.academyId },
       });
 
       if (!student) {
@@ -188,9 +194,9 @@ export async function enrollStudentAction(data: { studentId: string; batchId: st
         throw new Error(`Cannot enroll student: Status is currently ${student.status}. Only ACTIVE students can be enrolled.`);
       }
 
-      // 2. Verify batch exists
-      const batch = await tx.batch.findUnique({
-        where: { id: batchId },
+      // 2. Verify batch exists in this tenant
+      const batch = await tx.batch.findFirst({
+        where: { id: batchId, academyId: tenant.academyId },
         include: { class: true },
       });
 
@@ -199,12 +205,11 @@ export async function enrollStudentAction(data: { studentId: string; batchId: st
       }
 
       // 3. Check for existing enrollment
-      const existingEnrollment = await tx.enrollment.findUnique({
+      const existingEnrollment = await tx.enrollment.findFirst({
         where: {
-          studentId_batchId: {
-            studentId,
-            batchId,
-          },
+          academyId: tenant.academyId,
+          studentId,
+          batchId,
         },
       });
 
@@ -223,6 +228,7 @@ export async function enrollStudentAction(data: { studentId: string; batchId: st
       // 4. Create new enrollment
       return await tx.enrollment.create({
         data: {
+          academyId: tenant.academyId,
           studentId,
           batchId,
           status: EnrollmentStatus.ACTIVE,

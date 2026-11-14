@@ -18,6 +18,7 @@ test.describe("E2E Core Flow 3: Parent Isolation (Invariant 5)", () => {
     const ts = Date.now();
     const otherStudent = await db.student.create({
       data: {
+        academyId: "seed-academy-id",
         admissionNo: `AH-TEST-${ts}`,
         name: `Foreign Child ${ts}`,
         guardianName: "Other Guardian",

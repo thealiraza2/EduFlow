@@ -9,6 +9,9 @@ declare module "next-auth" {
       role: Role;
       phone?: string | null;
       teacherId?: string | null;
+      academyId?: string | null;
+      academySlug?: string | null;
+      academyStatus?: string | null;
     } & DefaultSession["user"];
   }
 
@@ -17,6 +20,9 @@ declare module "next-auth" {
     role: Role;
     phone?: string | null;
     teacherId?: string | null;
+    academyId?: string | null;
+    academySlug?: string | null;
+    academyStatus?: string | null;
   }
 }
 
@@ -26,5 +32,8 @@ declare module "next-auth/jwt" {
     role: Role;
     phone?: string | null;
     teacherId?: string | null;
+    academyId?: string | null;
+    academySlug?: string | null;
+    academyStatus?: string | null;
   }
 }

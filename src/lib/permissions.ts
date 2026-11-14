@@ -18,12 +18,24 @@ export class AuthorizationError extends Error {
 }
 
 /**
- * Ensures the currently logged-in user is an ADMIN.
+ * Ensures the currently logged-in user is a SUPER_ADMIN (Platform Owner).
+ * Returns the super admin user or throws a 403 AuthorizationError.
+ */
+export async function requireSuperAdmin() {
+  const user = await requireUser();
+  if (user.role !== Role.SUPER_ADMIN) {
+    throw new AuthorizationError("Forbidden: Super Administrator access required.", 403);
+  }
+  return user;
+}
+
+/**
+ * Ensures the currently logged-in user is an ADMIN (or SUPER_ADMIN).
  * Returns the admin user or throws a 403 AuthorizationError.
  */
 export async function requireAdmin() {
   const user = await requireUser();
-  if (user.role !== Role.ADMIN) {
+  if (user.role !== Role.ADMIN && user.role !== Role.SUPER_ADMIN) {
     throw new AuthorizationError("Forbidden: Administrator access required.", 403);
   }
   return user;

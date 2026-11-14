@@ -1,12 +1,15 @@
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { AdmitStudentModal } from "@/components/admin/AdmitStudentModal";
 import { StudentList } from "@/components/admin/StudentList";
 
 export default async function StudentsPage() {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const students = await db.student.findMany({
+    where: { academyId: tenant.academyId },
     orderBy: { createdAt: "desc" },
     include: {
       enrollments: {

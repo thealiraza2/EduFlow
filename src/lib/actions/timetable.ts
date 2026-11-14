@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -26,6 +27,7 @@ export type CreateSlotInput = z.input<typeof createSlotSchema>;
 
 export async function createTimetableSlotAction(input: CreateSlotInput) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const validated = createSlotSchema.safeParse(input);
   if (!validated.success) {
@@ -39,9 +41,9 @@ export async function createTimetableSlotAction(input: CreateSlotInput) {
 
   try {
     const slot = await db.$transaction(async (tx) => {
-      // 1. Verify batch exists
-      const batch = await tx.batch.findUnique({
-        where: { id: batchId },
+      // 1. Verify batch exists in this tenant
+      const batch = await tx.batch.findFirst({
+        where: { id: batchId, academyId: tenant.academyId },
         include: { class: true },
       });
 
@@ -49,9 +51,9 @@ export async function createTimetableSlotAction(input: CreateSlotInput) {
         throw new Error("Batch not found.");
       }
 
-      // 2. Verify teacher exists
-      const teacher = await tx.teacher.findUnique({
-        where: { id: teacherId },
+      // 2. Verify teacher exists in this tenant
+      const teacher = await tx.teacher.findFirst({
+        where: { id: teacherId, academyId: tenant.academyId },
         include: { user: true },
       });
 
@@ -60,10 +62,9 @@ export async function createTimetableSlotAction(input: CreateSlotInput) {
       }
 
       // 3. Invariant: Check for overlapping slot in the SAME batch on the SAME day
-      // Interval [startTime, endTime] overlaps with [s.startTime, s.endTime] if:
-      // s.startTime < endTime AND s.endTime > startTime
       const batchOverlap = await tx.timetableSlot.findFirst({
         where: {
+          academyId: tenant.academyId,
           batchId,
           dayOfWeek,
           startTime: { lt: endTime },
@@ -80,6 +81,7 @@ export async function createTimetableSlotAction(input: CreateSlotInput) {
       // 4. Invariant: Teacher cannot be booked in two batches at the same time
       const teacherConflict = await tx.timetableSlot.findFirst({
         where: {
+          academyId: tenant.academyId,
           teacherId,
           dayOfWeek,
           startTime: { lt: endTime },
@@ -98,9 +100,10 @@ export async function createTimetableSlotAction(input: CreateSlotInput) {
         );
       }
 
-      // 5. Create timetable slot
+      // 5. Create timetable slot in this tenant
       return await tx.timetableSlot.create({
         data: {
+          academyId: tenant.academyId,
           batchId,
           dayOfWeek,
           startTime,
@@ -127,8 +130,16 @@ export async function createTimetableSlotAction(input: CreateSlotInput) {
 
 export async function deleteTimetableSlotAction(slotId: string) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   try {
+    const slot = await db.timetableSlot.findFirst({
+      where: { id: slotId, academyId: tenant.academyId },
+    });
+    if (!slot) {
+      throw new Error("Timetable slot not found.");
+    }
+
     await db.timetableSlot.delete({
       where: { id: slotId },
     });

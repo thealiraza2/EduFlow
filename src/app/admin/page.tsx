@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,13 +28,17 @@ import {
 
 export default async function AdminDashboardPage() {
   const admin = await requireAdmin();
+  const tenant = await requireTenant();
 
   const now = new Date();
   const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
   // 1. Fee collection for current month (collected vs due)
   const currentMonthInvoices = await db.feeInvoice.findMany({
-    where: { month: currentMonth },
+    where: {
+      academyId: tenant.academyId,
+      month: currentMonth,
+    },
     include: {
       payments: true,
     },
@@ -49,6 +54,7 @@ export default async function AdminDashboardPage() {
   // 2. Defaulters count (unpaid/partial past due date)
   const unpaidInvoices = await db.feeInvoice.findMany({
     where: {
+      academyId: tenant.academyId,
       status: { in: ["UNPAID", "PARTIAL"] },
     },
     include: {
@@ -82,6 +88,7 @@ export default async function AdminDashboardPage() {
 
   const todayAttendances = await db.attendance.findMany({
     where: {
+      academyId: tenant.academyId,
       date: { gte: startOfDay, lte: endOfDay },
     },
   });
@@ -96,14 +103,15 @@ export default async function AdminDashboardPage() {
 
   // 4. Active students & active batches
   const [activeStudentsCount, activeBatchesCount, totalTeachersCount] = await Promise.all([
-    db.student.count({ where: { status: "ACTIVE" } }),
-    db.batch.count(),
-    db.teacher.count({ where: { status: "ACTIVE" } }),
+    db.student.count({ where: { academyId: tenant.academyId, status: "ACTIVE" } }),
+    db.batch.count({ where: { academyId: tenant.academyId } }),
+    db.teacher.count({ where: { academyId: tenant.academyId, status: "ACTIVE" } }),
   ]);
 
   // 5. Upcoming / recent tests
   const upcomingTests = await db.test.findMany({
     where: {
+      academyId: tenant.academyId,
       date: { gte: startOfDay },
     },
     include: {
@@ -119,6 +127,7 @@ export default async function AdminDashboardPage() {
     upcomingTests.length > 0
       ? upcomingTests
       : await db.test.findMany({
+          where: { academyId: tenant.academyId },
           include: {
             batch: {
               include: { class: true },
@@ -136,6 +145,7 @@ export default async function AdminDashboardPage() {
 
   const monthlyEnrollments = await db.enrollment.findMany({
     where: {
+      academyId: tenant.academyId,
       status: "ACTIVE",
       student: { status: "ACTIVE" },
     },
@@ -175,6 +185,7 @@ export default async function AdminDashboardPage() {
 
   // 7. Recent Announcements
   const recentAnnouncements = await db.announcement.findMany({
+    where: { academyId: tenant.academyId },
     orderBy: { createdAt: "desc" },
     take: 5,
   });

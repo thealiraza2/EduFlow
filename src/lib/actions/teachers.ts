@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { rupeesToPaisa } from "@/lib/money";
 import { Role, TeacherStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
@@ -22,6 +23,7 @@ export type CreateTeacherInput = z.input<typeof createTeacherSchema>;
 
 export async function createTeacherAction(data: CreateTeacherInput) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const validated = createTeacherSchema.safeParse(data);
   if (!validated.success) {
@@ -55,9 +57,10 @@ export async function createTeacherAction(data: CreateTeacherInput) {
       // 2. Hash password
       const passwordHash = await bcrypt.hash(password, 10);
 
-      // 3. Create User account with TEACHER role
+      // 3. Create User account with TEACHER role in this tenant
       const user = await tx.user.create({
         data: {
+          academyId: tenant.academyId,
           email,
           passwordHash,
           name,
@@ -66,9 +69,10 @@ export async function createTeacherAction(data: CreateTeacherInput) {
         },
       });
 
-      // 4. Create Teacher record linked to user
+      // 4. Create Teacher record linked to user and tenant
       const teacher = await tx.teacher.create({
         data: {
+          academyId: tenant.academyId,
           userId: user.id,
           subjects: subjectsArray,
           salaryMinor,
@@ -94,12 +98,20 @@ export async function createTeacherAction(data: CreateTeacherInput) {
 
 export async function updateTeacherStatusAction(data: { teacherId: string; status: TeacherStatus }) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   try {
+    const teacher = await db.teacher.findFirst({
+      where: { id: data.teacherId, academyId: tenant.academyId },
+    });
+
+    if (!teacher) {
+      throw new Error("Teacher not found");
+    }
+
     const updated = await db.teacher.update({
       where: { id: data.teacherId },
       data: { status: data.status },
-      include: { user: true },
     });
 
     revalidatePath("/admin/teachers");

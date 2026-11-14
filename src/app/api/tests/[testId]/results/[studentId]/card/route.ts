@@ -20,6 +20,7 @@ export async function GET(
     const test = await db.test.findUnique({
       where: { id: testId },
       include: {
+        academy: true,
         batch: {
           include: {
             class: true,
@@ -35,6 +36,11 @@ export async function GET(
 
     if (!test) {
       return NextResponse.json({ error: "Test not found" }, { status: 404 });
+    }
+
+    // Multi-tenant check
+    if (session.user.academyId && test.academyId !== session.user.academyId) {
+      return NextResponse.json({ error: "Forbidden: Access denied" }, { status: 403 });
     }
 
     const targetResult = test.results.find((r) => r.studentId === studentId);
@@ -73,7 +79,7 @@ export async function GET(
     const testDateStr = test.date.toISOString().split("T")[0];
 
     const pdfBytes = await generateResultCardPdf({
-      academyName: "AcademyHub Coaching Centre",
+      academyName: test.academy?.name || "AcademyHub Coaching Centre",
       studentName: targetResult.student.name,
       admissionNo: targetResult.student.admissionNo,
       className: test.batch.class.name,

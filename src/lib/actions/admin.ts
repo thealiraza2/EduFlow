@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { notifier } from "@/lib/notify";
 import { SalaryStatus, AnnouncementAudience, NotificationTrigger } from "@prisma/client";
 import { revalidatePath } from "next/cache";
@@ -23,12 +24,13 @@ export type MarkSalaryInput = z.infer<typeof markSalarySchema>;
  */
 export async function markTeacherSalaryAction(input: MarkSalaryInput) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const validated = markSalarySchema.parse(input);
   const { teacherId, month, status, notes } = validated;
 
-  const teacher = await db.teacher.findUnique({
-    where: { id: teacherId },
+  const teacher = await db.teacher.findFirst({
+    where: { id: teacherId, academyId: tenant.academyId },
   });
 
   if (!teacher) {
@@ -43,6 +45,7 @@ export async function markTeacherSalaryAction(input: MarkSalaryInput) {
       },
     },
     create: {
+      academyId: tenant.academyId,
       teacherId,
       month,
       amountMinor: teacher.salaryMinor,
@@ -81,12 +84,14 @@ export type CreateAnnouncementInput = z.infer<typeof createAnnouncementSchema>;
  */
 export async function createAnnouncementAction(input: CreateAnnouncementInput) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const validated = createAnnouncementSchema.parse(input);
   const { title, content, audience } = validated;
 
   const announcement = await db.announcement.create({
     data: {
+      academyId: tenant.academyId,
       title,
       content,
       audience: audience as AnnouncementAudience,
@@ -101,6 +106,7 @@ export async function createAnnouncementAction(input: CreateAnnouncementInput) {
     trigger: NotificationTrigger.CUSTOM,
     referenceId: `announcement_${announcement.id}`,
     message: `[Announcement - ${title}] ${content} — AcademyHub`,
+    academyId: tenant.academyId,
   });
 
   revalidatePath("/admin");

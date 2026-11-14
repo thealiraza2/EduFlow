@@ -1,15 +1,18 @@
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { TeacherSalariesManager } from "@/components/admin/TeacherSalariesManager";
 import { Wallet } from "lucide-react";
 
 export default async function AdminSalariesPage() {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const now = new Date();
   const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
   const teachers = await db.teacher.findMany({
+    where: { academyId: tenant.academyId },
     include: {
       user: {
         select: {

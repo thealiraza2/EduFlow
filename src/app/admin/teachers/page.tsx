@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { formatPKR } from "@/lib/money";
 import { AddTeacherModal } from "@/components/admin/AddTeacherModal";
@@ -15,8 +16,10 @@ import {
 
 export default async function TeachersPage() {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const teachers = await db.teacher.findMany({
+    where: { academyId: tenant.academyId },
     include: {
       user: true,
       batches: {

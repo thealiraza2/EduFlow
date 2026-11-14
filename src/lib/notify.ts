@@ -24,6 +24,7 @@ export interface NotificationPayload {
   template?: string;
   message: string;
   studentId?: string | null;
+  academyId?: string;
   trigger?: NotificationTrigger;
   referenceId?: string | null;
   status?: NotificationStatus;
@@ -49,6 +50,20 @@ export class LogNotificationService implements NotificationService {
     const trigger = payload.trigger || "CUSTOM";
     const status = payload.status || "SENT";
 
+    let academyId = payload.academyId;
+    if (!academyId && payload.studentId) {
+      const student = await db.student.findUnique({
+        where: { id: payload.studentId },
+        select: { academyId: true },
+      });
+      if (student?.academyId) {
+        academyId = student.academyId;
+      }
+    }
+    if (!academyId) {
+      academyId = "seed-academy-id";
+    }
+
     console.log(
       `[NOTIFY LOG DRIVER] [${timestamp}] [${channel}] To: ${payload.recipientPhone} | Template: ${template} | Trigger: ${trigger}`
     );
@@ -57,6 +72,7 @@ export class LogNotificationService implements NotificationService {
     // Persist to NotificationLog table in database
     const logRecord = await db.notificationLog.create({
       data: {
+        academyId,
         channel,
         recipientPhone: payload.recipientPhone,
         recipient: payload.recipientPhone,
@@ -109,12 +125,14 @@ export async function sendAbsenceNotification({
   guardianPhone,
   batchName,
   date,
+  academyId,
 }: {
   studentId: string;
   studentName: string;
   guardianPhone: string;
   batchName: string;
   date: string; // YYYY-MM-DD
+  academyId?: string;
 }): Promise<{ sent: boolean; logId?: string; reason?: string }> {
   const referenceId = `absence_${studentId}_${date}`;
 
@@ -124,6 +142,7 @@ export async function sendAbsenceNotification({
       studentId,
       trigger: "ABSENCE",
       referenceId,
+      ...(academyId ? { academyId } : {}),
     },
   });
 
@@ -144,6 +163,7 @@ export async function sendAbsenceNotification({
     studentId,
     referenceId,
     message,
+    academyId,
   });
 
   return { sent: true, logId: result.messageId };

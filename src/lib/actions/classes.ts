@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import { rupeesToPaisa } from "@/lib/money";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -16,6 +17,7 @@ export type CreateClassInput = z.infer<typeof createClassSchema>;
 
 export async function createClassAction(data: CreateClassInput) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const validated = createClassSchema.safeParse(data);
   if (!validated.success) {
@@ -30,6 +32,7 @@ export async function createClassAction(data: CreateClassInput) {
   try {
     const newClass = await db.class.create({
       data: {
+        academyId: tenant.academyId,
         name,
         section,
         capacity,
@@ -56,6 +59,7 @@ export type CreateBatchInput = z.input<typeof createBatchSchema>;
 
 export async function createBatchAction(data: CreateBatchInput) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const validated = createBatchSchema.safeParse(data);
   if (!validated.success) {
@@ -71,28 +75,29 @@ export async function createBatchAction(data: CreateBatchInput) {
     const feeMinor = rupeesToPaisa(feeRupees);
 
     const result = await db.$transaction(async (tx) => {
-      // 1. Verify class exists
-      const classRecord = await tx.class.findUnique({
-        where: { id: classId },
+      // 1. Verify class exists in this tenant
+      const classRecord = await tx.class.findFirst({
+        where: { id: classId, academyId: tenant.academyId },
       });
 
       if (!classRecord) {
         throw new Error("Specified Class not found.");
       }
 
-      // 2. If teacherId provided, verify teacher exists and is active
+      // 2. If teacherId provided, verify teacher exists in this tenant
       if (teacherId) {
-        const teacher = await tx.teacher.findUnique({
-          where: { id: teacherId },
+        const teacher = await tx.teacher.findFirst({
+          where: { id: teacherId, academyId: tenant.academyId },
         });
         if (!teacher) {
           throw new Error("Specified Teacher not found.");
         }
       }
 
-      // 3. Create batch
+      // 3. Create batch in this tenant
       const batch = await tx.batch.create({
         data: {
+          academyId: tenant.academyId,
           classId,
           name,
           timing,
@@ -104,6 +109,7 @@ export async function createBatchAction(data: CreateBatchInput) {
       // 4. Create default fee plan for this batch
       await tx.feePlan.create({
         data: {
+          academyId: tenant.academyId,
           batchId: batch.id,
           monthlyFeeMinor: feeMinor,
           admissionFeeMinor: 0,
@@ -130,6 +136,7 @@ const assignTeacherSchema = z.object({
 
 export async function assignBatchTeacherAction(data: { batchId: string; teacherId: string | null }) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   const validated = assignTeacherSchema.safeParse(data);
   if (!validated.success) {
@@ -139,6 +146,22 @@ export async function assignBatchTeacherAction(data: { batchId: string; teacherI
   const { batchId, teacherId } = validated.data;
 
   try {
+    const batch = await db.batch.findFirst({
+      where: { id: batchId, academyId: tenant.academyId },
+    });
+    if (!batch) {
+      throw new Error("Batch not found.");
+    }
+
+    if (teacherId) {
+      const teacher = await db.teacher.findFirst({
+        where: { id: teacherId, academyId: tenant.academyId },
+      });
+      if (!teacher) {
+        throw new Error("Teacher not found.");
+      }
+    }
+
     const updated = await db.batch.update({
       where: { id: batchId },
       data: { teacherId },

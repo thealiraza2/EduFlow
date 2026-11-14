@@ -21,6 +21,7 @@ describe("Phase 5: Fees, Invoices, Append-Only Payments & Status Derivation", ()
     // Setup test class, batch with FeePlan, and enrolled student
     const cls = await db.class.create({
       data: {
+        academyId: "seed-academy-id",
         name: "Test-Fee-10th",
         section: "X",
         capacity: 30,
@@ -30,12 +31,14 @@ describe("Phase 5: Fees, Invoices, Append-Only Payments & Status Derivation", ()
 
     const batch = await db.batch.create({
       data: {
+        academyId: "seed-academy-id",
         classId: testClassId,
         name: "Morning Science",
         timing: "9-11 AM",
         feeMinor: 500000, // PKR 5,000
         feePlan: {
           create: {
+            academyId: "seed-academy-id",
             monthlyFeeMinor: 500000, // PKR 5,000
             admissionFeeMinor: 100000, // PKR 1,000
             lateFineMinor: 30000, // PKR 300
@@ -48,6 +51,7 @@ describe("Phase 5: Fees, Invoices, Append-Only Payments & Status Derivation", ()
 
     const student = await db.student.create({
       data: {
+        academyId: "seed-academy-id",
         admissionNo: `TEST-FEE-${Date.now()}`,
         name: "Usman Tariq",
         guardianName: "Tariq Mahmood",
@@ -58,6 +62,7 @@ describe("Phase 5: Fees, Invoices, Append-Only Payments & Status Derivation", ()
 
     const enr = await db.enrollment.create({
       data: {
+        academyId: "seed-academy-id",
         studentId: testStudentId,
         batchId: testBatchId,
       },
@@ -196,6 +201,7 @@ describe("Phase 5: Fees, Invoices, Append-Only Payments & Status Derivation", ()
     // Payment 1: Partial (PKR 2,000 / 200,000 paisa)
     await db.feePayment.create({
       data: {
+        academyId: "seed-academy-id",
         invoiceId,
         amountMinor: 200000,
         method: PaymentMethod.CASH,
@@ -219,6 +225,7 @@ describe("Phase 5: Fees, Invoices, Append-Only Payments & Status Derivation", ()
     // Payment 2: Remaining balance (PKR 3,000 / 300,000 paisa)
     await db.feePayment.create({
       data: {
+        academyId: "seed-academy-id",
         invoiceId,
         amountMinor: 300000,
         method: PaymentMethod.JAZZCASH,

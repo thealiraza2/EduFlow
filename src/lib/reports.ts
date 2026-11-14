@@ -20,9 +20,15 @@ function escapeCsv(val: any): string {
 /**
  * 1. Monthly Fee Collection Report (CSV)
  */
-export async function generateMonthlyFeeCollectionReportCsv(month: string): Promise<string> {
+export async function generateMonthlyFeeCollectionReportCsv(
+  month: string,
+  academyId?: string
+): Promise<string> {
+  const where: any = { month };
+  if (academyId) where.academyId = academyId;
+
   const invoices = await db.feeInvoice.findMany({
-    where: { month },
+    where,
     include: {
       student: true,
       batch: { include: { class: true } },
@@ -76,7 +82,8 @@ export async function generateMonthlyFeeCollectionReportCsv(month: string): Prom
  */
 export async function generateBatchAttendanceReportCsv(
   monthStr: string,
-  batchId?: string
+  batchId?: string,
+  academyId?: string
 ): Promise<string> {
   const [yearStr, monthNumStr] = monthStr.split("-");
   const year = parseInt(yearStr, 10);
@@ -89,6 +96,7 @@ export async function generateBatchAttendanceReportCsv(
     status: "ACTIVE",
     student: { status: "ACTIVE" },
   };
+  if (academyId) enrollmentWhere.academyId = academyId;
   if (batchId) enrollmentWhere.batchId = batchId;
 
   const enrollments = await db.enrollment.findMany({
@@ -148,12 +156,19 @@ export async function generateBatchAttendanceReportCsv(
 /**
  * 3. Student Performance Report (CSV)
  */
-export async function generateStudentPerformanceReportCsv(batchId?: string): Promise<string> {
+export async function generateStudentPerformanceReportCsv(
+  batchId?: string,
+  academyId?: string
+): Promise<string> {
   const where: any = {
     test: {
       status: "PUBLISHED",
     },
   };
+  if (academyId) {
+    where.academyId = academyId;
+    where.test.academyId = academyId;
+  }
   if (batchId) {
     where.test.batchId = batchId;
   }
@@ -216,8 +231,12 @@ export async function generateStudentPerformanceReportCsv(batchId?: string): Pro
  * 4. Teacher Workload Report (CSV)
  * Calculates weekly assigned lectures and hours from timetable slots.
  */
-export async function generateTeacherWorkloadReportCsv(): Promise<string> {
+export async function generateTeacherWorkloadReportCsv(academyId?: string): Promise<string> {
+  const where: any = {};
+  if (academyId) where.academyId = academyId;
+
   const teachers = await db.teacher.findMany({
+    where,
     include: {
       user: true,
       batches: {

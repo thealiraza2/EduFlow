@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { requireAdmin } from "@/lib/permissions";
+import { requireTenant } from "@/lib/tenant";
 import {
   generateMonthlyInvoices,
   deriveInvoiceStatus,
@@ -29,12 +30,15 @@ export type RecordPaymentInput = z.infer<typeof recordPaymentSchema>;
  */
 export async function generateInvoicesAction(month: string) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
   if (!/^\d{4}-\d{2}$/.test(month)) {
     throw new Error("Invalid month format. Expected YYYY-MM");
   }
 
-  const result = await generateMonthlyInvoices(month);
+  const result = await generateMonthlyInvoices(month, new Date(), db, {
+    academyId: tenant.academyId,
+  });
 
   revalidatePath("/admin/fees");
   revalidatePath("/admin/fees/defaulters");
@@ -51,17 +55,21 @@ export async function generateInvoicesAction(month: string) {
  */
 export async function recordPaymentAction(input: RecordPaymentInput) {
   const session = await auth();
-  if (!session?.user || session.user.role !== "ADMIN") {
+  if (!session?.user || (session.user.role !== "ADMIN" && session.user.role !== "SUPER_ADMIN")) {
     throw new Error("Unauthorized: Only administrators can collect fee payments.");
   }
+  const tenant = await requireTenant();
 
   const validated = recordPaymentSchema.parse(input);
   const { invoiceId, amountMinor, method } = validated;
 
   const result = await db.$transaction(async (tx) => {
     // 1. Fetch invoice and existing payments
-    const invoice = await tx.feeInvoice.findUnique({
-      where: { id: invoiceId },
+    const invoice = await tx.feeInvoice.findFirst({
+      where: {
+        id: invoiceId,
+        academyId: tenant.academyId,
+      },
       include: {
         payments: true,
         student: true,
@@ -88,6 +96,7 @@ export async function recordPaymentAction(input: RecordPaymentInput) {
     // 2. Append-only payment insertion
     const payment = await tx.feePayment.create({
       data: {
+        academyId: tenant.academyId,
         invoiceId,
         amountMinor,
         method: method as PaymentMethod,
@@ -137,9 +146,13 @@ export async function recordPaymentAction(input: RecordPaymentInput) {
  */
 export async function sendFeeReminderAction(invoiceId: string) {
   await requireAdmin();
+  const tenant = await requireTenant();
 
-  const invoice = await db.feeInvoice.findUnique({
-    where: { id: invoiceId },
+  const invoice = await db.feeInvoice.findFirst({
+    where: {
+      id: invoiceId,
+      academyId: tenant.academyId,
+    },
     include: {
       student: true,
       batch: true,
@@ -176,6 +189,7 @@ export async function sendFeeReminderAction(invoiceId: string) {
     studentId: invoice.student.id,
     referenceId: `reminder_${invoice.id}_${Date.now()}`,
     message,
+    academyId: tenant.academyId,
   });
 
   return {

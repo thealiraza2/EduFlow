@@ -20,6 +20,7 @@ export default async function ParentPortalDashboardPage() {
   const announcements = await db.announcement.findMany({
     where: {
       audience: { in: ["ALL", "PARENTS"] },
+      ...(user.academyId ? { academyId: user.academyId } : {}),
     },
     orderBy: { createdAt: "desc" },
     take: 5,

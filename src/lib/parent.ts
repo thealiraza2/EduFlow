@@ -124,7 +124,11 @@ export async function getParentDashboardData(
   }
 
   // Active or registered children linked via guardianUserId
-  const childrenWhere = userRole === Role.ADMIN ? {} : { guardianUserId: parentUserId };
+  const childrenWhere: Record<string, unknown> =
+    userRole === Role.ADMIN ? {} : { guardianUserId: parentUserId };
+  if (parentUser.academyId) {
+    childrenWhere.academyId = parentUser.academyId;
+  }
   const students = await db.student.findMany({
     where: childrenWhere,
     orderBy: { admissionNo: "asc" },
@@ -327,13 +331,18 @@ export async function getParentDashboardData(
   const childrenIds = students.map((s) => s.id);
   const studentMap = new Map(students.map((s) => [s.id, s.name]));
 
+  const notifWhere: Record<string, unknown> = {
+    OR: [
+      { studentId: { in: childrenIds } },
+      ...(parentUser.phone ? [{ recipientPhone: parentUser.phone }] : []),
+    ],
+  };
+  if (parentUser.academyId) {
+    notifWhere.academyId = parentUser.academyId;
+  }
+
   const notificationLogs = await db.notificationLog.findMany({
-    where: {
-      OR: [
-        { studentId: { in: childrenIds } },
-        ...(parentUser.phone ? [{ recipientPhone: parentUser.phone }] : []),
-      ],
-    },
+    where: notifWhere,
     orderBy: { createdAt: "desc" },
     take: 30,
   });
@@ -369,12 +378,24 @@ export async function getParentChildData(
   studentId: string,
   userRole: Role = Role.PARENT
 ): Promise<ParentChildSummary> {
+  const parentUser = await db.user.findUnique({
+    where: { id: parentUserId },
+  });
+
+  if (!parentUser) {
+    throw new AuthorizationError("Parent user account not found.", 404);
+  }
+
   const student = await db.student.findUnique({
     where: { id: studentId },
   });
 
   if (!student) {
     throw new AuthorizationError("Student not found", 404);
+  }
+
+  if (parentUser.academyId && student.academyId !== parentUser.academyId) {
+    throw new AuthorizationError("Forbidden: Student belongs to another academy", 403);
   }
 
   // INVARIANT 5: Cross-child access is strictly blocked
