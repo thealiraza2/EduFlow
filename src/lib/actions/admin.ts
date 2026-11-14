@@ -7,7 +7,7 @@ import { notifier } from "@/lib/notify";
 import { SalaryStatus, AnnouncementAudience, NotificationTrigger } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
-export const markSalarySchema = z.object({
+const markSalarySchema = z.object({
   teacherId: z.string().min(1, "Teacher ID is required"),
   month: z.string().regex(/^\d{4}-\d{2}$/, "Invalid month format. Expected YYYY-MM"),
   status: z.enum(["PAID", "UNPAID"]),
@@ -68,7 +68,7 @@ export async function markTeacherSalaryAction(input: MarkSalaryInput) {
   };
 }
 
-export const createAnnouncementSchema = z.object({
+const createAnnouncementSchema = z.object({
   title: z.string().min(2, "Title is required"),
   content: z.string().min(5, "Content is required"),
   audience: z.enum(["ALL", "TEACHERS", "PARENTS"]),

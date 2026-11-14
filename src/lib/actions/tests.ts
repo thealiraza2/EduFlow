@@ -7,7 +7,7 @@ import { requireAdmin, requireTeacher } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 import { TestStatus } from "@prisma/client";
 
-export const createTestSchema = z.object({
+const createTestSchema = z.object({
   batchId: z.string().min(1, "Batch is required"),
   subject: z.string().min(1, "Subject is required"),
   title: z.string().min(1, "Test title is required"),
@@ -67,13 +67,13 @@ export async function createTestAction(input: CreateTestInput) {
   };
 }
 
-export const studentMarkEntrySchema = z.object({
+const studentMarkEntrySchema = z.object({
   studentId: z.string().min(1),
   obtainedMarks: z.number().min(0, "Obtained marks cannot be negative"),
   remarks: z.string().max(255).optional(),
 });
 
-export const submitMarksSchema = z.object({
+const submitMarksSchema = z.object({
   testId: z.string().min(1, "Test ID is required"),
   results: z.array(studentMarkEntrySchema).min(1, "At least one student mark is required"),
   adminReason: z.string().optional(),
@@ -223,7 +223,7 @@ export async function publishTestAction(testId: string) {
   };
 }
 
-export const correctStudentMarkSchema = z.object({
+const correctStudentMarkSchema = z.object({
   testId: z.string().min(1),
   studentId: z.string().min(1),
   newObtainedMarks: z.number().min(0),

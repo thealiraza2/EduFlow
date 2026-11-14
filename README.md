@@ -1,171 +1,220 @@
 # AcademyHub — Academy Management System
 
-A complete, robust management system engineered for tuition academies and coaching centres in Pakistan.
+A production-ready management system engineered specifically for tuition academies, coaching centres, and evening schools in Pakistan.
 
-One academy runs on one installation. The academy owner (admin) manages students, teachers, classes, attendance, fees, and test results. Teachers mark attendance and enter marks. Parents access attendance, fee dues, and results on a dedicated parent portal.
+One academy runs on one installation. The academy owner (admin) oversees students, teachers, classes, attendance, fees, test results, and salaries. Teachers mark attendance in under a minute and submit marks. Parents access attendance percentages, fee dues, challan PDFs, and official result cards via an isolated parent portal.
 
 ---
 
 ## Project Status
 
-> **Current Milestone: Phase 8 Complete**  
-> All subsequent phases (9 through 15) are **NOT built yet**.
+> **Current Milestone: Phase 9 Complete (Core Checkpoint)**  
+> Phases 0 through 9 are fully implemented and verified. Advanced modules (Phases 10 through 14) and production deployment (Phase 15) are **NOT built yet**.
 
 | Phase | Description | Status |
 | :--- | :--- | :--- |
 | **Phase 0** | Pre-flight & repo setup, tooling, env, DB schema, health check | **DONE** |
-| **Phase 1** | Auth + roles (Admin, Teacher, Parent) + middleware protection | **DONE** |
-| **Phase 2** | Students, teachers, classes & batches | **DONE** |
-| **Phase 3** | Timetable management | **DONE** |
-| **Phase 4** | Attendance + parent absence notifications | **DONE** |
-| **Phase 5** | Fees: plans, monthly invoices, append-only payments, challans | **DONE** |
-| **Phase 6** | Tests, marks, result cards & publishing | **DONE** |
-| **Phase 7** | Parent portal (strict child data isolation) | **DONE** |
-| **Phase 8** | Admin dashboard, reports & teacher salaries | **DONE** |
-| **Phase 9** | Core checkpoint: unit + e2e tests & security audit | Not built yet |
+| **Phase 1** | Auth + roles (`ADMIN`, `TEACHER`, `PARENT`) + middleware protection | **DONE** |
+| **Phase 2** | Students, teachers, classes & batches (sequential admission numbers) | **DONE** |
+| **Phase 3** | Weekly timetable system with conflict prevention | **DONE** |
+| **Phase 4** | Attendance marking & guardian absence notifications (deduplicated) | **DONE** |
+| **Phase 5** | Fee plans, idempotent monthly invoices, append-only payments, challan PDF | **DONE** |
+| **Phase 6** | Tests, draft marks, publishing lock, official result card PDFs, batch analytics | **DONE** |
+| **Phase 7** | Parent portal with strict child data isolation (Invariant 5) | **DONE** |
+| **Phase 8** | Admin dashboard, CSV reports, teacher payroll records & announcements | **DONE** |
+| **Phase 9** | Core checkpoint: unit tests (39/39), E2E flows (8/8), security audit & documentation | **DONE** |
 | **Phase 10** | Multi-branch SaaS: multi-tenancy & tenant isolation | Not built yet |
 | **Phase 11** | Real payments: JazzCash + Easypaisa (sandbox + idempotent webhooks) | Not built yet |
 | **Phase 12** | Online test engine: timed MCQs, auto-grading, leaderboard | Not built yet |
 | **Phase 13** | AI analytics (dropout prediction, weak subjects) + test paper generator | Not built yet |
 | **Phase 14** | WhatsApp Business bot + QR attendance | Not built yet |
-| **Phase 15** | Final verification & deployment (Vercel + Supabase) | Not built yet |
+| **Phase 15** | Final verification & production deployment (Vercel + Supabase) | Not built yet |
 
 ---
 
-## Important Notice on SMS / WhatsApp Notifications
+## Seed Accounts & Demo Logins
 
-Real SMS in Pakistan requires a registered bulk SMS gateway with paid SMS credits (e.g. standard telco shortcodes/brand names). WhatsApp integration requires a verified Meta WhatsApp Business Account.
+The database seed (`npm run seed`) provisions preconfigured demonstration accounts for each role:
 
-In this codebase:
-- All notifications go through a provider-agnostic `NotificationService` interface.
-- By default, the **LOG driver** is active (`SMS_PROVIDER=log`), which records notifications to the console and audit logs.
-- **SMS is log-only until a real gateway is configured via environment variables.**
-- We never claim SMS "works" when only the log driver has run.
+| Role | Email | Password | Primary Access |
+| :--- | :--- | :--- | :--- |
+| **Admin** (Academy Owner) | `admin@academyhub.test` | `Admin123!` | `/admin` (Full administrative control) |
+| **Teacher** (Faculty Lead) | `usman.teacher@academyhub.test` | `Teacher123!` | `/teacher` (Attendance & marks) |
+| **Parent** (Guardian) | `parent@academyhub.test` | `Parent123!` | `/parent` (Child attendance, dues, results) |
 
----
-
-## Notice on Teacher Salaries & Payroll Accounting
-
-> **Operational Accounting Notice**: Teacher salaries are marked as PAID inside AcademyHub for internal record-keeping; actual bank transfers occur outside the system.
+> *Note: For production deployments (Phase 15), seed passwords must be changed immediately upon first login.*
 
 ---
 
-## Core Invariants
+## Quickstart & Local Run (Clean Clone Instructions)
 
-1. **Money Math**: Money is **ALWAYS integer minor units (paisa)**. No floating-point numbers anywhere. 1 PKR = 100 paisas. All calculations strictly reside in `src/lib/money.ts`.
-2. **Append-Only Fees**: Fee payments are immutable and append-only. No payment record can ever be modified or deleted. Adjustments are recorded as new compensating transactions.
-3. **Attendance**: Exactly one attendance record per student per day per batch. Upsert semantics prevent duplicate records.
-4. **Result Cards Locked**: Marks become read-only once published; corrections require administrative audit logging.
-5. **Parent Isolation**: Parents can only access records belonging to their own children (`guardianUserId` verification). Any unauthorized direct access returns `403 Forbidden`.
-6. **Teacher Isolation**: Teachers can only access and update batches assigned directly to them.
-7. **No Secrets in Repo**: Environment variables and keys are never committed; `.env` is gitignored.
-
----
-
-## Tech Stack (Pinned Versions)
-
-- **Framework**: Next.js 14.2.5 (App Router), React 18.3.1, TypeScript 5.5.4
-- **Styling**: Tailwind CSS 3.4.10 + shadcn/ui
-- **Database**: PostgreSQL 16
-- **ORM**: Prisma 5.18.0
-- **Authentication**: Auth.js (NextAuth v5 beta.20)
-- **Validation**: Zod 3.23.8
-- **PDF Generation**: pdf-lib 1.17.1
-- **Testing**: Vitest 2.0.5, Playwright 1.46.1
-
----
-
-## Setup & Local Development
+Follow these exact steps to run AcademyHub locally from a fresh checkout:
 
 ### 1. Prerequisites
-- Node.js >= 20.x
-- PostgreSQL 16 (Local, Docker, or Supabase)
+- **Node.js**: `v20.x` or higher
+- **PostgreSQL**: `16.x` running locally or via Docker
+- **Google Chrome** or system Chromium (for Playwright E2E tests)
 
-### 2. Environment Configuration
-Copy `.env.example` to `.env`:
+### 2. Clone and Setup Environment
 ```bash
+git clone <repo-url>
+cd "Academy Management System"
 cp .env.example .env
 ```
-Ensure `DATABASE_URL` points to your PostgreSQL 16 instance.
 
-### 3. Installation & Database Sync
+Ensure `.env` contains your PostgreSQL credentials:
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/academyhub?schema=public"
+AUTH_SECRET="change-me-to-a-secure-random-string-min-32-chars"
+NEXTAUTH_SECRET="change-me-to-a-secure-random-string-min-32-chars"
+NEXTAUTH_URL="http://localhost:3000"
+AUTH_TRUST_HOST=true
+SMS_PROVIDER="log"
+SMS_API_KEY=""
+```
+
+### 3. Install Dependencies & Provision Database
 ```bash
+# 1. Install pinned packages
 npm install
+
+# 2. Generate Prisma Client
 npx prisma generate
+
+# 3. Apply schema migrations
 npx prisma migrate dev
+
+# 4. Seed initial academy data & test accounts
+npm run seed
 ```
 
-### 4. Running the Development Server
+### 4. Start the Application
 ```bash
+# Development mode:
 npm run dev
+
+# Production build & run:
+npm run build
+npm start
 ```
-Open [http://localhost:3000](http://localhost:3000) to view the application.
+Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
 Health check endpoint:
 ```bash
 curl http://localhost:3000/api/health
+# Response: {"status":"ok"}
 ```
-Response: `{"status":"ok"}`
 
 ---
 
-## Modules Implemented (Phases 1–8)
+## Test Suites & Quality Assurance
 
-### Phase 1: Authentication & Authorization
-- Auth.js v5 with credentials provider, JWT sessions, bcryptjs.
-- Roles: `ADMIN`, `TEACHER`, `PARENT`.
-- Middleware protection on `/admin/*`, `/teacher/*`, `/parent/*`. Server-side guards in `src/lib/permissions.ts`.
+AcademyHub includes comprehensive automated testing covering all core business logic and critical user journeys.
 
-### Phase 2: Students, Faculty, Classes & Batches
-- Sequential non-reusable student admission numbers (`AH-YYYY-####`).
-- Atomic transactions for teacher accounts and guardian accounts.
-- Batch scheduling, enrollment rules, and status lifecycle (`ACTIVE`, `LEFT`, `STRUCK_OFF`).
+### 1. Unit Tests (Vitest)
+Runs 39 tests across 7 test suites verifying mathematical invariants, isolation guarantees, and edge cases:
+```bash
+npm test
+```
+- `tests/unit/money.test.ts`: Integer paisa arithmetic, rounding, discounts, tax/fines.
+- `tests/unit/fees.test.ts`: Fee plan creation, discount application, fine timing, payment allocation, invoice idempotency.
+- `tests/unit/attendance.test.ts`: Upsert semantics (marking twice updates the same record), duplicate-notification guard.
+- `tests/unit/results.test.ts`: Percentage math, grade thresholds (A+, A, B, C, D, F), class position ranking with ties.
+- `tests/unit/parent.test.ts`: Guardian isolation (Invariant 5) — parent A cannot read parent B's child data (throws 403).
+- `tests/unit/teacher.test.ts`: Teacher batch isolation — teachers can only mark attendance and enter marks for assigned batches.
+- `tests/unit/admin.test.ts`: Monthly collection math, defaulter calculations, CSV exports, teacher salary ledger.
 
-### Phase 3: Weekly Timetable System
-- Mon–Sat schedule grid with double-booking prevention for batches and teachers.
-- Teacher personal timetable and parent read-only timetable views.
+### 2. End-to-End Tests (Playwright)
+Executes 8 headless browser tests validating the three core workflows:
+```bash
+npm run test:e2e
+```
+- `tests/e2e/canary.spec.ts`: Health check API & login page rendering.
+- `tests/e2e/auth.spec.ts`: Authentication & role-based dashboard redirection for Admin, Teacher, and Parent.
+- `tests/e2e/core-flow-1.spec.ts`: **Core Lifecycle Flow 1**:
+  - Admin admits student with sequential admission number (`AH-YYYY-####`).
+  - Admin assigns batch enrollment with monthly fee plan.
+  - Teacher marks student present on attendance roster.
+  - Admin generates monthly invoices (idempotent, 0 duplicates).
+  - Admin records cash fee payment.
+  - Generates & downloads official 3-copy Fee Challan PDF (`%PDF-` format verified).
+- `tests/e2e/core-flow-2.spec.ts`: **Core Evaluation Flow 2**:
+  - Teacher creates new assessment test in DRAFT state.
+  - Teacher inputs student marks into roster.
+  - Admin reviews and officially publishes test results (locking marks against further edits).
+  - Parent logs in and views verified test result, score, percentage, and grade.
+  - Official student Result Card PDF downloaded and validated.
+- `tests/e2e/core-flow-3.spec.ts`: **Parent Isolation Flow 3**:
+  - Parent views own linked child's dashboard and profile.
+  - Parent attempts direct URL guessing to an unlinked student profile (`/parent/child/[unlinkedId]`) → receives custom 403 Forbidden screen.
+  - Parent makes direct HTTP request to `/api/parent/child/[unlinkedId]` → receives HTTP 403 Forbidden with `{ error: "Access denied: ..." }`.
 
-### Phase 4: Attendance & Absence Notifications
-- Rapid attendance marking with upsert semantics and 7-day teacher edit window.
-- Guardian absence alerts queued with strict once-per-day duplicate prevention.
-- Admin attendance analytics flagging students below 75% attendance.
+---
 
-### Phase 5: Fees, Invoices, Payments & Challan PDFs
-- Idempotent monthly invoice generation (`generateMonthlyInvoices(month)`).
-- Append-only payment ledger with auto-derived payment status (`UNPAID`, `PARTIAL`, `PAID`).
-- High-fidelity 3-copy A4 fee challan PDF generation (Bank, Academy, Student copies).
-- Defaulters dashboard with 1-tap SMS fee reminder.
+## Core Invariants & Architecture Rules
 
-### Phase 6: Tests, Marks, Result Cards & Publishing
-- Teacher test creation and student marks entry in DRAFT state.
-- Admin publishing workflow locking marks from modifications.
-- Official A4 Result Card PDF with letter grading, percentage, and faculty remarks.
-- Batch analytics, toppers list, and subject difficulty diagnostics.
+1. **Integer Money Math (Invariant 1)**:
+   - Money is **ALWAYS stored as integer minor units (paisa)**. No floating-point currencies.
+   - 1 PKR = 100 paisas (e.g. PKR 4,000.00 is stored as `400000`).
+   - All arithmetic strictly uses helper functions in `src/lib/money.ts`.
+2. **Append-Only Payments (Invariant 2)**:
+   - `FeePayment` records are strictly append-only and immutable.
+   - Payments are never updated or deleted; reversing transactions must be recorded as separate compensating entries.
+3. **Attendance Idempotency (Invariant 3)**:
+   - Exactly one attendance record per student per day per batch (`UNIQUE(enrollmentId, date)`).
+   - Marking attendance twice updates the existing record, never inserting duplicate rows.
+4. **Result Cards Locked (Invariant 4)**:
+   - Tests remain in `DRAFT` status while faculty enter scores.
+   - Once published by an administrator, scores become read-only (`PUBLISHED`). Faculty cannot edit them; administrative modifications require an explicit audit reason stored in `correctionLog`.
+5. **Guardian Privacy & Isolation (Invariant 5)**:
+   - Parents can only access records belonging to their own registered children (`guardianUserId` verification).
+   - Direct URL tampering (`/parent/child/[otherId]`) and unauthorized API requests are strictly blocked with `403 Forbidden`.
+6. **Teacher Scope Isolation**:
+   - Faculty members can only mark attendance, create tests, and enter marks for batches where they are the designated instructor.
+7. **No Secrets in Repo**:
+   - Secrets are loaded exclusively from `.env`. Sensitive credentials are never committed.
 
-### Phase 7: Parent Portal
-- Strict guardian isolation (Invariant 5) enforced at service layer and HTTP routes (403 Forbidden).
-- Overview of linked children, attendance summaries, fee payment ledger, downloadable challans, and published test cards.
-- Historical log of SMS messages and absence alerts.
+---
 
-### Phase 8: Admin Dashboard, Reports & Teacher Salaries
-- **Admin Control Center (`/admin`)**:
-  - Live monthly fee collection KPI (collected vs due).
-  - Defaulters counter.
-  - Today's academy attendance percentage.
-  - Active roster metrics (students, batches, faculty).
-  - Low-attendance watchlist (<75% attendance rate).
-  - Upcoming evaluation tests and status tracker.
-- **CSV Reports Engine (`/admin/reports` & `/api/admin/reports`)**:
-  - 1. Monthly fee collection report (all line items, discounts, late fines, paid amounts, remaining balances).
-  - 2. Batch attendance report (total sessions, present, absent, leave, late, attendance %).
-  - 3. Student academic performance report (test marks, percentage, grade, remarks).
-  - 4. Teacher workload & payroll report (base contracts, assigned batches, weekly lecture slots, estimated weekly hours).
-- **Teacher Salaries & Payroll Ledger (`/admin/salaries`)**:
-  - Contract base salary in minor units (paisa).
-  - Monthly disbursement tracking (`PAID` vs `UNPAID`).
-  - Workload metrics derived from timetable slots.
-  - Prominent operational notice that bank transfers take place outside the system.
-- **Academy Announcements**:
-  - Admin announcement composer with audience targeting (`ALL`, `TEACHERS`, `PARENTS`).
-  - Broadcast notification logging via `NotificationService`.
-  - Targeted notices banner on Teacher and Parent dashboards.
+## Operational Limitations & Disclosures
+
+### 1. SMS & WhatsApp Notifications (Simulated Log Driver)
+- Real bulk SMS in Pakistan requires registering a branded alphanumeric sender ID with local telecommunication operators via an aggregator (e.g. standard telco shortcodes). WhatsApp bot integration requires an approved Meta WhatsApp Business Account.
+- By default, AcademyHub runs with `SMS_PROVIDER="log"`.
+- All notifications are routed through `NotificationService` (`src/lib/notify.ts`), which writes outgoing SMS payloads to `stdout` and logs them to the `NotificationLog` database table for audit purposes.
+- Real SMS/WhatsApp integration is slated for **Phase 14**.
+
+### 2. Teacher Salaries & Payroll
+- The `/admin/salaries` module allows academy owners to track monthly salary disbursement status (`PAID` vs `UNPAID`) and cross-reference contracted salaries against weekly timetable hours.
+- **AcademyHub does NOT execute direct bank-to-bank transfers or 1Link integration.** Disbursal occurs through external commercial banking channels or cash, and is recorded in the system for bookkeeping.
+
+### 3. Pinned Stack & Dependency Audit
+- All packages are strictly pinned to exact versions as specified in project requirements:
+  - `next@14.2.5`
+  - `react@18.3.1`
+  - `typescript@5.5.4`
+  - `tailwindcss@3.4.10`
+  - `zod@3.23.8`
+  - `prisma@5.18.0`
+  - `next-auth@5.0.0-beta.20`
+  - `pdf-lib@1.17.1`
+  - `vitest@2.0.5`
+  - `@playwright/test@1.46.1`
+- `npm audit` reports 13 upstream advisories within these pinned packages. Running `npm audit fix --force` was intentionally bypassed because doing so would unpin required dependencies and introduce breaking API changes (e.g. Zod v4). Mitigating server-side authorization checks and validation schemas are enforced on all routes.
+
+### 4. Hosting & Deployment
+- Production deployment configuration (Vercel + Supabase) is deferred to **Phase 15**.
+
+---
+
+## Environment Variables Reference
+
+| Variable | Description | Example / Default |
+| :--- | :--- | :--- |
+| `DATABASE_URL` | PostgreSQL connection URL | `postgresql://postgres:postgres@localhost:5432/academyhub?schema=public` |
+| `AUTH_SECRET` | Session encryption & JWT secret | 32+ character random hex or base64 string |
+| `NEXTAUTH_SECRET` | NextAuth secret (same as `AUTH_SECRET`) | 32+ character random hex or base64 string |
+| `NEXTAUTH_URL` | Canonical URL of the application | `http://localhost:3000` |
+| `AUTH_TRUST_HOST` | Trust proxy headers for local Auth.js | `true` |
+| `SMS_PROVIDER` | Driver for notifications (`log` or mock) | `log` |
+| `SMS_API_KEY` | Vendor API key (for future phases) | `""` |

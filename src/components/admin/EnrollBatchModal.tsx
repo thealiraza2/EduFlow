@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -38,6 +39,7 @@ export function EnrollBatchModal({
   studentId: string;
   availableBatches: BatchOption[];
 }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [selectedBatchId, setSelectedBatchId] = useState("");
   const [loading, setLoading] = useState(false);
@@ -56,6 +58,7 @@ export function EnrollBatchModal({
     if (res.success) {
       setOpen(false);
       setSelectedBatchId("");
+      router.refresh();
     } else {
       setError(res.error || "Failed to enroll student in batch");
     }

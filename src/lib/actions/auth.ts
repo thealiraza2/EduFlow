@@ -1,6 +1,7 @@
 "use server";
 
 import { signIn } from "@/lib/auth";
+import { db } from "@/lib/db";
 import { AuthError } from "next-auth";
 import { z } from "zod";
 
@@ -39,10 +40,22 @@ export async function loginAction(
   const { email, password, callbackUrl } = validated.data;
 
   try {
+    let defaultRedirect = "/admin";
+    try {
+      const existingUser = await db.user.findUnique({
+        where: { email },
+        select: { role: true },
+      });
+      if (existingUser?.role === "TEACHER") defaultRedirect = "/teacher";
+      else if (existingUser?.role === "PARENT") defaultRedirect = "/parent";
+    } catch {
+      // Default to /admin if lookup fails
+    }
+
     await signIn("credentials", {
       email,
       password,
-      redirectTo: callbackUrl || "/admin",
+      redirectTo: callbackUrl || defaultRedirect,
     });
     return {};
   } catch (err) {

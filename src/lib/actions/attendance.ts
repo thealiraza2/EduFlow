@@ -14,7 +14,7 @@ const attendanceRecordSchema = z.object({
   remarks: z.string().max(255).optional(),
 });
 
-export const saveBatchAttendanceSchema = z.object({
+const saveBatchAttendanceSchema = z.object({
   batchId: z.string().min(1, "Batch ID is required"),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format. Expected YYYY-MM-DD"),
   records: z.array(attendanceRecordSchema).min(1, "At least one attendance record is required"),

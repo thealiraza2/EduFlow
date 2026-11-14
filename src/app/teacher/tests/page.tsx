@@ -91,6 +91,8 @@ export default async function TeacherTestsPage({
               </p>
             </div>
           </div>
+
+          {!selectedTest && <CreateTestModal batches={batches} />}
         </div>
 
         {selectedTest ? (
