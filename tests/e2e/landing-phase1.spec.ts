@@ -123,7 +123,7 @@ test.describe("Marketing Landing Page — Phase 1: Navbar, Hero, Trust Strip", (
     await expect(page.getByText("Ahmed Raza", { exact: true })).toBeVisible();
     await expect(page.getByText("Bilal Tariq", { exact: true })).toBeVisible();
     await expect(page.locator("text=Present").first()).toBeVisible();
-    await expect(page.locator("text=Absent")).toBeVisible();
+    await expect(page.getByText("Absent", { exact: true })).toBeVisible();
 
     // Fee payment status check (verifying -> PAID flip)
     await page.waitForTimeout(2200);

@@ -2,6 +2,9 @@ import Link from "next/link";
 import { Navbar } from "@/components/marketing/Navbar";
 import { HeroSection } from "@/components/marketing/HeroSection";
 import { TrustStrip } from "@/components/marketing/TrustStrip";
+import { FeaturesBento } from "@/components/marketing/FeaturesBento";
+import { HowItWorks } from "@/components/marketing/HowItWorks";
+import { PhotoStories } from "@/components/marketing/PhotoStories";
 
 export default function MarketingHomePage() {
   const jsonLd = {
@@ -65,53 +68,44 @@ export default function MarketingHomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="flex flex-col min-h-screen bg-paper text-ink">
+      <div className="flex flex-col min-h-screen bg-paper text-ink selection:bg-pine selection:text-paper font-sans">
         {/* Sticky Navbar */}
         <Navbar />
 
         <main className="flex-1">
-          {/* Phase 1: Hero Section with Photo + Real JSX Floating Dashboard */}
+          {/* Phase 1: Hero Section */}
           <HeroSection />
 
-          {/* Phase 1: Trust Strip with Honest Product Metrics */}
+          {/* Phase 1: Trust Strip */}
           <TrustStrip />
 
-          {/* Features Section Anchor */}
-          <section id="features" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="space-y-4 max-w-2xl">
-              <span className="text-xs font-semibold text-pine uppercase tracking-wider">Features</span>
-              <h2 className="font-display text-3xl font-bold text-ink">
-                Har feature Pakistan ke educational landscape ke mutabiq.
+          {/* Phase 2: Bento Grid Features */}
+          <FeaturesBento />
+
+          {/* Phase 2: How It Works (3 Steps) */}
+          <HowItWorks />
+
+          {/* Phase 2: Photo-Led Alternating Story Sections */}
+          <PhotoStories />
+
+          {/* Pricing Anchor */}
+          <section id="pricing" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-[#E8E2D6]">
+            <div className="max-w-2xl mb-12">
+              <span className="text-xs font-semibold text-pine uppercase tracking-wider">Pricing</span>
+              <h2 className="font-display text-3xl font-bold text-ink mt-2">
+                Transparent pricing — no hidden fees
               </h2>
-              <p className="text-sm text-[#5A5852] leading-relaxed">
-                Attendance, fee challans, parent WhatsApp updates, aur board exams — sab kuch interconnected.
+              <p className="mt-2 text-sm text-[#55534D]">
+                Starter (PKR 2,500/mo), Growth (PKR 5,000/mo), and Pro (PKR 9,000/mo). Pay 10 months on annual billing and get 12 months.
               </p>
             </div>
           </section>
 
-          {/* How It Works Anchor */}
-          <section id="how-it-works" className="py-16 bg-[#F5F1E9] border-t border-[#E8E2D6]">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <span className="text-xs font-semibold text-pine uppercase tracking-wider">Workflow</span>
-              <h2 className="font-display text-2xl font-bold text-ink mt-2">
-                Teen asaan steps mein shuru karein
-              </h2>
-            </div>
-          </section>
-
-          {/* Pricing Anchor */}
-          <section id="pricing" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-[#E8E2D6]">
-            <span className="text-xs font-semibold text-pine uppercase tracking-wider">Pricing</span>
-            <h2 className="font-display text-2xl font-bold text-ink mt-2">
-              Transparent pricing — no hidden fees
-            </h2>
-          </section>
-
           {/* FAQ Anchor */}
-          <section id="faq" className="py-16 bg-[#F5F1E9] border-t border-[#E8E2D6]">
+          <section id="faq" className="py-20 bg-[#F5F1E9] border-t border-[#E8E2D6]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <span className="text-xs font-semibold text-pine uppercase tracking-wider">FAQ</span>
-              <h2 className="font-display text-2xl font-bold text-ink mt-2">
+              <h2 className="font-display text-3xl font-bold text-ink mt-2">
                 Aksar poochay janay walay sawalat
               </h2>
             </div>
@@ -124,7 +118,7 @@ export default function MarketingHomePage() {
               <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink">
                 Apni academy ko digital karein — aaj hi
               </h2>
-              <p className="text-base text-[#5A5852] max-w-xl mx-auto">
+              <p className="text-base text-[#5A5852] max-w-xl mx-auto font-sans">
                 No credit card required. Setup takes under two minutes. 14 days full access with all 288 Punjab pairing schemes and automated fee collection.
               </p>
               <div className="pt-2">
@@ -139,10 +133,10 @@ export default function MarketingHomePage() {
           </section>
 
           {/* Contact Anchor */}
-          <section id="contact" className="py-16 bg-[#F5F1E9] border-t border-[#E8E2D6]">
+          <section id="contact" className="py-20 bg-[#F5F1E9] border-t border-[#E8E2D6]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <span className="text-xs font-semibold text-pine uppercase tracking-wider">Contact</span>
-              <h2 className="font-display text-2xl font-bold text-ink mt-2">
+              <h2 className="font-display text-3xl font-bold text-ink mt-2">
                 Hamaray sath rabta karein
               </h2>
             </div>
@@ -155,6 +149,7 @@ export default function MarketingHomePage() {
             <p>© {new Date().getFullYear()} AcademyHub. Built for education in Pakistan.</p>
             <div className="flex gap-6">
               <a href="#features" className="hover:text-ink">Features</a>
+              <a href="#how-it-works" className="hover:text-ink">How it works</a>
               <a href="#pricing" className="hover:text-ink">Pricing</a>
               <a href="#faq" className="hover:text-ink">FAQ</a>
               <a href="#contact" className="hover:text-ink">Contact</a>
