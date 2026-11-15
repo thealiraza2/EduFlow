@@ -131,7 +131,7 @@ describe("Phase 14: WhatsApp Bot Inbound Keyword Routing & Parent Isolation", ()
 
       expect(result.matched).toBe(true);
       expect(result.intent).toBe("HELP");
-      expect(result.replyMessage).toContain("AcademyHub WhatsApp Service");
+      expect(result.replyMessage).toContain("EduFlow WhatsApp Service");
       expect(result.replyMessage).toContain("fee");
       expect(result.replyMessage).toContain("attendance");
     }

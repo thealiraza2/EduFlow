@@ -88,7 +88,7 @@ export default async function StudentQRScanPage({ searchParams }: Props) {
           </Link>
           <div className="text-xs font-medium text-slate-500 flex items-center">
             <QrCode className="h-3.5 w-3.5 mr-1 text-indigo-600" />
-            AcademyHub QR Attendance
+            EduFlow QR Attendance
           </div>
         </div>
 

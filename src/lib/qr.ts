@@ -1,5 +1,5 @@
 /**
- * AcademyHub - QR Code Attendance Engine (Phase 14)
+ * EduFlow - QR Code Attendance Engine (Phase 14)
  *
  * Implements time-limited, cryptographically signed QR codes:
  * - Signed HMAC-SHA256 token valid for 10 minutes.

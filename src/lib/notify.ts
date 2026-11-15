@@ -1,5 +1,5 @@
 /**
- * AcademyHub - Notification Service
+ * EduFlow - Notification Service
  * Provider-agnostic interface for SMS/WhatsApp notifications.
  *
  * NOTE (Pakistan SMS):
@@ -234,10 +234,10 @@ export const notifier = getNotificationService();
 
 /**
  * Builds the standard Pakistan academy absence message
- * "Assalam-o-Alaikum, [Student] aaj [Batch] mein absent tha. — AcademyHub"
+ * "Assalam-o-Alaikum, [Student] aaj [Batch] mein absent tha. — EduFlow"
  */
 export function buildAbsenceMessage(studentName: string, batchName: string): string {
-  return `Assalam-o-Alaikum, ${studentName} aaj ${batchName} mein absent tha. — AcademyHub`;
+  return `Assalam-o-Alaikum, ${studentName} aaj ${batchName} mein absent tha. — EduFlow`;
 }
 
 /**

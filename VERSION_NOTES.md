@@ -27,6 +27,6 @@ Running `npm audit` flags 13 dependency advisories originating in pinned package
 1. **Explicit Pinned Stack Mandate**: The project constraints explicitly mandate pinned versions (`next@14.2.5`, `zod@3.23.8`, `next-auth@5.0.0-beta.20`).
 2. **Breaking Changes**: Running `npm audit fix --force` attempts to upgrade to `zod@4.x` (which introduces breaking API changes throughout the codebase) and unpins Next.js and Auth.js.
 3. **Compensating Controls**:
-   - AcademyHub is an invite-only internal academy management system (no public registration).
+   - EduFlow is an invite-only internal school/academy management system (no public registration).
    - Strict server-side Zod input validation guards all endpoints against oversized payloads.
    - All server actions and API routes enforce session authentication and role/tenant authorization checks.

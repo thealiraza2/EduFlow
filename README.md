@@ -1,6 +1,6 @@
-# AcademyHub — Academy Management System
+# EduFlow — School Management System
 
-A production-grade management system engineered specifically for tuition academies, coaching centres, and evening schools in Pakistan.
+A production-grade management system engineered specifically for schools, tuition academies, coaching centres, and educational networks in Pakistan.
 
 One academy runs on one installation (or multi-tenant SaaS across many branches). The academy owner (admin) oversees students, teachers, classes, attendance, fees, test results, and salaries. Teachers mark attendance in under a minute, manage board pairings, and submit marks. Parents access attendance percentages, fee dues, challan PDFs, and official result cards via an isolated parent portal. Students take timed online tests with automated grading and view leaderboards.
 
@@ -44,11 +44,11 @@ The database seed (`npm run seed`) provisions local demonstration accounts for t
 
 | Role | Username / Email | Primary Access |
 | :--- | :--- | :--- |
-| **Super Admin** (Platform Owner) | `superadmin@academyhub.test` | `/superadmin` (Cross-tenant SaaS oversight & billing) |
-| **Admin** (Academy Owner) | `admin@academyhub.test` | `/admin` (Full administrative control) |
-| **Teacher** (Faculty Lead) | `usman.teacher@academyhub.test` | `/teacher` (Attendance, marks & `/teacher/marking`) |
-| **Parent** (Guardian) | `parent@academyhub.test` | `/parent` (Child attendance, dues, results & online payments) |
-| **Student** (Enrolled Pupil) | `student@academyhub.test` | `/student` (Take timed tests, live score & leaderboard) |
+| **Super Admin** (Platform Owner) | `superadmin@eduflow.test` | `/superadmin` (Cross-tenant SaaS oversight & billing) |
+| **Admin** (School/Academy Owner) | `admin@eduflow.test` | `/admin` (Full administrative control) |
+| **Teacher** (Faculty Lead) | `usman.teacher@eduflow.test` | `/teacher` (Attendance, marks & `/teacher/marking`) |
+| **Parent** (Guardian) | `parent@eduflow.test` | `/parent` (Child attendance, dues, results & online payments) |
+| **Student** (Enrolled Pupil) | `student@eduflow.test` | `/student` (Take timed tests, live score & leaderboard) |
 
 > [!WARNING]
 > **Password Policy & Production Notice**:
@@ -58,7 +58,7 @@ The database seed (`npm run seed`) provisions local demonstration accounts for t
 
 ## Quickstart & Local Run (Clean Clone Instructions)
 
-Follow these exact steps to run AcademyHub locally from a fresh checkout:
+Follow these exact steps to run EduFlow locally from a fresh checkout:
 
 ### 1. Prerequisites
 - **Node.js**: `v20.x` or higher
@@ -74,7 +74,7 @@ cp .env.example .env
 
 Ensure `.env` contains your PostgreSQL credentials:
 ```env
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/academyhub?schema=public"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/eduflow?schema=public"
 AUTH_SECRET="change-me-to-a-secure-random-string-min-32-chars"
 NEXTAUTH_SECRET="change-me-to-a-secure-random-string-min-32-chars"
 NEXTAUTH_URL="http://localhost:3000"
@@ -122,7 +122,7 @@ curl http://localhost:3000/api/health
 
 ## Test Suites & Quality Assurance
 
-AcademyHub includes comprehensive automated testing covering all core business logic and critical user journeys.
+EduFlow includes comprehensive automated testing covering all core business logic and critical user journeys.
 
 ### 1. Unit Tests (Vitest)
 Runs 112 tests across 13 test suites verifying mathematical invariants, multi-tenant isolation, cryptographic payment webhooks, board pairing schemes, and the online test engine:
@@ -162,11 +162,11 @@ npm run test:e2e
 
 ## Architecture & Multi-Tenancy
 
-AcademyHub implements a strict multi-tenant architecture designed to support both standalone single-academy deployments and multi-branch SaaS platforms:
+EduFlow implements a strict multi-tenant architecture designed to support both standalone single-academy deployments and multi-branch SaaS platforms:
 
 ```text
 +---------------------------------------------------------------------------------------+
-|                                    AcademyHub Architecture                             |
+|                                      EduFlow Architecture                             |
 +---------------------------------------------------------------------------------------+
 |                                                                                       |
 |  [Client Browser / Mobile PWA]                                                        |
@@ -250,7 +250,7 @@ AcademyHub implements a strict multi-tenant architecture designed to support bot
 
 > [!IMPORTANT]
 > **Production Readiness Statement**:
-> AcademyHub has a **production-ready software architecture** with strict multi-tenant isolation, cryptographic webhook verification, deterministic risk scoring, and zero-defect test suites.
+> EduFlow has a **production-ready software architecture** with strict multi-tenant isolation, cryptographic webhook verification, deterministic risk scoring, and zero-defect test suites.
 > However, **live commercial deployment requires external commercial business accounts** (JazzCash corporate merchant account, Meta WhatsApp Business verification, and local telco SMS aggregator contracts). Do not claim "production-ready for live commercial transactions" without these external contracts in place.
 
 ### 1. Mobile Wallet Payments (Sandbox vs. Live Mode)
@@ -293,11 +293,11 @@ AcademyHub implements a strict multi-tenant architecture designed to support bot
 
 ## Production Deployment (Vercel + Supabase Free Tiers)
 
-AcademyHub is engineered to run seamlessly on the free tiers of **Supabase** (PostgreSQL) and **Vercel** (Next.js hosting).
+EduFlow is engineered to run seamlessly on the free tiers of **Supabase** (PostgreSQL) and **Vercel** (Next.js hosting).
 
 ### Step 1: Provision Supabase PostgreSQL Database
 1. Sign in to [Supabase](https://supabase.com) and click **New Project**.
-2. Set the project name (e.g., `academyhub-prod`) and a secure database password.
+2. Set the project name (e.g., `eduflow-prod`) and a secure database password.
 3. Choose the closest region (e.g., Singapore `ap-southeast-1` or Frankfurt `eu-central-1`).
 4. Once provisioned, navigate to **Project Settings** $\rightarrow$ **Database**.
 5. Under **Connection String**, select **URI**:
@@ -329,7 +329,7 @@ npm run seed:schemes
 ### Step 3: Deploy to Vercel
 1. Push your repository to GitHub or GitLab.
 2. Sign in to [Vercel](https://vercel.com) and click **Add New Project**.
-3. Import your `AcademyHub` repository.
+3. Import your `EduFlow` repository.
 4. Set **Framework Preset** to **Next.js**.
 5. The `package.json` includes `"postinstall": "prisma generate"`, ensuring the Prisma Client compiles during the Vercel build phase.
 6. Configure the **Environment Variables** in Vercel Project Settings:
@@ -366,13 +366,13 @@ To verify the platform independently from a fresh clone:
 
 ```bash
 # 1. Clone repository into a fresh directory
-git clone <repo-url> academyhub-clean
-cd academyhub-clean
+git clone <repo-url> eduflow-clean
+cd eduflow-clean
 
 # 2. Configure environment
 cp .env.example .env
 # Edit .env with your local PostgreSQL 16 credentials:
-# DATABASE_URL="postgresql://postgres:postgres@localhost:5432/academyhub_fresh?schema=public"
+# DATABASE_URL="postgresql://postgres:postgres@localhost:5432/eduflow_fresh?schema=public"
 
 # 3. Install pinned dependencies (triggers postinstall prisma generate)
 npm install
@@ -401,7 +401,7 @@ npm run dev
 
 | Variable | Description | Example / Default |
 | :--- | :--- | :--- |
-| `DATABASE_URL` | PostgreSQL connection URL | `postgresql://postgres:postgres@localhost:5432/academyhub?schema=public` |
+| `DATABASE_URL` | PostgreSQL connection URL | `postgresql://postgres:postgres@localhost:5432/eduflow?schema=public` |
 | `AUTH_SECRET` | Session encryption & JWT secret | 32+ character random hex or base64 string |
 | `NEXTAUTH_SECRET` | NextAuth secret (same as `AUTH_SECRET`) | 32+ character random hex or base64 string |
 | `NEXTAUTH_URL` | Canonical URL of the application | `http://localhost:3000` |

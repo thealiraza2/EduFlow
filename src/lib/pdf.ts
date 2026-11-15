@@ -1,5 +1,5 @@
 /**
- * AcademyHub - PDF Generation Module
+ * EduFlow - PDF Generation Module
  * Generates official 3-copy Fee Challans and Student Result Cards using pdf-lib.
  *
  * All amounts are formatted from integer minor units (paisa).
@@ -36,7 +36,7 @@ export interface ChallanData {
 
 const DEFAULT_BANK_DETAILS = {
   bankName: "Habib Bank Limited (HBL)",
-  accountTitle: "AcademyHub Education Services",
+  accountTitle: "EduFlow Education Services",
   accountNumber: "2345-78901234-03",
   jazzCashAccount: "0300-1234567 (Till: 98765)",
   easyPaisaAccount: "0300-1234567",

@@ -1,5 +1,5 @@
 /**
- * AcademyHub - Payment Gateway Interface & Reconciliation Engine
+ * EduFlow - Payment Gateway Interface & Reconciliation Engine
  *
  * HONESTY NOTE:
  * Sandbox is fully functional end-to-end with cryptographic HMAC-SHA256 signature

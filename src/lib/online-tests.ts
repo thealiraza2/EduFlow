@@ -1,5 +1,5 @@
 /**
- * AcademyHub - Online Test Engine & Auto-Grading Module (Phase 12)
+ * EduFlow - Online Test Engine & Auto-Grading Module (Phase 12)
  *
  * Requirements:
  * - Server-side timer calculation (never trust client clock)

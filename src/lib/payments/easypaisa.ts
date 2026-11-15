@@ -1,5 +1,5 @@
 /**
- * AcademyHub - Easypaisa Payment Gateway Driver
+ * EduFlow - Easypaisa Payment Gateway Driver
  *
  * HONESTY NOTE:
  * Sandbox is 100% functional end-to-end for testing and integration.

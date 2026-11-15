@@ -1,5 +1,5 @@
 /**
- * AcademyHub - Role & Permissions Checking Module
+ * EduFlow - Role & Permissions Checking Module
  * Server-side authorization rules and resource ownership verification.
  */
 

@@ -1,4 +1,4 @@
-// AcademyHub - Core Database Schema
+// EduFlow - Core Database Schema
 // PostgreSQL 16 via Prisma ORM
 
 generator client {

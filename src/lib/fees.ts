@@ -1,5 +1,5 @@
 /**
- * AcademyHub - Fee Calculation Module
+ * EduFlow - Fee Calculation Module
  * Single source of truth for fee computation, fine calculations, invoice generation,
  * status derivation, and reminder notifications.
  *
@@ -225,5 +225,5 @@ export function buildFeeReminderMessage(
   balanceMinor: Paisa
 ): string {
   const formattedBalance = formatPKR(balanceMinor);
-  return `Assalam-o-Alaikum, ${studentName} ki ${month} ki fee ${formattedBalance} baqi hai. Baraye meherbani jald ada karein. — AcademyHub`;
+  return `Assalam-o-Alaikum, ${studentName} ki ${month} ki fee ${formattedBalance} baqi hai. Baraye meherbani jald ada karein. — EduFlow`;
 }

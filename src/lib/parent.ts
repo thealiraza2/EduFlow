@@ -1,5 +1,5 @@
 /**
- * AcademyHub - Parent Portal Service Layer
+ * EduFlow - Parent Portal Service Layer
  * INVARIANT 5: Strict Parent & Child Data Isolation.
  * Every query filters by guardianUserId. Unauthorized access returns 403.
  */

@@ -1,5 +1,5 @@
 /**
- * AcademyHub - AI LLM Provider Interface & Test Paper Generator (Phase 13)
+ * EduFlow - AI LLM Provider Interface & Test Paper Generator (Phase 13)
  *
  * INVARIANT 12: Deterministic code does the deciding; LLM only does the wording.
  * - Credentials from environment ONLY (LLM_API_KEY, LLM_MODEL, LLM_ENDPOINT).

@@ -35,7 +35,7 @@ export function AdminNav({ academySlug, role }: AdminNavProps) {
           <div className="flex items-center space-x-8">
             <div className="flex items-center space-x-2">
               <Link href="/admin" className="text-xl font-bold tracking-tight text-slate-900">
-                AcademyHub
+                EduFlow
               </Link>
               {academySlug && (
                 <span className="hidden sm:inline-block px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">

@@ -19,7 +19,7 @@ export type MarkSalaryInput = z.infer<typeof markSalarySchema>;
 
 /**
  * Marks teacher salary as PAID or UNPAID for a given month.
- * NOTE: This records salary status within AcademyHub. Actual bank transfer or cash
+ * NOTE: This records salary status within EduFlow. Actual bank transfer or cash
  * disbursement takes place outside the system.
  */
 export async function markTeacherSalaryAction(input: MarkSalaryInput) {
@@ -105,7 +105,7 @@ export async function createAnnouncementAction(input: CreateAnnouncementInput) {
     template: "ANNOUNCEMENT",
     trigger: NotificationTrigger.CUSTOM,
     referenceId: `announcement_${announcement.id}`,
-    message: `[Announcement - ${title}] ${content} — AcademyHub`,
+    message: `[Announcement - ${title}] ${content} — EduFlow`,
     academyId: tenant.academyId,
   });
 

@@ -1,5 +1,5 @@
 /**
- * AcademyHub - CSV Reports Generation Module
+ * EduFlow - CSV Reports Generation Module
  * Generates exportable CSV files for administrative oversight:
  * 1. Monthly fee collection report
  * 2. Attendance report per batch

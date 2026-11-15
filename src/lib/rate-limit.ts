@@ -1,5 +1,5 @@
 /**
- * AcademyHub - Login Rate Limiting & Account Lockout (Phase 15 Security Hardening & Patch 2)
+ * EduFlow - Login Rate Limiting & Account Lockout (Phase 15 Security Hardening & Patch 2)
  *
  * Implements dual-key brute-force & credential-stuffing protection:
  * - 5 failed attempts locks the target account (email) OR client IP for 15 minutes.

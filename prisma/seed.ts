@@ -28,7 +28,7 @@ function resolveSeedPassword(envVar: string, roleLabel: string): string {
 }
 
 async function main() {
-  console.log("Starting AcademyHub Multi-Tenant Seed...");
+  console.log("Starting EduFlow Multi-Tenant Seed...");
 
   // In production, NEVER seed demo accounts or test users
   if (process.env.NODE_ENV === "production") {
@@ -69,7 +69,7 @@ async function main() {
   const seedAcademy = await prisma.academy.upsert({
     where: { id: "seed-academy-id" },
     update: {
-      name: "AcademyHub Main Campus",
+      name: "EduFlow Main Campus",
       slug: "main",
       subdomain: "main",
       plan: AcademyPlan.PRO,
@@ -77,7 +77,7 @@ async function main() {
     },
     create: {
       id: "seed-academy-id",
-      name: "AcademyHub Main Campus",
+      name: "EduFlow Main Campus",
       slug: "main",
       subdomain: "main",
       plan: AcademyPlan.PRO,
@@ -383,6 +383,34 @@ async function main() {
     data: { userId: studentUser.id },
   });
   console.log(`✓ Seeded student login: ${studentUser.email} (${studentPasswordRaw})`);
+
+  // 11b. Also provision @eduflow.test brand aliases for modern logins
+  await prisma.user.upsert({
+    where: { email: "superadmin@eduflow.test" },
+    update: { passwordHash: superAdminPassword, role: Role.SUPER_ADMIN, name: "Platform Owner", mustChangePassword: true, academyId: null },
+    create: { email: "superadmin@eduflow.test", passwordHash: superAdminPassword, role: Role.SUPER_ADMIN, name: "Platform Owner", phone: "03000000000", mustChangePassword: true, academyId: null },
+  });
+  await prisma.user.upsert({
+    where: { email: "admin@eduflow.test" },
+    update: { passwordHash: adminPasswordHash, role: Role.ADMIN, name: "Academy Director", mustChangePassword: true, academyId: seedAcademy.id },
+    create: { email: "admin@eduflow.test", passwordHash: adminPasswordHash, role: Role.ADMIN, name: "Academy Director", phone: "03001234567", mustChangePassword: true, academyId: seedAcademy.id },
+  });
+  await prisma.user.upsert({
+    where: { email: "usman.teacher@eduflow.test" },
+    update: { passwordHash: teacher1Hash, role: Role.TEACHER, name: "Sir Usman Farooq", mustChangePassword: true, academyId: seedAcademy.id },
+    create: { email: "usman.teacher@eduflow.test", passwordHash: teacher1Hash, role: Role.TEACHER, name: "Sir Usman Farooq", phone: "03339998877", mustChangePassword: true, academyId: seedAcademy.id },
+  });
+  await prisma.user.upsert({
+    where: { email: "parent@eduflow.test" },
+    update: { passwordHash: parentHash, role: Role.PARENT, name: "Muhammad Tariq", mustChangePassword: true, academyId: seedAcademy.id },
+    create: { email: "parent@eduflow.test", passwordHash: parentHash, role: Role.PARENT, name: "Muhammad Tariq", phone: "03009876543", mustChangePassword: true, academyId: seedAcademy.id },
+  });
+  await prisma.user.upsert({
+    where: { email: "student@eduflow.test" },
+    update: { passwordHash: studentHash, role: Role.STUDENT, name: "Hamza Tariq", mustChangePassword: true, academyId: seedAcademy.id },
+    create: { email: "student@eduflow.test", passwordHash: studentHash, role: Role.STUDENT, name: "Hamza Tariq", phone: "03009876543", mustChangePassword: true, academyId: seedAcademy.id },
+  });
+  console.log("✓ Seeded EduFlow brand login aliases (@eduflow.test)");
 
   // 12. Additional Students for Leaderboard
   const student2 = await prisma.student.upsert({

@@ -82,7 +82,7 @@ export function AddTeacherModal() {
               <label className="text-xs font-semibold text-slate-700 uppercase">
                 Login Email *
               </label>
-              <Input name="email" type="email" required placeholder="asad@academyhub.test" />
+              <Input name="email" type="email" required placeholder="asad@eduflow.test" />
             </div>
             <div className="space-y-2">
               <label className="text-xs font-semibold text-slate-700 uppercase">

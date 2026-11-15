@@ -1,5 +1,5 @@
 /**
- * AcademyHub - Admission Number Generator
+ * EduFlow - Admission Number Generator
  * INVARIANT: Sequential, year-scoped, never reused within an academy (e.g. AH-2026-0001)
  */
 

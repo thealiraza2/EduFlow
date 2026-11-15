@@ -62,7 +62,7 @@ export async function GET(
 
     const pdfBytes = await generateFeeChallanPdf({
       challanNo: `CH-${invoice.month.replace("-", "")}-${invoice.student.admissionNo.replace(/[^a-zA-Z0-9]/g, "")}`,
-      academyName: invoice.academy?.name || "AcademyHub Coaching Centre",
+      academyName: invoice.academy?.name || "EduFlow Coaching Centre",
       studentName: invoice.student.name,
       admissionNo: invoice.student.admissionNo,
       className: invoice.batch.class.name,

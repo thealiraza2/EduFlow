@@ -79,7 +79,7 @@ describe("Phase 4: Attendance & Parent Absence Notifications", () => {
   it("formats the absence message in standard Pakistani academy format", () => {
     const msg = buildAbsenceMessage("Zaid Khan", "9th-Z Test Morning Batch");
     expect(msg).toBe(
-      "Assalam-o-Alaikum, Zaid Khan aaj 9th-Z Test Morning Batch mein absent tha. — AcademyHub"
+      "Assalam-o-Alaikum, Zaid Khan aaj 9th-Z Test Morning Batch mein absent tha. — EduFlow"
     );
   });
 
@@ -236,7 +236,7 @@ describe("Phase 4: Attendance & Parent Absence Notifications", () => {
       expect(logs[0].recipientPhone).toBe("03215554433");
       expect(logs[0].recipient).toBe("03215554433");
       expect(logs[0].message).toBe(
-        "Assalam-o-Alaikum, Bilal Ahmed aaj 10th Science mein absent tha. — AcademyHub"
+        "Assalam-o-Alaikum, Bilal Ahmed aaj 10th Science mein absent tha. — EduFlow"
       );
     } finally {
       await db.notificationLog.deleteMany({ where: { studentId: freshStudent.id } });

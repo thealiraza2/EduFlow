@@ -1,5 +1,5 @@
 /**
- * AcademyHub - Money Math Module
+ * EduFlow - Money Math Module
  * INVARIANT: Money is ALWAYS integer minor units (paisa: 1 PKR = 100 paisas).
  * No floats anywhere in financial storage or arithmetic.
  * All financial math must live in this file.

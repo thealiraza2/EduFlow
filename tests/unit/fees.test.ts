@@ -256,7 +256,7 @@ describe("Phase 5: Fees, Invoices, Append-Only Payments & Status Derivation", ()
   it("builds fee reminder message accurately in Pakistani format", () => {
     const msg = buildFeeReminderMessage("Usman Tariq", "2026-11", 300000);
     expect(msg).toBe(
-      "Assalam-o-Alaikum, Usman Tariq ki 2026-11 ki fee PKR 3,000 baqi hai. Baraye meherbani jald ada karein. — AcademyHub"
+      "Assalam-o-Alaikum, Usman Tariq ki 2026-11 ki fee PKR 3,000 baqi hai. Baraye meherbani jald ada karein. — EduFlow"
     );
   });
 });

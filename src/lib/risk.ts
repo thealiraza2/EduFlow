@@ -1,5 +1,5 @@
 /**
- * AcademyHub - Deterministic Student Risk & Weak Subject Analysis (Phase 13)
+ * EduFlow - Deterministic Student Risk & Weak Subject Analysis (Phase 13)
  *
  * INVARIANT 12: Deterministic code does all the deciding; the LLM only does the wording.
  * - Risk score is mathematically computed from real database facts (attendance, fee dues, marks trend).

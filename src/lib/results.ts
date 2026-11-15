@@ -1,5 +1,5 @@
 /**
- * AcademyHub - Result Calculation & Analytics Engine
+ * EduFlow - Result Calculation & Analytics Engine
  * Single source of truth for grades, percentages, class positions (with ties),
  * and batch analytics.
  */

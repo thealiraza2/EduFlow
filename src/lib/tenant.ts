@@ -1,5 +1,5 @@
 /**
- * AcademyHub - Multi-Tenancy & Tenant Resolution Module
+ * EduFlow - Multi-Tenancy & Tenant Resolution Module
  * Enforces strict isolation across academies.
  *
  * INVARIANT: Every tenant data query must include where: { academyId }.
@@ -123,7 +123,7 @@ export function scopeWhere<T extends Record<string, any>>(
 }
 
 /**
- * Resolves tenant slug from Host header (e.g. "alpha.academyhub.app" -> "alpha")
+ * Resolves tenant slug from Host header (e.g. "alpha.eduflow.app" -> "alpha")
  */
 export function extractSubdomain(host: string | null): string | null {
   if (!host) return null;
@@ -133,6 +133,7 @@ export function extractSubdomain(host: string | null): string | null {
   if (
     cleanHost === "localhost" ||
     cleanHost === "127.0.0.1" ||
+    cleanHost === "eduflow.app" ||
     cleanHost === "academyhub.app" ||
     cleanHost.startsWith("www.") ||
     cleanHost.startsWith("app.")
@@ -140,7 +141,7 @@ export function extractSubdomain(host: string | null): string | null {
     return null;
   }
 
-  // Format: <subdomain>.academyhub.app or <subdomain>.localhost
+  // Format: <subdomain>.eduflow.app or <subdomain>.localhost
   const parts = cleanHost.split(".");
   if (parts.length >= 2) {
     return parts[0];

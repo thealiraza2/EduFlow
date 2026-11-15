@@ -79,7 +79,7 @@ export async function GET(
     const testDateStr = test.date.toISOString().split("T")[0];
 
     const pdfBytes = await generateResultCardPdf({
-      academyName: test.academy?.name || "AcademyHub Coaching Centre",
+      academyName: test.academy?.name || "EduFlow Coaching Centre",
       studentName: targetResult.student.name,
       admissionNo: targetResult.student.admissionNo,
       className: test.batch.class.name,

@@ -243,7 +243,7 @@ export function SuperAdminManager({ initialAcademies, stats }: Props) {
                         <td className="py-3 px-4">
                           <div className="font-bold text-slate-900 text-sm">{academy.name}</div>
                           <div className="font-mono text-[11px] text-blue-600 mt-0.5">
-                            {academy.slug}.academyhub.app
+                            {academy.slug}.eduflow.app
                           </div>
                         </td>
 

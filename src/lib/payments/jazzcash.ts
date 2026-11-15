@@ -1,5 +1,5 @@
 /**
- * AcademyHub - JazzCash Payment Gateway Driver
+ * EduFlow - JazzCash Payment Gateway Driver
  *
  * HONESTY NOTE:
  * Sandbox is 100% functional end-to-end for testing and integration.

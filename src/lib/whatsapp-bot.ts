@@ -1,5 +1,5 @@
 /**
- * AcademyHub - WhatsApp Business Bot Services (Phase 14)
+ * EduFlow - WhatsApp Business Bot Services (Phase 14)
  *
  * Implements parent inbound query processing:
  * - Parent identified strictly by guardian phone number (Isolation Invariant)
@@ -141,7 +141,7 @@ export async function processInboundWhatsAppMessage(
   // 2. Unknown Sender Guard (Isolation Invariant)
   if (students.length === 0) {
     const replyMessage =
-      "Assalam-o-Alaikum! Aap ka phone number AcademyHub system mein kisi student ke sath register nahi hai. Barah-e-karam academy administration se rabta karein. — AcademyHub";
+      "Assalam-o-Alaikum! Aap ka phone number EduFlow system mein kisi student ke sath register nahi hai. Barah-e-karam academy administration se rabta karein. — EduFlow";
 
     const logRes = await notifier.send({
       recipientPhone: from,
@@ -176,7 +176,7 @@ export async function processInboundWhatsAppMessage(
     lowerQuery.includes("paisa")
   ) {
     intent = "FEE";
-    const parts: string[] = [`Assalam-o-Alaikum ${guardianName},\n*AcademyHub Fee Status Summary:*`];
+    const parts: string[] = [`Assalam-o-Alaikum ${guardianName},\n*EduFlow Fee Status Summary:*`];
 
     for (const s of students) {
       const unpaidInvoices = s.invoices.filter(
@@ -202,7 +202,7 @@ export async function processInboundWhatsAppMessage(
     }
 
     parts.push("\nOnline payment ke liye student ya parent portal check karein.");
-    parts.push("— AcademyHub");
+    parts.push("— EduFlow");
     replyMessage = parts.join("\n");
   } else if (
     lowerQuery.includes("attendance") ||
@@ -212,7 +212,7 @@ export async function processInboundWhatsAppMessage(
     lowerQuery.includes("present")
   ) {
     intent = "ATTENDANCE";
-    const parts: string[] = [`Assalam-o-Alaikum ${guardianName},\n*AcademyHub Attendance Report:*`];
+    const parts: string[] = [`Assalam-o-Alaikum ${guardianName},\n*EduFlow Attendance Report:*`];
 
     for (const s of students) {
       const allAtt = s.enrollments.flatMap((e) => e.attendance);
@@ -229,7 +229,7 @@ export async function processInboundWhatsAppMessage(
     }
 
     parts.push("\nRozana hazri alerts SMS aur portal par bhi bhej di jati hain.");
-    parts.push("— AcademyHub");
+    parts.push("— EduFlow");
     replyMessage = parts.join("\n");
   } else if (
     lowerQuery.includes("result") ||
@@ -240,7 +240,7 @@ export async function processInboundWhatsAppMessage(
     lowerQuery.includes("test")
   ) {
     intent = "RESULT";
-    const parts: string[] = [`Assalam-o-Alaikum ${guardianName},\n*AcademyHub Academic Results:*`];
+    const parts: string[] = [`Assalam-o-Alaikum ${guardianName},\n*EduFlow Academic Results:*`];
 
     for (const s of students) {
       const latestResult = s.testResults[0];
@@ -265,13 +265,13 @@ export async function processInboundWhatsAppMessage(
     }
 
     parts.push("\nMukammal result card PDF parent portal se download kar sakte hain.");
-    parts.push("— AcademyHub");
+    parts.push("— EduFlow");
     replyMessage = parts.join("\n");
   } else {
     // Default menu / help
     intent = "HELP";
     replyMessage = `Assalam-o-Alaikum ${guardianName}!
-Welcome to AcademyHub WhatsApp Service.
+Welcome to EduFlow WhatsApp Service.
 
 Aap darj zail keywords likh kar bhej sakte hain:
 1️⃣ *'fee'* — Fees dues aur payment status
@@ -280,7 +280,7 @@ Aap darj zail keywords likh kar bhej sakte hain:
 4️⃣ *'help'* — Yeh menu dubara dekhne ke liye
 
 (Aap Roman Urdu ya English mein message kar sakte hain)
-— AcademyHub`;
+— EduFlow`;
   }
 
   // 4. Send Reply via Notification Service

@@ -105,7 +105,7 @@ export function TeacherSalariesManager({ teachers, initialMonth }: Props) {
           <strong className="font-semibold block text-sm mb-0.5">
             Operational Accounting Notice
           </strong>
-          Marking a salary as <strong>PAID</strong> records the disbursement inside AcademyHub
+          Marking a salary as <strong>PAID</strong> records the disbursement inside EduFlow
           for internal record-keeping and audit reporting. Actual bank wire transfers, pay orders, or
           cash disbursements happen outside the software system.
         </div>
