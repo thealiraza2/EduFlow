@@ -33,6 +33,8 @@ enum AttemptStatus {
 
 enum AcademyPlan {
   FREE
+  STARTER
+  GROWTH
   PRO
 }
 
