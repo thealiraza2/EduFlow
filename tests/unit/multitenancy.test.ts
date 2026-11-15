@@ -128,10 +128,10 @@ describe("Phase 10: Multi-branch SaaS & Tenant Isolation", () => {
   });
 
   describe("2. Sequence & Composite Uniqueness per Tenant", () => {
-    it("allows both Academy A and Academy B to have the exact same admission number (e.g. AH-2026-0001)", async () => {
+    it("allows both Academy A and Academy B to have the exact same admission number (e.g. EF-2026-0001)", async () => {
       // Generate admission number for Academy A
       const admNoA = await generateNextAdmissionNumber(db as any, 2026, academyAId);
-      expect(admNoA).toBe("AH-2026-0001");
+      expect(admNoA).toBe("EF-2026-0001");
 
       const studentA = await db.student.create({
         data: {
@@ -146,7 +146,7 @@ describe("Phase 10: Multi-branch SaaS & Tenant Isolation", () => {
 
       // Generate admission number for Academy B
       const admNoB = await generateNextAdmissionNumber(db as any, 2026, academyBId);
-      expect(admNoB).toBe("AH-2026-0001"); // Scoped sequence starts at 1 for Academy B!
+      expect(admNoB).toBe("EF-2026-0001"); // Scoped sequence starts at 1 for Academy B!
 
       const studentB = await db.student.create({
         data: {
@@ -168,7 +168,7 @@ describe("Phase 10: Multi-branch SaaS & Tenant Isolation", () => {
         db.student.create({
           data: {
             academyId: academyAId,
-            admissionNo: "AH-2026-0001",
+            admissionNo: "EF-2026-0001",
             name: "Collision Student",
             guardianName: "Parent Collision",
             guardianPhone: "03000000000",

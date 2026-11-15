@@ -90,7 +90,7 @@ async function main() {
   // 2. Platform SUPER_ADMIN Account (No specific academy)
   const superAdminPassword = await bcrypt.hash(superAdminPasswordRaw, 10);
   const superAdmin = await prisma.user.upsert({
-    where: { email: "superadmin@academyhub.test" },
+    where: { email: "superadmin@eduflow.test" },
     update: {
       passwordHash: superAdminPassword,
       role: Role.SUPER_ADMIN,
@@ -99,7 +99,7 @@ async function main() {
       academyId: null,
     },
     create: {
-      email: "superadmin@academyhub.test",
+      email: "superadmin@eduflow.test",
       passwordHash: superAdminPassword,
       role: Role.SUPER_ADMIN,
       name: "Platform Owner",
@@ -113,7 +113,7 @@ async function main() {
   // 3. Tenant ADMIN Account (Academy Director)
   const adminPasswordHash = await bcrypt.hash(adminPasswordRaw, 10);
   const admin = await prisma.user.upsert({
-    where: { email: "admin@academyhub.test" },
+    where: { email: "admin@eduflow.test" },
     update: {
       passwordHash: adminPasswordHash,
       role: Role.ADMIN,
@@ -122,7 +122,7 @@ async function main() {
       academyId: seedAcademy.id,
     },
     create: {
-      email: "admin@academyhub.test",
+      email: "admin@eduflow.test",
       passwordHash: adminPasswordHash,
       role: Role.ADMIN,
       name: "Academy Director",
@@ -136,7 +136,7 @@ async function main() {
   // 4. Teachers
   const teacher1Hash = await bcrypt.hash(teacherPasswordRaw, 10);
   const teacherUser1 = await prisma.user.upsert({
-    where: { email: "usman.teacher@academyhub.test" },
+    where: { email: "usman.teacher@eduflow.test" },
     update: {
       passwordHash: teacher1Hash,
       role: Role.TEACHER,
@@ -145,7 +145,7 @@ async function main() {
       academyId: seedAcademy.id,
     },
     create: {
-      email: "usman.teacher@academyhub.test",
+      email: "usman.teacher@eduflow.test",
       passwordHash: teacher1Hash,
       role: Role.TEACHER,
       name: "Sir Usman Farooq",
@@ -173,7 +173,7 @@ async function main() {
 
   const teacher2Hash = await bcrypt.hash(teacherPasswordRaw, 10);
   const teacherUser2 = await prisma.user.upsert({
-    where: { email: "fatima.teacher@academyhub.test" },
+    where: { email: "fatima.teacher@eduflow.test" },
     update: {
       passwordHash: teacher2Hash,
       role: Role.TEACHER,
@@ -182,7 +182,7 @@ async function main() {
       academyId: seedAcademy.id,
     },
     create: {
-      email: "fatima.teacher@academyhub.test",
+      email: "fatima.teacher@eduflow.test",
       passwordHash: teacher2Hash,
       role: Role.TEACHER,
       name: "Miss Fatima Zahra",
@@ -212,7 +212,7 @@ async function main() {
   // 5. Parent User
   const parentHash = await bcrypt.hash(parentPasswordRaw, 10);
   const parentUser = await prisma.user.upsert({
-    where: { email: "parent@academyhub.test" },
+    where: { email: "parent@eduflow.test" },
     update: {
       passwordHash: parentHash,
       role: Role.PARENT,
@@ -221,7 +221,7 @@ async function main() {
       academyId: seedAcademy.id,
     },
     create: {
-      email: "parent@academyhub.test",
+      email: "parent@eduflow.test",
       passwordHash: parentHash,
       role: Role.PARENT,
       name: "Muhammad Tariq",
@@ -266,13 +266,16 @@ async function main() {
 
   // 7. Student
   let student = await prisma.student.findFirst({
-    where: { academyId: seedAcademy.id, admissionNo: "AH-2026-0001" },
+    where: {
+      academyId: seedAcademy.id,
+      OR: [{ admissionNo: "EF-2026-0001" }, { admissionNo: "AH-2026-0001" }],
+    },
   });
   if (!student) {
     student = await prisma.student.create({
       data: {
         academyId: seedAcademy.id,
-        admissionNo: "AH-2026-0001",
+        admissionNo: "EF-2026-0001",
         name: "Hamza Tariq",
         guardianName: "Muhammad Tariq",
         guardianPhone: "03009876543",
@@ -283,7 +286,7 @@ async function main() {
   } else {
     student = await prisma.student.update({
       where: { id: student.id },
-      data: { guardianUserId: parentUser.id, academyId: seedAcademy.id },
+      data: { admissionNo: "EF-2026-0001", guardianUserId: parentUser.id, academyId: seedAcademy.id },
     });
   }
 
@@ -359,7 +362,7 @@ async function main() {
   // 11. Student User Account
   const studentHash = await bcrypt.hash(studentPasswordRaw, 10);
   const studentUser = await prisma.user.upsert({
-    where: { email: "student@academyhub.test" },
+    where: { email: "student@eduflow.test" },
     update: {
       passwordHash: studentHash,
       role: Role.STUDENT,
@@ -368,7 +371,7 @@ async function main() {
       academyId: seedAcademy.id,
     },
     create: {
-      email: "student@academyhub.test",
+      email: "student@eduflow.test",
       passwordHash: studentHash,
       role: Role.STUDENT,
       name: "Hamza Tariq",
@@ -384,43 +387,15 @@ async function main() {
   });
   console.log(`✓ Seeded student login: ${studentUser.email} (${studentPasswordRaw})`);
 
-  // 11b. Also provision @eduflow.test brand aliases for modern logins
-  await prisma.user.upsert({
-    where: { email: "superadmin@eduflow.test" },
-    update: { passwordHash: superAdminPassword, role: Role.SUPER_ADMIN, name: "Platform Owner", mustChangePassword: true, academyId: null },
-    create: { email: "superadmin@eduflow.test", passwordHash: superAdminPassword, role: Role.SUPER_ADMIN, name: "Platform Owner", phone: "03000000000", mustChangePassword: true, academyId: null },
-  });
-  await prisma.user.upsert({
-    where: { email: "admin@eduflow.test" },
-    update: { passwordHash: adminPasswordHash, role: Role.ADMIN, name: "Academy Director", mustChangePassword: true, academyId: seedAcademy.id },
-    create: { email: "admin@eduflow.test", passwordHash: adminPasswordHash, role: Role.ADMIN, name: "Academy Director", phone: "03001234567", mustChangePassword: true, academyId: seedAcademy.id },
-  });
-  await prisma.user.upsert({
-    where: { email: "usman.teacher@eduflow.test" },
-    update: { passwordHash: teacher1Hash, role: Role.TEACHER, name: "Sir Usman Farooq", mustChangePassword: true, academyId: seedAcademy.id },
-    create: { email: "usman.teacher@eduflow.test", passwordHash: teacher1Hash, role: Role.TEACHER, name: "Sir Usman Farooq", phone: "03339998877", mustChangePassword: true, academyId: seedAcademy.id },
-  });
-  await prisma.user.upsert({
-    where: { email: "parent@eduflow.test" },
-    update: { passwordHash: parentHash, role: Role.PARENT, name: "Muhammad Tariq", mustChangePassword: true, academyId: seedAcademy.id },
-    create: { email: "parent@eduflow.test", passwordHash: parentHash, role: Role.PARENT, name: "Muhammad Tariq", phone: "03009876543", mustChangePassword: true, academyId: seedAcademy.id },
-  });
-  await prisma.user.upsert({
-    where: { email: "student@eduflow.test" },
-    update: { passwordHash: studentHash, role: Role.STUDENT, name: "Hamza Tariq", mustChangePassword: true, academyId: seedAcademy.id },
-    create: { email: "student@eduflow.test", passwordHash: studentHash, role: Role.STUDENT, name: "Hamza Tariq", phone: "03009876543", mustChangePassword: true, academyId: seedAcademy.id },
-  });
-  console.log("✓ Seeded EduFlow brand login aliases (@eduflow.test)");
-
   // 12. Additional Students for Leaderboard
   const student2 = await prisma.student.upsert({
     where: {
-      academyId_admissionNo: { academyId: seedAcademy.id, admissionNo: "AH-2026-0002" },
+      academyId_admissionNo: { academyId: seedAcademy.id, admissionNo: "EF-2026-0002" },
     },
     update: {},
     create: {
       academyId: seedAcademy.id,
-      admissionNo: "AH-2026-0002",
+      admissionNo: "EF-2026-0002",
       name: "Ayesha Malik",
       guardianName: "Tariq Malik",
       guardianPhone: "03111223344",
@@ -446,12 +421,12 @@ async function main() {
 
   const student3 = await prisma.student.upsert({
     where: {
-      academyId_admissionNo: { academyId: seedAcademy.id, admissionNo: "AH-2026-0003" },
+      academyId_admissionNo: { academyId: seedAcademy.id, admissionNo: "EF-2026-0003" },
     },
     update: {},
     create: {
       academyId: seedAcademy.id,
-      admissionNo: "AH-2026-0003",
+      admissionNo: "EF-2026-0003",
       name: "Bilal Ahmed",
       guardianName: "Ahmed Khan",
       guardianPhone: "03215554433",

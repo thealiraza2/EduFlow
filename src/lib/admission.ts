@@ -1,6 +1,6 @@
 /**
  * EduFlow - Admission Number Generator
- * INVARIANT: Sequential, year-scoped, never reused within an academy (e.g. AH-2026-0001)
+ * INVARIANT: Sequential, year-scoped, never reused within an academy (e.g. EF-2026-0001)
  */
 
 import { Prisma } from "@prisma/client";
@@ -10,7 +10,7 @@ export async function generateNextAdmissionNumber(
   year: number = new Date().getFullYear(),
   academyId?: string
 ): Promise<string> {
-  const prefix = `AH-${year}-`;
+  const prefix = `EF-${year}-`;
 
   const whereClause: Prisma.StudentWhereInput = {
     admissionNo: {
