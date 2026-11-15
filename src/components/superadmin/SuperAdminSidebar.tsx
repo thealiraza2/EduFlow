@@ -74,6 +74,15 @@ export function SuperAdminSidebar({ user }: SuperAdminSidebarProps) {
           <Button
             variant="ghost"
             size="sm"
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className="text-slate-300 hover:text-red-400 hover:bg-slate-800 h-8 w-8 p-0"
+            title="Sign Out"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setMobileOpen(!mobileOpen)}
             className="text-slate-300 hover:text-white hover:bg-slate-800"
           >

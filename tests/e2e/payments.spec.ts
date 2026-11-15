@@ -8,7 +8,7 @@ test.describe("E2E Phase 11: Real Payments (JazzCash + Easypaisa Sandbox)", () =
     const { parentPassword } = getTestCredentials();
     // 1. Sign in as the seed parent
     await page.goto("/login");
-    await page.fill('input[type="email"]', "parent@academyhub.test");
+    await page.fill('input[type="email"]', "parent@eduflow.test");
     await page.fill('input[type="password"]', parentPassword);
     await page.click('button[type="submit"]');
 

@@ -27,7 +27,7 @@ test.describe("E2E Core Flow 1: Admission → Attendance → Fee Invoicing → P
     // Step 1: Admin Logs In & Admits New Student
     // -------------------------------------------------------------------------
     await page.goto("/login");
-    await page.fill('input[name="email"]', "admin@academyhub.test");
+    await page.fill('input[name="email"]', "admin@eduflow.test");
     await page.fill('input[name="password"]', adminPassword);
     await page.click('button[type="submit"]');
     await page.waitForURL("**/admin", { timeout: 15000 });
@@ -82,7 +82,7 @@ test.describe("E2E Core Flow 1: Admission → Attendance → Fee Invoicing → P
     // -------------------------------------------------------------------------
     await page.context().clearCookies();
     await page.goto("/login");
-    await page.fill('input[name="email"]', "usman.teacher@academyhub.test");
+    await page.fill('input[name="email"]', "usman.teacher@eduflow.test");
     await page.fill('input[name="password"]', teacherPassword);
     await page.click('button[type="submit"]');
     await page.waitForURL("**/teacher", { timeout: 15000 });
@@ -105,7 +105,7 @@ test.describe("E2E Core Flow 1: Admission → Attendance → Fee Invoicing → P
     // -------------------------------------------------------------------------
     await page.context().clearCookies();
     await page.goto("/login");
-    await page.fill('input[name="email"]', "admin@academyhub.test");
+    await page.fill('input[name="email"]', "admin@eduflow.test");
     await page.fill('input[name="password"]', adminPassword);
     await page.click('button[type="submit"]');
     await page.waitForURL("**/admin", { timeout: 15000 });

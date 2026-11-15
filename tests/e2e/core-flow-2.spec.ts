@@ -18,7 +18,7 @@ test.describe("E2E Core Flow 2: Test → Marks → Publish → Parent Sees Resul
   });
 
   test("teacher creates test, enters marks, admin publishes, and parent sees published card", async ({ page }) => {
-    // Hamza Tariq (AH-2026-0001) is linked to parent@academyhub.test
+    // Hamza Tariq (AH-2026-0001) is linked to parent@eduflow.test
     const hamza = await db.student.findFirst({
       where: { admissionNo: "AH-2026-0001" },
     });
@@ -31,7 +31,7 @@ test.describe("E2E Core Flow 2: Test → Marks → Publish → Parent Sees Resul
     // -------------------------------------------------------------------------
     await page.context().clearCookies();
     await page.goto("/login");
-    await page.fill('input[name="email"]', "usman.teacher@academyhub.test");
+    await page.fill('input[name="email"]', "usman.teacher@eduflow.test");
     await page.fill('input[name="password"]', teacherPassword);
     await page.click('button[type="submit"]');
     await page.waitForURL("**/teacher", { timeout: 15000 });
@@ -89,7 +89,7 @@ test.describe("E2E Core Flow 2: Test → Marks → Publish → Parent Sees Resul
     // -------------------------------------------------------------------------
     await page.context().clearCookies();
     await page.goto("/login");
-    await page.fill('input[name="email"]', "admin@academyhub.test");
+    await page.fill('input[name="email"]', "admin@eduflow.test");
     await page.fill('input[name="password"]', adminPassword);
     await page.click('button[type="submit"]');
     await page.waitForURL("**/admin", { timeout: 15000 });
@@ -113,7 +113,7 @@ test.describe("E2E Core Flow 2: Test → Marks → Publish → Parent Sees Resul
     // -------------------------------------------------------------------------
     await page.context().clearCookies();
     await page.goto("/login");
-    await page.fill('input[name="email"]', "parent@academyhub.test");
+    await page.fill('input[name="email"]', "parent@eduflow.test");
     await page.fill('input[name="password"]', parentPassword);
     await page.click('button[type="submit"]');
     await page.waitForURL("**/parent", { timeout: 15000 });

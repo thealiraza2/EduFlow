@@ -76,7 +76,7 @@ test.describe("Phase 15: Full System End-to-End User Journey", () => {
     // Log in as seeded parent to test the complete sandbox wallet payment flow
     await page.context().clearCookies();
     await page.goto("/login");
-    await page.fill('input[name="email"]', "parent@academyhub.test");
+    await page.fill('input[name="email"]', "parent@eduflow.test");
     await page.fill('input[name="password"]', parentPassword);
     await page.click('button[type="submit"]');
 
@@ -121,7 +121,7 @@ test.describe("Phase 15: Full System End-to-End User Journey", () => {
     await page.context().clearCookies();
     const { studentPassword } = getTestCredentials();
     await page.goto("/login");
-    await page.fill('input[name="email"]', "student@academyhub.test");
+    await page.fill('input[name="email"]', "student@eduflow.test");
     await page.fill('input[name="password"]', studentPassword);
     await page.click('button[type="submit"]');
 
@@ -154,7 +154,7 @@ test.describe("Phase 15: Full System End-to-End User Journey", () => {
     // Log in as main academy admin
     await page.context().clearCookies();
     await page.goto("/login");
-    await page.fill('input[name="email"]', "admin@academyhub.test");
+    await page.fill('input[name="email"]', "admin@eduflow.test");
     await page.fill('input[name="password"]', adminPassword);
     await page.click('button[type="submit"]');
 
@@ -182,7 +182,7 @@ test.describe("Phase 15: Full System End-to-End User Journey", () => {
     // 1. Verify Parent Portal
     await page.context().clearCookies();
     await page.goto("/login");
-    await page.fill('input[name="email"]', "parent@academyhub.test");
+    await page.fill('input[name="email"]', "parent@eduflow.test");
     await page.fill('input[name="password"]', parentPassword);
     await page.click('button[type="submit"]');
 
@@ -202,7 +202,7 @@ test.describe("Phase 15: Full System End-to-End User Journey", () => {
 
     // 2. Student scans a live 10-minute QR attendance token
     const studentUser = await db.user.findFirst({
-      where: { email: "student@academyhub.test" },
+      where: { email: "student@eduflow.test" },
       include: { student: true },
     });
     expect(studentUser?.student).toBeDefined();
@@ -224,7 +224,7 @@ test.describe("Phase 15: Full System End-to-End User Journey", () => {
     await page.context().clearCookies();
     const { studentPassword } = getTestCredentials();
     await page.goto("/login");
-    await page.fill('input[name="email"]', "student@academyhub.test");
+    await page.fill('input[name="email"]', "student@eduflow.test");
     await page.fill('input[name="password"]', studentPassword);
     await page.click('button[type="submit"]');
 

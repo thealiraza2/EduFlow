@@ -39,20 +39,20 @@ export default async function ParentTimetablePage() {
   const displayDays = DAYS_OF_WEEK.filter((d) => d.id >= 1 && d.id <= 6);
 
   return (
-    <div className="p-6 md:p-8">
+    <div className="p-4 sm:p-6 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Navigation & Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-xl border shadow-sm">
-          <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm" asChild>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 sm:p-6 rounded-xl border shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <Button variant="outline" size="sm" asChild className="w-fit">
               <Link href="/parent">
                 <ArrowLeft className="h-4 w-4 mr-1.5" />
                 Back to Dashboard
               </Link>
             </Button>
             <div>
-              <div className="flex items-center space-x-3">
-                <h1 className="text-2xl font-bold text-slate-900">Weekly Timetable</h1>
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Weekly Timetable</h1>
                 <Badge variant="outline">Guardian Access</Badge>
               </div>
               <p className="text-slate-500 text-xs mt-1">
@@ -79,9 +79,9 @@ export default async function ParentTimetablePage() {
           <div className="space-y-8">
             {children.map((child) => (
               <div key={child.id} className="space-y-4">
-                <div className="flex items-center justify-between border-b pb-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b pb-2">
                   <div>
-                    <h2 className="text-2xl font-bold text-slate-900">{child.name}</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900">{child.name}</h2>
                     <span className="text-xs font-mono text-slate-500">
                       Admission No: <strong>{child.admissionNo}</strong> | Status: {child.status}
                     </span>
@@ -98,17 +98,17 @@ export default async function ParentTimetablePage() {
                 ) : (
                   child.enrollments.map((enr) => (
                     <Card key={enr.id} className="shadow-sm overflow-hidden border">
-                      <CardHeader className="bg-slate-900 text-white flex flex-row items-center justify-between py-3 px-5">
+                      <CardHeader className="bg-slate-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 py-3 px-4 sm:px-5">
                         <div>
-                          <CardTitle className="text-lg font-bold text-white flex items-center">
-                            <School className="h-4 w-4 mr-2 text-blue-400" />
+                          <CardTitle className="text-base sm:text-lg font-bold text-white flex items-center">
+                            <School className="h-4 w-4 mr-2 text-blue-400 shrink-0" />
                             Class {enr.batch.class.name}-{enr.batch.class.section} — {enr.batch.name}
                           </CardTitle>
                           <CardDescription className="text-slate-300 text-xs">
                             Standard Batch Hours: {enr.batch.timing}
                           </CardDescription>
                         </div>
-                        <Badge variant="outline" className="text-white border-slate-700 text-xs">
+                        <Badge variant="outline" className="text-white border-slate-700 text-xs shrink-0">
                           {enr.batch.timetableSlots.length} Weekly Lectures
                         </Badge>
                       </CardHeader>

@@ -8,7 +8,7 @@ test.describe("E2E Core Flow 3: Parent Isolation (Invariant 5)", () => {
   let ownChildId: string;
 
   test.beforeAll(async () => {
-    // 1. Get Hamza Tariq (linked to parent@academyhub.test)
+    // 1. Get Hamza Tariq (linked to parent@eduflow.test)
     const hamza = await db.student.findFirst({
       where: { admissionNo: "AH-2026-0001" },
     });
@@ -24,7 +24,7 @@ test.describe("E2E Core Flow 3: Parent Isolation (Invariant 5)", () => {
         name: `Foreign Child ${ts}`,
         guardianName: "Other Guardian",
         guardianPhone: "03110000000",
-        guardianUserId: null, // NOT linked to parent@academyhub.test
+        guardianUserId: null, // NOT linked to parent@eduflow.test
         status: StudentStatus.ACTIVE,
       },
     });
@@ -42,7 +42,7 @@ test.describe("E2E Core Flow 3: Parent Isolation (Invariant 5)", () => {
     // 1. Log in as Parent
     await page.context().clearCookies();
     await page.goto("/login");
-    await page.fill('input[name="email"]', "parent@academyhub.test");
+    await page.fill('input[name="email"]', "parent@eduflow.test");
     await page.fill('input[name="password"]', parentPassword);
     await page.click('button[type="submit"]');
     await page.waitForURL("**/parent", { timeout: 15000 });

@@ -116,7 +116,7 @@ test.describe("Phase 2 — Rebrand Login + Signup to EduFlow", () => {
     await page.waitForLoadState("networkidle");
 
     // Sign in with admin demo account
-    await page.fill('input[name="email"]', "admin@academyhub.test");
+    await page.fill('input[name="email"]', "admin@eduflow.test");
     await page.fill('input[name="password"]', adminPassword);
     await page.click('button[type="submit"]');
 

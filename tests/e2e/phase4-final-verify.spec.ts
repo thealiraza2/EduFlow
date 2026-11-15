@@ -127,7 +127,7 @@ test.describe("PHASE 4 — Final Verification (Whole Site)", () => {
     await page.goto("/login");
     await page.waitForLoadState("networkidle");
 
-    await page.fill('input[name="email"]', "admin@academyhub.test");
+    await page.fill('input[name="email"]', "admin@eduflow.test");
     await page.fill('input[name="password"]', adminPassword);
     await page.click('button[type="submit"]');
 

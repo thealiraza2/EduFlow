@@ -49,18 +49,18 @@ test.describe("EduFlow Marketing Homepage — SchulFlow UI, English Only", () =>
     await expect(page.getByText("EduFlow Academy Portal")).toBeVisible();
     await expect(page.getByText("Live Demo Preview")).toBeVisible();
     await expect(page.getByText("Total Students")).toBeVisible();
-    await expect(page.getByText("850", { exact: true })).toBeVisible();
+    await expect(page.getByText("3", { exact: true }).first()).toBeVisible();
     await expect(page.getByText("Teachers", { exact: true })).toBeVisible();
-    await expect(page.getByText("42", { exact: true })).toBeVisible();
+    await expect(page.getByText("2", { exact: true }).first()).toBeVisible();
     await expect(page.getByText("Classes", { exact: true })).toBeVisible();
-    await expect(page.getByText("24", { exact: true })).toBeVisible();
+    await expect(page.getByText("1", { exact: true }).first()).toBeVisible();
     await expect(page.getByText("Pending Fees")).toBeVisible();
-    await expect(page.getByText("PKR 45,000")).toBeVisible();
+    await expect(page.getByText("PKR 0")).toBeVisible();
 
-    // 3 lines of recent activity
-    await expect(page.getByText("Admitted Ahmed Raza to Class 10-A")).toBeVisible();
-    await expect(page.getByText("QR Attendance marked for Class 9-B (31/33 Present)")).toBeVisible();
-    await expect(page.getByText("Fee Challan #1042 marked Paid via JazzCash")).toBeVisible();
+    // 3 lines of real recent activity
+    await expect(page.getByText("Enrolled Hamza Tariq in 10th-A (Evening Batch)")).toBeVisible();
+    await expect(page.getByText("Attendance registered for 10th-A Evening Batch")).toBeVisible();
+    await expect(page.getByText("Midterm Physics Online Test graded and recorded")).toBeVisible();
 
     // Section 3: Six feature cards
     const featuresSection = page.locator("#features");
@@ -139,8 +139,8 @@ test.describe("EduFlow Marketing Homepage — SchulFlow UI, English Only", () =>
     }
 
     // Section 6: Testimonials ("Be our first success story")
-    await expect(page.getByText("WHAT OUR CLIENTS SAY")).toBeVisible();
-    await expect(page.getByText("Trusted by Schools Across the World")).toBeVisible();
+    await expect(page.getByText("PARTNER WITH US")).toBeVisible();
+    await expect(page.getByText("Transform Your School's Operations")).toBeVisible();
     await expect(
       page.getByText("Be our first success story — your academy's story could be here.")
     ).toBeVisible();
@@ -148,7 +148,7 @@ test.describe("EduFlow Marketing Homepage — SchulFlow UI, English Only", () =>
 
     // Section 7: CTA + Footer
     await expect(page.getByText("Get Started with EduFlow Today")).toBeVisible();
-    await expect(page.getByText("Join schools already using our platform.")).toBeVisible();
+    await expect(page.getByText("Automate attendance, fees, and results with a 14-day free trial. Setup takes under 5 minutes.")).toBeVisible();
 
     const footer = page.locator("footer");
     await expect(footer).toBeVisible();

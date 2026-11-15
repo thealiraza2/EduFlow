@@ -6,7 +6,7 @@ test.describe("E2E Phase 12: Online Test Engine & Student Portal", () => {
     const { studentPassword } = getTestCredentials();
     // 1. Sign in as the seed student
     await page.goto("/login");
-    await page.fill('input[type="email"]', "student@academyhub.test");
+    await page.fill('input[type="email"]', "student@eduflow.test");
     await page.fill('input[type="password"]', studentPassword);
     await page.click('button[type="submit"]');
 
@@ -41,7 +41,7 @@ test.describe("E2E Phase 12: Online Test Engine & Student Portal", () => {
     const { teacherPassword } = getTestCredentials();
     // 1. Sign in as teacher
     await page.goto("/login");
-    await page.fill('input[type="email"]', "usman.teacher@academyhub.test");
+    await page.fill('input[type="email"]', "usman.teacher@eduflow.test");
     await page.fill('input[type="password"]', teacherPassword);
     await page.click('button[type="submit"]');
 

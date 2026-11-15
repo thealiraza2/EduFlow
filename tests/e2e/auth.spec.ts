@@ -8,7 +8,7 @@ test("Fix 1 & Fix 7: full change-password flow — login as seeded user -> redir
 
   // 1. Visit /login and submit initial seeded credentials
   await page.goto("/login");
-  await page.fill('input[name="email"]', "admin@academyhub.test");
+  await page.fill('input[name="email"]', "admin@eduflow.test");
   await page.fill('input[name="password"]', adminPassword);
   await page.click('button[type="submit"]');
 
@@ -39,7 +39,7 @@ test("Fix 1 & Fix 7: full change-password flow — login as seeded user -> redir
 test("teacher can sign in and reaches /teacher", async ({ page }) => {
   const { teacherPassword } = getTestCredentials();
   await page.goto("/login");
-  await page.fill('input[name="email"]', "usman.teacher@academyhub.test");
+  await page.fill('input[name="email"]', "usman.teacher@eduflow.test");
   await page.fill('input[name="password"]', teacherPassword);
   await page.click('button[type="submit"]');
 
@@ -60,7 +60,7 @@ test("parent can sign in and reaches /parent", async ({ page }) => {
   const { parentPassword } = getTestCredentials();
   await page.context().clearCookies();
   await page.goto("/login");
-  await page.fill('input[name="email"]', "parent@academyhub.test");
+  await page.fill('input[name="email"]', "parent@eduflow.test");
   await page.fill('input[name="password"]', parentPassword);
   await page.click('button[type="submit"]');
 

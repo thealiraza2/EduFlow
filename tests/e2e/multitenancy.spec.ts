@@ -46,7 +46,7 @@ test.describe("E2E Phase 10: Multi-Branch SaaS & Super Admin", () => {
     const { superadminPassword } = getTestCredentials();
     // 1. Log in as superadmin
     await page.goto("/login");
-    await page.fill('input[type="email"]', "superadmin@academyhub.test");
+    await page.fill('input[type="email"]', "superadmin@eduflow.test");
     await page.fill('input[type="password"]', superadminPassword);
     await page.click('button[type="submit"]');
 
