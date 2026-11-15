@@ -118,3 +118,64 @@ export async function createAnnouncementAction(input: CreateAnnouncementInput) {
     announcementId: announcement.id,
   };
 }
+
+const updateSettingsSchema = z.object({
+  name: z.string().trim().min(2, "Academy name must be at least 2 characters"),
+  phone: z.string().trim().optional(),
+  academicYear: z.string().trim().optional(),
+});
+
+export type UpdateSettingsState = {
+  success?: boolean;
+  error?: string;
+  fieldErrors?: {
+    name?: string[];
+    phone?: string[];
+    academicYear?: string[];
+  };
+};
+
+export async function updateAcademySettingsAction(
+  prevState: UpdateSettingsState | null,
+  formData: FormData
+): Promise<UpdateSettingsState> {
+  const admin = await requireAdmin();
+  const tenant = await requireTenant();
+
+  const rawData = {
+    name: formData.get("name"),
+    phone: formData.get("phone") || undefined,
+    academicYear: formData.get("academicYear") || undefined,
+  };
+
+  const validated = updateSettingsSchema.safeParse(rawData);
+  if (!validated.success) {
+    return {
+      fieldErrors: validated.error.flatten().fieldErrors,
+      error: "Please correct the errors in the form.",
+    };
+  }
+
+  const { name, phone } = validated.data;
+
+  try {
+    await db.academy.update({
+      where: { id: tenant.academyId },
+      data: { name },
+    });
+
+    if (phone !== undefined) {
+      await db.user.update({
+        where: { id: admin.id },
+        data: { phone: phone || null },
+      });
+    }
+
+    revalidatePath("/admin/settings");
+    revalidatePath("/admin");
+
+    return { success: true };
+  } catch (err: any) {
+    return { error: err.message || "Failed to update academy settings." };
+  }
+}

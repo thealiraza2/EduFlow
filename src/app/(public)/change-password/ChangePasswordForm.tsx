@@ -8,46 +8,68 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { ShieldAlert, CheckCircle2 } from "lucide-react";
+import { ShieldAlert, CheckCircle2, Lock, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
-function SubmitButton() {
+function SubmitButton({ isForced = true }: { isForced?: boolean }) {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? "Updating Password..." : "Update Password & Continue"}
+      {pending
+        ? "Updating Password..."
+        : isForced
+        ? "Update Password & Continue"
+        : "Save New Password"}
     </Button>
   );
 }
 
-export function ChangePasswordForm() {
+interface ChangePasswordFormProps {
+  isForced?: boolean;
+  dashboardUrl?: string;
+}
+
+export function ChangePasswordForm({
+  isForced = false,
+  dashboardUrl = "/admin",
+}: ChangePasswordFormProps) {
   const router = useRouter();
   const [state, formAction] = useFormState(changePasswordAction, null);
 
   useEffect(() => {
     if (state?.success) {
-      const destination = state.redirectTo || "/admin";
+      const destination = state.redirectTo || dashboardUrl;
       const timer = setTimeout(() => {
         router.push(destination);
         router.refresh();
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [state?.success, state?.redirectTo, router]);
+  }, [state?.success, state?.redirectTo, dashboardUrl, router]);
 
   return (
-    <Card className="w-full max-w-md shadow-lg border-amber-200">
+    <Card className={`w-full max-w-md shadow-lg ${isForced ? "border-amber-200" : "border-slate-200"}`}>
       <CardHeader className="space-y-1 text-center">
         <div className="flex justify-center mb-2">
-          <Badge variant="outline" className="px-3 py-1 font-semibold text-amber-800 bg-amber-50 border-amber-300">
-            <ShieldAlert className="w-3.5 h-3.5 mr-1 text-amber-600 inline" />
-            Security Action Required
-          </Badge>
+          {isForced ? (
+            <Badge variant="outline" className="px-3 py-1 font-semibold text-amber-800 bg-amber-50 border-amber-300">
+              <ShieldAlert className="w-3.5 h-3.5 mr-1 text-amber-600 inline" />
+              Security Action Required
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="px-3 py-1 font-semibold text-slate-700 bg-slate-50 border-slate-300">
+              <Lock className="w-3.5 h-3.5 mr-1 text-slate-600 inline" />
+              Account Security
+            </Badge>
+          )}
         </div>
         <CardTitle className="text-2xl font-bold tracking-tight text-slate-900">
           Change Your Password
         </CardTitle>
         <CardDescription className="text-slate-600 text-sm">
-          Your account has a default or temporary password. Please set a secure new password to continue.
+          {isForced
+            ? "Your account has a default or temporary password. Please set a secure new password to continue."
+            : "Update your account password to keep your account secure."}
         </CardDescription>
       </CardHeader>
       <form action={formAction}>
@@ -123,8 +145,20 @@ export function ChangePasswordForm() {
           </div>
         </CardContent>
 
-        <CardFooter className="flex flex-col space-y-4 pt-2">
-          {!state?.success && <SubmitButton />}
+        <CardFooter className="flex flex-col space-y-3 pt-2">
+          {!state?.success && (
+            <>
+              <SubmitButton isForced={isForced} />
+              {!isForced && (
+                <Button variant="ghost" size="sm" asChild className="w-full text-slate-600">
+                  <Link href={dashboardUrl}>
+                    <ArrowLeft className="h-4 w-4 mr-1.5" />
+                    Back to Dashboard
+                  </Link>
+                </Button>
+              )}
+            </>
+          )}
         </CardFooter>
       </form>
     </Card>

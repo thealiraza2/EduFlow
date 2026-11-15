@@ -2,10 +2,8 @@ import { requireSuperAdmin } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { SuperAdminManager } from "@/components/superadmin/SuperAdminManager";
 import { Role } from "@prisma/client";
-import { ShieldCheck, LogOut } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { signOut } from "@/lib/auth";
 
 export default async function SuperAdminDashboardPage() {
   const superAdmin = await requireSuperAdmin();
@@ -57,7 +55,7 @@ export default async function SuperAdminDashboardPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-8">
+    <div className="p-6 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Superadmin Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
@@ -75,18 +73,6 @@ export default async function SuperAdminDashboardPage() {
               Logged in as <strong>{superAdmin.email}</strong> • Multi-branch SaaS control center
             </p>
           </div>
-
-          <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/login" });
-            }}
-          >
-            <Button variant="outline" size="sm" type="submit" className="text-xs text-slate-600">
-              <LogOut className="h-3.5 w-3.5 mr-1.5" />
-              Sign Out
-            </Button>
-          </form>
         </div>
 
         {/* Dashboard Manager */}

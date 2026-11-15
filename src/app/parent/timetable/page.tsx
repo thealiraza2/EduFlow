@@ -4,8 +4,9 @@ import { Role } from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DAYS_OF_WEEK } from "@/lib/constants";
-import { Calendar, Clock, MapPin, School, BookOpen, User, LogOut } from "lucide-react";
+import { Calendar, Clock, MapPin, School, BookOpen, User, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default async function ParentTimetablePage() {
   const user = await requireRole([Role.PARENT, Role.ADMIN]);
@@ -38,18 +39,26 @@ export default async function ParentTimetablePage() {
   const displayDays = DAYS_OF_WEEK.filter((d) => d.id >= 1 && d.id <= 6);
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-8">
+    <div className="p-6 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
-        {/* Parent Portal Header */}
+        {/* Navigation & Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-xl border shadow-sm">
-          <div>
-            <div className="flex items-center space-x-3">
-              <h1 className="text-3xl font-bold text-slate-900">Parent Portal</h1>
-              <Badge variant="outline">Guardian Access</Badge>
+          <div className="flex items-center space-x-3">
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/parent">
+                <ArrowLeft className="h-4 w-4 mr-1.5" />
+                Back to Dashboard
+              </Link>
+            </Button>
+            <div>
+              <div className="flex items-center space-x-3">
+                <h1 className="text-2xl font-bold text-slate-900">Weekly Timetable</h1>
+                <Badge variant="outline">Guardian Access</Badge>
+              </div>
+              <p className="text-slate-500 text-xs mt-1">
+                Viewing schedule for <strong>{user.name}</strong> ({user.email})
+              </p>
             </div>
-            <p className="text-slate-500 text-sm mt-1">
-              Welcome, <strong>{user.name}</strong> ({user.email})
-            </p>
           </div>
           <Badge variant="secondary" className="text-xs px-3 py-1">
             {children.length} Registered {children.length === 1 ? "Child" : "Children"}

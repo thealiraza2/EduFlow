@@ -38,6 +38,15 @@ export default auth((req) => {
     return NextResponse.redirect(changePwdUrl);
   }
 
+  function handleForbidden(reason: string) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: `Forbidden: ${reason}` }, { status: 403 });
+    }
+    const forbiddenUrl = new URL("/forbidden", req.nextUrl.origin);
+    forbiddenUrl.searchParams.set("reason", reason);
+    return NextResponse.rewrite(forbiddenUrl, { status: 403 });
+  }
+
   // Suspended Academy Protection
   if (
     user &&
@@ -47,10 +56,7 @@ export default auth((req) => {
     !pathname.startsWith("/login") &&
     !pathname.startsWith("/api/auth")
   ) {
-    return new NextResponse(
-      "Forbidden: This academy account is currently suspended. Please contact platform support.",
-      { status: 403 }
-    );
+    return handleForbidden("This academy account is currently suspended. Please contact platform support.");
   }
 
   // Protect /superadmin routes -> requires SUPER_ADMIN
@@ -62,7 +68,7 @@ export default auth((req) => {
     }
 
     if (user.role !== "SUPER_ADMIN") {
-      return new NextResponse("Forbidden: Super Administrator access required.", { status: 403 });
+      return handleForbidden("Super Administrator access required.");
     }
   }
 
@@ -75,7 +81,7 @@ export default auth((req) => {
     }
 
     if (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
-      return new NextResponse("Forbidden: Administrator access required.", { status: 403 });
+      return handleForbidden("Administrator access required.");
     }
   }
 
@@ -88,7 +94,7 @@ export default auth((req) => {
     }
 
     if (user.role !== "TEACHER" && user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
-      return new NextResponse("Forbidden: Teacher access required.", { status: 403 });
+      return handleForbidden("Teacher access required.");
     }
   }
 
@@ -101,7 +107,7 @@ export default auth((req) => {
     }
 
     if (user.role !== "PARENT" && user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
-      return new NextResponse("Forbidden: Parent access required.", { status: 403 });
+      return handleForbidden("Parent access required.");
     }
   }
 
@@ -114,7 +120,7 @@ export default auth((req) => {
     }
 
     if (user.role !== "STUDENT" && user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
-      return new NextResponse("Forbidden: Student access required.", { status: 403 });
+      return handleForbidden("Student access required.");
     }
   }
 

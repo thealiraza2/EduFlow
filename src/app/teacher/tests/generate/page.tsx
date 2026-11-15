@@ -46,16 +46,17 @@ export default async function TeacherGenerateTestPage() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-8">
+    <div className="p-6 md:p-8">
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Navigation & Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center space-x-3">
-            <Link href="/teacher/tests">
-              <Button variant="outline" size="sm" className="h-9 w-9 p-0">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            </Link>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/teacher/tests">
+                <ArrowLeft className="h-4 w-4 mr-1.5" />
+                Back to Tests
+              </Link>
+            </Button>
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center">
                 <Sparkles className="h-6 w-6 mr-2 text-indigo-600" />

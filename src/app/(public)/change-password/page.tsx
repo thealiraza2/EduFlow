@@ -15,19 +15,17 @@ export default async function ChangePasswordPage() {
     redirect("/login");
   }
 
-  // If user does not need to change password, redirect to home
-  if (!session.user.mustChangePassword) {
-    if (session.user.role === "SUPER_ADMIN") redirect("/superadmin");
-    if (session.user.role === "ADMIN") redirect("/admin");
-    if (session.user.role === "TEACHER") redirect("/teacher");
-    if (session.user.role === "PARENT") redirect("/parent");
-    if (session.user.role === "STUDENT") redirect("/student");
-    redirect("/");
-  }
+  let dashboardUrl = "/admin";
+  if (session.user.role === "SUPER_ADMIN") dashboardUrl = "/superadmin";
+  else if (session.user.role === "TEACHER") dashboardUrl = "/teacher";
+  else if (session.user.role === "PARENT") dashboardUrl = "/parent";
+  else if (session.user.role === "STUDENT") dashboardUrl = "/student";
+
+  const isForced = Boolean(session.user.mustChangePassword);
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4">
-      <ChangePasswordForm />
+      <ChangePasswordForm isForced={isForced} dashboardUrl={dashboardUrl} />
     </div>
   );
 }

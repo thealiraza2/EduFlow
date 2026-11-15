@@ -35,7 +35,7 @@ export default async function ParentPortalDashboardPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-8">
+    <div className="p-6 md:p-8">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Parent Portal Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-xl border shadow-sm">

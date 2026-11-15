@@ -1,11 +1,13 @@
 import React from "react";
+import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { TeacherMarkingManager } from "@/components/teacher/TeacherMarkingManager";
 import { rankLeaderboardAttempts } from "@/lib/online-tests";
-import { FileCheck, Trophy } from "lucide-react";
+import { FileCheck, Trophy, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default async function TeacherMarkingPage() {
   const user = await requireRole([Role.TEACHER, Role.ADMIN]);
@@ -102,21 +104,33 @@ export default async function TeacherMarkingPage() {
   });
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center">
-          <FileCheck className="h-6 w-6 mr-2 text-emerald-600" />
-          Online Test Evaluation & Leaderboards
-        </h1>
-        <p className="text-xs text-slate-500 mt-0.5">
-          Grade subjective short questions, monitor anti-cheat tab audits, and publish official test leaderboards.
-        </p>
-      </div>
+    <div className="p-6 md:p-8">
+      <div className="max-w-6xl mx-auto space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex items-center space-x-3">
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/teacher">
+                <ArrowLeft className="h-4 w-4 mr-1.5" />
+                Back to Dashboard
+              </Link>
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center">
+                <FileCheck className="h-6 w-6 mr-2 text-emerald-600" />
+                Online Test Evaluation & Leaderboards
+              </h1>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Grade subjective short questions, monitor anti-cheat tab audits, and publish official test leaderboards.
+              </p>
+            </div>
+          </div>
+        </div>
 
-      <TeacherMarkingManager
-        pendingAnswers={formattedPending}
-        testsSummary={testsSummary}
-      />
+        <TeacherMarkingManager
+          pendingAnswers={formattedPending}
+          testsSummary={testsSummary}
+        />
+      </div>
     </div>
   );
 }

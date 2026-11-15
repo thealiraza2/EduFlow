@@ -39,17 +39,7 @@ export default async function StudentPortalPage() {
     },
   });
 
-  if (!student) {
-    // If admin or unlinked student, redirect to first online test
-    const firstTest = await db.test.findFirst({
-      where: { durationMinutes: { not: null }, status: "PUBLISHED" },
-    });
-    if (firstTest) {
-      redirect(`/student/test/${firstTest.id}`);
-    }
-  }
-
-  const allTests = student?.enrollments.flatMap((e) =>
+  let allTests = student?.enrollments.flatMap((e) =>
     e.batch.tests.map((t) => ({
       ...t,
       batchName: `${e.batch.class.name} ${e.batch.name}`,
@@ -57,8 +47,27 @@ export default async function StudentPortalPage() {
     }))
   ) || [];
 
+  if (!student && (user.role === Role.ADMIN || (user.role as string) === "SUPER_ADMIN")) {
+    const adminTests = await db.test.findMany({
+      where: {
+        ...(user.academyId ? { academyId: user.academyId } : {}),
+        durationMinutes: { not: null },
+      },
+      include: {
+        batch: { include: { class: true } },
+        attempts: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    allTests = adminTests.map((t) => ({
+      ...t,
+      batchName: `${t.batch.class.name} ${t.batch.name}`,
+      myAttempt: t.attempts[0] || null,
+    }));
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-8">
+    <div className="p-6 md:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Student Welcome Header */}
         <div className="bg-white p-6 rounded-2xl border shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

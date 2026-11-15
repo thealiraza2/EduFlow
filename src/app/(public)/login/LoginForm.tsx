@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { loginAction } from "@/lib/actions/auth";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,17 @@ export function LoginForm() {
   const registered = searchParams.get("registered") === "true";
   const defaultEmail = searchParams.get("email") || "";
   const [state, formAction] = useFormState(loginAction, null);
+
+  const [email, setEmail] = useState(defaultEmail);
+  const [password, setPassword] = useState("");
+
+  // Ensure password is unconditionally blank on mount/navigation (Fix: logout password bug)
+  useEffect(() => {
+    setPassword("");
+    if (defaultEmail) {
+      setEmail(defaultEmail);
+    }
+  }, [defaultEmail]);
 
   return (
     <div className="w-full">
@@ -58,7 +70,7 @@ export function LoginForm() {
         </div>
       )}
 
-      <form action={formAction} className="mt-6 space-y-4">
+      <form action={formAction} className="mt-6 space-y-4" autoComplete="off">
         <input type="hidden" name="callbackUrl" value={callbackUrl} />
 
         <div className="space-y-1.5">
@@ -70,10 +82,11 @@ export function LoginForm() {
               id="email"
               name="email"
               type="email"
-              defaultValue={defaultEmail}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="e.g. admin@eduflow.test"
               required
-              autoComplete="email"
+              autoComplete="off"
               className="h-11 rounded-xl text-sm border-gray-200 focus-visible:ring-[#F5B800] focus-visible:border-[#F5B800]"
             />
           </div>
@@ -95,9 +108,11 @@ export function LoginForm() {
               id="password"
               name="password"
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              autoComplete="current-password"
+              autoComplete="new-password"
               className="h-11 rounded-xl text-sm border-gray-200 focus-visible:ring-[#F5B800] focus-visible:border-[#F5B800]"
             />
           </div>

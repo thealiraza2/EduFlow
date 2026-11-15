@@ -78,14 +78,15 @@ export default async function StudentQRScanPage({ searchParams }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-8 flex flex-col justify-center">
+    <div className="p-6 md:p-8 flex flex-col justify-center">
       <div className="max-w-md mx-auto w-full space-y-4">
         <div className="flex items-center justify-between">
-          <Link href="/student">
-            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </Link>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/student">
+              <ArrowLeft className="h-4 w-4 mr-1.5" />
+              Back to Dashboard
+            </Link>
+          </Button>
           <div className="text-xs font-medium text-slate-500 flex items-center">
             <QrCode className="h-3.5 w-3.5 mr-1 text-indigo-600" />
             EduFlow QR Attendance

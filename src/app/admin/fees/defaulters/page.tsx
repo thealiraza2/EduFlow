@@ -87,11 +87,12 @@ export default async function DefaultersPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center space-x-3">
-          <Link href="/admin/fees">
-            <Button variant="outline" size="sm" className="h-9 w-9 p-0">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </Link>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/admin/fees">
+              <ArrowLeft className="h-4 w-4 mr-1.5" />
+              Back to Fees
+            </Link>
+          </Button>
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center">
               <AlertTriangle className="h-6 w-6 mr-2 text-rose-600" />

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Users, GraduationCap, School, LayoutDashboard, LogOut, Calendar, CheckCircle2, Banknote, Award, Wallet, FileSpreadsheet, ShieldAlert } from "lucide-react";
+import { Users, GraduationCap, School, LayoutDashboard, LogOut, Calendar, CheckCircle2, Banknote, Award, Wallet, FileSpreadsheet, ShieldAlert, Settings, KeyRound } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 const navItems = [
@@ -18,6 +18,7 @@ const navItems = [
   { href: "/admin/salaries", label: "Salaries", icon: Wallet },
   { href: "/admin/results", label: "Results", icon: Award },
   { href: "/admin/reports", label: "Reports", icon: FileSpreadsheet },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 interface AdminNavProps {
@@ -79,7 +80,17 @@ export function AdminNav({ academySlug, role }: AdminNavProps) {
               })}
             </nav>
           </div>
-          <div>
+          <div className="flex items-center space-x-2">
+            <Link href="/admin/change-password">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-slate-600 hover:text-slate-900"
+              >
+                <KeyRound className="h-4 w-4 mr-1.5" />
+                Password
+              </Button>
+            </Link>
             <Button
               variant="ghost"
               size="sm"

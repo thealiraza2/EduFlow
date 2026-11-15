@@ -35,16 +35,17 @@ export default async function TeacherAttendancePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-8">
+    <div className="p-6 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Navigation & Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center space-x-3">
-            <Link href="/teacher">
-              <Button variant="outline" size="sm" className="h-9 w-9 p-0">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            </Link>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/teacher">
+                <ArrowLeft className="h-4 w-4 mr-1.5" />
+                Back to Dashboard
+              </Link>
+            </Button>
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center">
                 <CheckCircle2 className="h-6 w-6 mr-2 text-emerald-600" />

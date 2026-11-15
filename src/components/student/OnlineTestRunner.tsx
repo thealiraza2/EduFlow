@@ -280,24 +280,33 @@ export function OnlineTestRunner({
           </div>
         </div>
 
-        {/* Start Button */}
-        <button
-          onClick={handleStart}
-          disabled={isStarting}
-          className="w-full py-3.5 px-6 rounded-xl font-bold text-sm bg-slate-900 hover:bg-slate-800 text-white shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
-        >
-          {isStarting ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Initializing Server Session...</span>
-            </>
-          ) : (
-            <>
-              <span>Begin Assessment</span>
-              <ArrowRight className="h-4 w-4" />
-            </>
-          )}
-        </button>
+        {/* Actions */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Link
+            href="/student"
+            className="flex-1 py-3 px-4 rounded-xl font-medium text-xs border border-slate-300 hover:bg-slate-50 text-slate-700 transition-all flex items-center justify-center space-x-1.5"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back to Dashboard</span>
+          </Link>
+          <button
+            onClick={handleStart}
+            disabled={isStarting}
+            className="flex-1 py-3 px-4 rounded-xl font-bold text-xs bg-slate-900 hover:bg-slate-800 text-white shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+          >
+            {isStarting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Initializing Server Session...</span>
+              </>
+            ) : (
+              <>
+                <span>Begin Assessment</span>
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
+          </button>
+        </div>
       </div>
     );
   }
@@ -418,11 +427,11 @@ export function OnlineTestRunner({
 
           <div className="pt-2 text-center">
             <Link
-              href="/parent"
-              className="text-xs text-slate-500 hover:text-slate-800 font-medium inline-flex items-center space-x-1"
+              href="/student"
+              className="text-xs text-slate-600 hover:text-slate-900 font-semibold inline-flex items-center space-x-1.5 px-4 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 shadow-sm"
             >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Return to Dashboard</span>
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back to Student Dashboard</span>
             </Link>
           </div>
         </div>
