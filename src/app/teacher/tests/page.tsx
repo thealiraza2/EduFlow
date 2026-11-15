@@ -26,15 +26,33 @@ export default async function TeacherTestsPage({
       batches: {
         include: { class: true },
       },
+      timetableSlots: {
+        include: {
+          batch: {
+            include: { class: true },
+          },
+        },
+      },
     },
   });
 
-  // Admin fallback
-  let batches = teacher ? teacher.batches : [];
-  if (!teacher && (user.role === Role.ADMIN || (user.role as string) === "SUPER_ADMIN")) {
+  // Extract all batches associated with teacher (assigned batches + timetable slots)
+  let batches: any[] = [];
+  if (teacher) {
+    const batchMap = new Map();
+    teacher.batches.forEach((b) => batchMap.set(b.id, b));
+    teacher.timetableSlots?.forEach((slot) => {
+      if (slot.batch) batchMap.set(slot.batch.id, slot.batch);
+    });
+    batches = Array.from(batchMap.values());
+  }
+
+  // Fallback to all batches in tenant academy if teacher has no explicit assignments or user is Admin
+  if (batches.length === 0) {
     batches = await db.batch.findMany({
       where: user.academyId ? { academyId: user.academyId } : {},
       include: { class: true },
+      orderBy: [{ class: { name: "asc" } }, { name: "asc" }],
     });
   }
 

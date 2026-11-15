@@ -24,6 +24,17 @@ export default async function StudentsPage() {
     },
   });
 
+  const batches = await db.batch.findMany({
+    where: { academyId: tenant.academyId },
+    include: {
+      class: true,
+    },
+    orderBy: [
+      { class: { name: "asc" } },
+      { name: "asc" },
+    ],
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -33,7 +44,7 @@ export default async function StudentsPage() {
             Admit students, manage student statuses, and oversee batch enrollments.
           </p>
         </div>
-        <AdmitStudentModal />
+        <AdmitStudentModal batches={batches} />
       </div>
 
       <StudentList students={students} />

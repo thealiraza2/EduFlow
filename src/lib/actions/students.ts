@@ -15,6 +15,7 @@ const admitStudentSchema = z.object({
   guardianPhone: z.string().trim().min(10, "Please enter a valid phone number (e.g. 03001234567)"),
   dateOfBirth: z.string().optional().transform((val) => (val ? new Date(val) : undefined)),
   address: z.string().trim().optional(),
+  batchId: z.string().optional(),
   createParentAccount: z.boolean().default(false),
   parentEmail: z.string().trim().email("Invalid email address").optional().or(z.literal("")),
   parentPassword: z.string().min(6, "Password must be at least 6 characters").optional().or(z.literal("")),
@@ -40,6 +41,7 @@ export async function admitStudentAction(data: AdmitStudentInput) {
     guardianPhone,
     dateOfBirth,
     address,
+    batchId,
     createParentAccount,
     parentEmail,
     parentPassword,
@@ -96,6 +98,24 @@ export async function admitStudentAction(data: AdmitStudentInput) {
           status: StudentStatus.ACTIVE,
         },
       });
+
+      // If batchId is provided, enroll the student directly into the batch
+      if (batchId) {
+        const batch = await tx.batch.findFirst({
+          where: { id: batchId, academyId: tenant.academyId },
+        });
+
+        if (batch) {
+          await tx.enrollment.create({
+            data: {
+              academyId: tenant.academyId,
+              studentId: student.id,
+              batchId: batch.id,
+              status: EnrollmentStatus.ACTIVE,
+            },
+          });
+        }
+      }
 
       return student;
     });
@@ -242,6 +262,101 @@ export async function enrollStudentAction(data: { studentId: string; batchId: st
     return { success: true, enrollment };
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Failed to enroll student";
+    return { success: false, error: message };
+  }
+}
+
+export async function deleteStudentAction(studentId: string) {
+  await requireAdmin();
+  const tenant = await requireTenant();
+
+  try {
+    await db.$transaction(async (tx) => {
+      const student = await tx.student.findFirst({
+        where: { id: studentId, academyId: tenant.academyId },
+      });
+
+      if (!student) {
+        throw new Error("Student record not found in this academy.");
+      }
+
+      // 1. Delete test attempts & student answers
+      const attempts = await tx.testAttempt.findMany({
+        where: { studentId },
+        select: { id: true },
+      });
+      if (attempts.length > 0) {
+        const attemptIds = attempts.map((a) => a.id);
+        await tx.studentAnswer.deleteMany({
+          where: { attemptId: { in: attemptIds } },
+        });
+        await tx.testAttempt.deleteMany({
+          where: { studentId },
+        });
+      }
+
+      // 2. Delete test results
+      await tx.testResult.deleteMany({
+        where: { studentId },
+      });
+
+      // 3. Delete fee payments & invoices
+      const invoices = await tx.feeInvoice.findMany({
+        where: { studentId },
+        select: { id: true },
+      });
+      if (invoices.length > 0) {
+        const invoiceIds = invoices.map((inv) => inv.id);
+        await tx.feePayment.deleteMany({
+          where: { invoiceId: { in: invoiceIds } },
+        });
+        await tx.feeInvoice.deleteMany({
+          where: { studentId },
+        });
+      }
+
+      // 4. Delete attendance & enrollments
+      const enrollments = await tx.enrollment.findMany({
+        where: { studentId },
+        select: { id: true },
+      });
+      if (enrollments.length > 0) {
+        const enrollmentIds = enrollments.map((e) => e.id);
+        await tx.attendance.deleteMany({
+          where: { enrollmentId: { in: enrollmentIds } },
+        });
+        await tx.enrollment.deleteMany({
+          where: { studentId },
+        });
+      }
+
+      // 5. Delete notifications
+      await tx.notificationLog.deleteMany({
+        where: { studentId },
+      });
+
+      // 6. Delete student record
+      await tx.student.delete({
+        where: { id: studentId },
+      });
+
+      // 7. If student had a direct user login account, delete it
+      if (student.userId) {
+        await tx.user.delete({
+          where: { id: student.userId },
+        });
+      }
+    });
+
+    revalidatePath("/admin/students");
+    revalidatePath("/admin/classes");
+    revalidatePath("/admin/fees");
+    revalidatePath("/admin/attendance");
+    revalidatePath("/admin/results");
+
+    return { success: true };
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Failed to delete student";
     return { success: false, error: message };
   }
 }

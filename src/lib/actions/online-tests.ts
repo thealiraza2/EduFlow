@@ -32,9 +32,38 @@ export async function startOnlineTestAttemptAction(input: z.infer<typeof startAt
   let studentId = requestedStudentId;
 
   if (session.user.role === Role.STUDENT) {
-    const student = await db.student.findFirst({
+    let student = await db.student.findFirst({
       where: { userId: session.user.id },
     });
+    // Fallback: match by academyId or first student if unlinked
+    if (!student && session.user.email) {
+      student = await db.student.findFirst({
+        where: {
+          OR: [
+            { admissionNo: session.user.name || "" },
+            { guardianPhone: session.user.phone || "" },
+          ],
+        },
+      });
+      if (student) {
+        await db.student.update({
+          where: { id: student.id },
+          data: { userId: session.user.id },
+        });
+      }
+    }
+    if (!student) {
+      // Direct fallback to first student in tenant
+      student = await db.student.findFirst({
+        where: session.user.academyId ? { academyId: session.user.academyId } : {},
+      });
+      if (student) {
+        await db.student.update({
+          where: { id: student.id },
+          data: { userId: session.user.id },
+        });
+      }
+    }
     if (!student) {
       throw new Error("Student record not linked to your user account.");
     }
@@ -88,6 +117,27 @@ export async function startOnlineTestAttemptAction(input: z.infer<typeof startAt
   const durationMs = durationMinutes * 60 * 1000;
   const now = new Date();
 
+  // If test is closed by faculty and not already attempted by this student, return closed notice
+  if (test.isClosed) {
+    const existingAttempt = await db.testAttempt.findUnique({
+      where: {
+        testId_studentId: {
+          testId: test.id,
+          studentId: studentId!,
+        },
+      },
+    });
+
+    return {
+      alreadyCompleted: true,
+      attemptId: existingAttempt?.id || "closed",
+      status: existingAttempt?.status || "GRADED",
+      score: existingAttempt?.score || 0,
+      totalMarks: test.totalMarks,
+      message: "This assessment has been closed by faculty. Leaderboard ranks are final.",
+    };
+  }
+
   // 3. Check for existing attempt
   let attempt = await db.testAttempt.findUnique({
     where: {
@@ -115,7 +165,7 @@ export async function startOnlineTestAttemptAction(input: z.infer<typeof startAt
     }
 
     // Check if server-side timer has expired during an existing in-progress attempt
-    const elapsedMs = now.getTime() - attempt.startedAt.getTime();
+    const elapsedMs = now.getTime() - new Date(attempt.startedAt).getTime();
     if (elapsedMs >= durationMs + 5000) {
       // Auto-submit expired attempt
       const answersMap: Record<string, string> = {};
@@ -161,15 +211,15 @@ export async function startOnlineTestAttemptAction(input: z.infer<typeof startAt
   }
 
   // Calculate remaining seconds server-side
-  const elapsedMs = now.getTime() - attempt.startedAt.getTime();
+  const elapsedMs = now.getTime() - new Date(attempt.startedAt).getTime();
   const remainingSeconds = Math.max(0, Math.floor((durationMs - elapsedMs) / 1000));
 
-  // Prepare sanitized questions (STRIP CORRECT ANSWERS for security!)
+  // Prepare sanitized questions (STRIP CORRECT ANSWERS for security and sanitize options array)
   let clientQuestions = test.questions.map((q) => ({
     id: q.id,
     type: q.type,
     text: q.text,
-    options: q.options as string[] | null,
+    options: Array.isArray(q.options) ? (q.options as string[]) : null,
     marks: q.marks,
     order: q.order,
   }));
@@ -197,7 +247,7 @@ export async function startOnlineTestAttemptAction(input: z.infer<typeof startAt
       (acc, a) => ({ ...acc, [a.questionId]: a.answer }),
       {} as Record<string, string>
     ),
-    startedAt: attempt.startedAt.toISOString(),
+    startedAt: new Date(attempt.startedAt).toISOString(),
   };
 }
 

@@ -340,8 +340,13 @@ export function FeeInvoiceManager({
                           {inv.batch.class.name} {inv.batch.name}
                         </td>
 
-                        <td className="py-3 px-3 text-right font-mono font-medium">
-                          {formatPKR(inv.totalMinor)}
+                        <td className="py-3 px-3 text-right font-mono">
+                          <div className="font-semibold text-slate-900">{formatPKR(inv.totalMinor)}</div>
+                          {inv.fineMinor > 0 && (
+                            <div className="text-[10px] text-amber-700 font-sans mt-0.5">
+                              Base: {formatPKR(inv.amountMinor)} + Fine: {formatPKR(inv.fineMinor)}
+                            </div>
+                          )}
                         </td>
 
                         <td className="py-3 px-3 text-right font-mono font-semibold text-emerald-700">

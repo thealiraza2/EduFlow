@@ -25,6 +25,8 @@ import {
 export interface DefaulterItem {
   id: string;
   month: string;
+  amountMinor?: number;
+  fineMinor?: number;
   totalMinor: number;
   paidMinor: number;
   remainingMinor: number;
@@ -254,7 +256,12 @@ export function DefaultersManager({ initialDefaulters, totalInvoicesCount = 0, a
                       </td>
 
                       <td className="py-3 px-3 text-right font-mono font-medium">
-                        {formatPKR(item.totalMinor)}
+                        <div>{formatPKR(item.totalMinor)}</div>
+                        {item.fineMinor !== undefined && item.fineMinor > 0 && (
+                          <div className="text-[10px] text-amber-700 font-sans mt-0.5">
+                            Base: {formatPKR(item.amountMinor ?? item.totalMinor - item.fineMinor)} + Fine: {formatPKR(item.fineMinor)}
+                          </div>
+                        )}
                       </td>
 
                       <td className="py-3 px-3 text-right font-mono font-semibold text-emerald-700">

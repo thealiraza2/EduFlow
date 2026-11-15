@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowLeft, UserCheck, ShieldAlert, CreditCard } from "lucide-react";
+import { ArrowLeft, UserCheck, ShieldAlert, CreditCard, FileText, Download } from "lucide-react";
 import { EnrollBatchModal } from "@/components/admin/EnrollBatchModal";
 import { StudentStatusChanger } from "@/components/admin/StudentStatusChanger";
 
@@ -48,7 +48,13 @@ export default async function StudentProfilePage({
       invoices: {
         include: {
           payments: true,
+          batch: {
+            include: {
+              class: true,
+            },
+          },
         },
+        orderBy: { month: "desc" },
       },
     },
   });
@@ -181,6 +187,14 @@ export default async function StudentProfilePage({
                 <div className="text-lg font-bold text-red-800 mt-1">{formatPKR(totalBalance)}</div>
               </div>
             </div>
+            <div className="rounded-lg bg-amber-50/70 border border-amber-200/80 p-3 text-[11px] text-amber-900 space-y-1">
+              <p className="font-semibold flex items-center">
+                Fee Structure Breakdown
+              </p>
+              <p className="text-amber-800">
+                Monthly tuition is <strong>PKR 4,000</strong>. An automated <strong>PKR 200 late fee</strong> is applied to unpaid invoices after the 10th of each billing month (Total: PKR 4,200).
+              </p>
+            </div>
             <p className="text-xs text-slate-400 text-center">
               Detailed invoices and challans are managed under the Fees module.
             </p>
@@ -248,6 +262,101 @@ export default async function StudentProfilePage({
                     </TableCell>
                   </TableRow>
                 ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      {/* Issued Invoices & Fee Challans Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center">
+            <FileText className="h-5 w-5 mr-2 text-emerald-600" />
+            Issued Invoices & Fee Breakdown
+          </CardTitle>
+          <CardDescription>
+            Detailed billing records, late fine breakdown, and downloadable 3-copy PDF challans
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-slate-50">
+                <TableHead>Billing Month</TableHead>
+                <TableHead>Class & Batch</TableHead>
+                <TableHead className="text-right">Base Tuition</TableHead>
+                <TableHead className="text-right">Late Fine</TableHead>
+                <TableHead className="text-right font-bold">Total Billable</TableHead>
+                <TableHead className="text-right text-emerald-700">Paid</TableHead>
+                <TableHead className="text-center">Status</TableHead>
+                <TableHead className="text-right">Challan</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {student.invoices.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-20 text-center text-slate-500">
+                    No invoices generated for this student yet. Invoices are generated under the Fees module.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                student.invoices.map((inv) => {
+                  const paid = inv.payments.reduce((acc, p) => acc + p.amountMinor, 0);
+                  return (
+                    <TableRow key={inv.id}>
+                      <TableCell className="font-semibold text-slate-900 font-mono text-xs">
+                        {inv.month}
+                      </TableCell>
+                      <TableCell>
+                        {inv.batch ? `${inv.batch.class.name} ${inv.batch.name}` : "General"}
+                      </TableCell>
+                      <TableCell className="text-right font-mono font-medium text-slate-900">
+                        {formatPKR(inv.amountMinor)}
+                      </TableCell>
+                      <TableCell className="text-right font-mono">
+                        {inv.fineMinor > 0 ? (
+                          <span className="text-amber-700 font-medium font-mono">
+                            +{formatPKR(inv.fineMinor)}
+                          </span>
+                        ) : (
+                          <span className="text-slate-400">PKR 0</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right font-mono font-bold text-slate-900">
+                        {formatPKR(inv.totalMinor)}
+                      </TableCell>
+                      <TableCell className="text-right font-mono font-semibold text-emerald-700">
+                        {formatPKR(paid)}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge
+                          variant={
+                            inv.status === "PAID"
+                              ? "default"
+                              : inv.status === "PARTIAL"
+                              ? "secondary"
+                              : "destructive"
+                          }
+                          className="text-[10px] uppercase font-bold"
+                        >
+                          {inv.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <a
+                          href={`/api/invoices/${inv.id}/challan`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded border border-slate-200 hover:bg-slate-100 text-slate-700"
+                        >
+                          <Download className="h-3 w-3 mr-1 text-slate-500" />
+                          PDF
+                        </a>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </Table>

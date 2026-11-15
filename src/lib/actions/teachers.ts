@@ -121,3 +121,56 @@ export async function updateTeacherStatusAction(data: { teacherId: string; statu
     return { success: false, error: message };
   }
 }
+
+export async function deleteTeacherAction(teacherId: string) {
+  await requireAdmin();
+  const tenant = await requireTenant();
+
+  try {
+    await db.$transaction(async (tx) => {
+      const teacher = await tx.teacher.findFirst({
+        where: { id: teacherId, academyId: tenant.academyId },
+      });
+
+      if (!teacher) {
+        throw new Error("Teacher record not found in this academy.");
+      }
+
+      // 1. Unassign batches
+      await tx.batch.updateMany({
+        where: { teacherId },
+        data: { teacherId: null },
+      });
+
+      // 2. Delete timetable slots
+      await tx.timetableSlot.deleteMany({
+        where: { teacherId },
+      });
+
+      // 3. Delete salary logs
+      await tx.teacherSalary.deleteMany({
+        where: { teacherId },
+      });
+
+      // 4. Delete teacher record
+      await tx.teacher.delete({
+        where: { id: teacherId },
+      });
+
+      // 5. Delete teacher user login account
+      await tx.user.delete({
+        where: { id: teacher.userId },
+      });
+    });
+
+    revalidatePath("/admin/teachers");
+    revalidatePath("/admin/classes");
+    revalidatePath("/admin/timetable");
+    revalidatePath("/admin/salaries");
+
+    return { success: true };
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Failed to delete teacher";
+    return { success: false, error: message };
+  }
+}

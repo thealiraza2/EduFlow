@@ -15,7 +15,20 @@ import {
 import { admitStudentAction } from "@/lib/actions/students";
 import { UserPlus } from "lucide-react";
 
-export function AdmitStudentModal() {
+interface BatchOption {
+  id: string;
+  name: string;
+  class: {
+    name: string;
+    section?: string | null;
+  };
+}
+
+interface AdmitStudentModalProps {
+  batches?: BatchOption[];
+}
+
+export function AdmitStudentModal({ batches = [] }: AdmitStudentModalProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,6 +47,7 @@ export function AdmitStudentModal() {
       guardianPhone: formData.get("guardianPhone") as string,
       dateOfBirth: (formData.get("dateOfBirth") as string) || undefined,
       address: (formData.get("address") as string) || undefined,
+      batchId: (formData.get("batchId") as string) || undefined,
       createParentAccount: createParent,
       parentEmail: (formData.get("parentEmail") as string) || undefined,
       parentPassword: (formData.get("parentPassword") as string) || undefined,
@@ -94,6 +108,28 @@ export function AdmitStudentModal() {
               <Input name="guardianPhone" required placeholder="03001234567" />
             </div>
           </div>
+
+          {batches.length > 0 && (
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                Assign Class & Batch
+              </label>
+              <select
+                name="batchId"
+                className="w-full h-10 px-3 py-2 text-sm bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900"
+              >
+                <option value="">-- Select Class & Batch (Optional) --</option>
+                {batches.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.class.name} {b.class.section ? `(${b.class.section})` : ""} — {b.name}
+                  </option>
+                ))}
+              </select>
+              <p className="text-[11px] text-slate-500">
+                Enrolling during admission links the student to class curriculum, tests, and monthly fee generation.
+              </p>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">

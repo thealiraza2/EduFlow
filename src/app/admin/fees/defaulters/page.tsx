@@ -56,6 +56,8 @@ export default async function DefaultersPage() {
         defaulters.push({
           id: inv.id,
           month: inv.month,
+          amountMinor: inv.amountMinor,
+          fineMinor: inv.fineMinor,
           totalMinor: inv.totalMinor,
           paidMinor,
           remainingMinor,
