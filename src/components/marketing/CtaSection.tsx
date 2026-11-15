@@ -22,10 +22,10 @@ export function CtaSection() {
             <div className="pt-2 flex justify-center">
               <Link
                 href="/signup"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#F5B800] px-9 py-4 text-base font-bold text-[#0F2040] hover:bg-[#DF9E00] shadow-lg transition-all active:scale-[0.99]"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#F5B800] px-9 py-4 text-base font-bold text-[#0F2040] hover:bg-[#DF9E00] shadow-lg transition-all active:scale-[0.99] whitespace-nowrap"
               >
-                <span>Get Started Free</span>
-                <ArrowRight className="w-4 h-4" />
+                <span className="whitespace-nowrap">Get Started Free</span>
+                <ArrowRight className="w-4 h-4 shrink-0" />
               </Link>
             </div>
           </div>

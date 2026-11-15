@@ -99,32 +99,32 @@ export default async function TeacherDashboardPage() {
               {teacher && ` • Subjects: ${teacher.subjects.join(", ")}`}
             </p>
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {teacher && (
               <Badge variant="outline" className="text-xs px-3 py-1 font-mono">
                 {teacher.batches.length} Assigned Batches
               </Badge>
             )}
             <Link href="/teacher/tests/generate">
-              <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white flex items-center text-xs shadow-sm">
+              <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white flex items-center text-xs shadow-sm whitespace-nowrap">
                 <Sparkles className="h-4 w-4 mr-1.5" />
                 AI Test Generator
               </Button>
             </Link>
             <Link href="/teacher/marking">
-              <Button size="sm" variant="outline" className="flex items-center text-xs text-amber-700 border-amber-300 hover:bg-amber-50">
+              <Button size="sm" variant="outline" className="flex items-center text-xs text-amber-700 border-amber-300 hover:bg-amber-50 whitespace-nowrap">
                 <FileCheck2 className="h-4 w-4 mr-1.5 text-amber-600" />
                 Marking Queue & Leaderboard
               </Button>
             </Link>
             <Link href="/teacher/tests">
-              <Button size="sm" variant="outline" className="flex items-center text-xs">
+              <Button size="sm" variant="outline" className="flex items-center text-xs whitespace-nowrap">
                 <FileSpreadsheet className="h-4 w-4 mr-1.5 text-blue-600" />
                 Tests & Marks
               </Button>
             </Link>
             <Link href="/teacher/attendance">
-              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center">
+              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center whitespace-nowrap">
                 <CheckCircle2 className="h-4 w-4 mr-1.5" />
                 Mark Attendance
               </Button>

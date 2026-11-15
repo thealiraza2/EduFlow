@@ -43,14 +43,14 @@ export function Header() {
           </Link>
 
           {/* Centre nav: Home / Features / Pricing / About / Contact with active yellow underline */}
-          <nav className="hidden md:flex items-center gap-7 lg:gap-8">
+          <nav className="hidden md:flex items-center gap-4 lg:gap-8">
             {navLinks.map((link) => {
               const active = isLinkActive(link.href);
               return (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`relative text-sm py-1.5 transition-colors ${
+                  className={`relative text-sm py-1.5 transition-colors whitespace-nowrap ${
                     active
                       ? "font-bold text-[#0F2040]"
                       : "font-semibold text-[#4B5563] hover:text-[#0F2040]"
@@ -66,24 +66,24 @@ export function Header() {
           </nav>
 
           {/* Right side: Login + Get Started Free */}
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2 lg:gap-3">
             <Link
               href="/login"
-              className="px-5 py-2.5 rounded-full border border-[#0F2040] text-[#0F2040] font-semibold text-sm hover:bg-gray-50 transition-colors"
+              className="px-4 lg:px-5 py-2.5 rounded-full border border-[#0F2040] text-[#0F2040] font-semibold text-sm hover:bg-gray-50 transition-colors whitespace-nowrap"
             >
               Login
             </Link>
             <Link
               href="/signup"
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-[#F5B800] text-[#0F2040] font-bold text-sm hover:bg-[#DF9E00] shadow-sm transition-all active:scale-[0.99]"
+              className="inline-flex items-center gap-1.5 px-4 lg:px-5 py-2.5 rounded-full bg-[#F5B800] text-[#0F2040] font-bold text-sm hover:bg-[#DF9E00] shadow-sm transition-all active:scale-[0.99] whitespace-nowrap"
             >
-              <span>Get Started Free</span>
-              <ArrowRight className="w-4 h-4" />
+              <span className="whitespace-nowrap">Get Started Free</span>
+              <ArrowRight className="w-4 h-4 shrink-0" />
             </Link>
           </div>
 
           {/* Mobile hamburger menu button */}
-          <div className="flex sm:hidden items-center">
+          <div className="flex md:hidden items-center">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -97,7 +97,7 @@ export function Header() {
 
         {/* Mobile dropdown menu */}
         {mobileMenuOpen && (
-          <div className="sm:hidden border-t border-gray-100 py-4 px-2 space-y-2 bg-white">
+          <div className="md:hidden border-t border-gray-100 py-4 px-2 space-y-2 bg-white">
             {navLinks.map((link) => {
               const active = isLinkActive(link.href);
               return (

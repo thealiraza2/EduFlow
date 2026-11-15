@@ -10,6 +10,6 @@ export const db =
     log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
   });
 
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = db;
-}
+// Always retain singleton instance in all environments to prevent connection pool exhaustion and reconnection latency
+globalForPrisma.prisma = db;
+

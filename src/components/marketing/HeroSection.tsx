@@ -49,17 +49,17 @@ export function HeroSection() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
               <Link
                 href="/signup"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#F5B800] px-7 py-3.5 text-base font-bold text-[#0F2040] hover:bg-[#DF9E00] shadow-md transition-all active:scale-[0.99] min-h-[48px]"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#F5B800] px-7 py-3.5 text-base font-bold text-[#0F2040] hover:bg-[#DF9E00] shadow-md transition-all active:scale-[0.99] min-h-[48px] whitespace-nowrap"
               >
-                <span>Get Started Free</span>
-                <ArrowRight className="w-4 h-4" />
+                <span className="whitespace-nowrap">Get Started Free</span>
+                <ArrowRight className="w-4 h-4 shrink-0" />
               </Link>
 
               <a
                 href="#features"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-7 py-3.5 text-base font-semibold text-[#0F2040] hover:bg-gray-50 hover:border-[#0F2040] shadow-sm transition-all min-h-[48px]"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-7 py-3.5 text-base font-semibold text-[#0F2040] hover:bg-gray-50 hover:border-[#0F2040] shadow-sm transition-all min-h-[48px] whitespace-nowrap"
               >
-                <span>Learn More</span>
+                <span className="whitespace-nowrap">Learn More</span>
               </a>
             </div>
           </div>
