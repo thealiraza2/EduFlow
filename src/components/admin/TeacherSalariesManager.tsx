@@ -135,8 +135,10 @@ export function TeacherSalariesManager({ teachers, initialMonth }: Props) {
             <div className="text-2xl font-bold font-mono text-emerald-600 mt-1">
               {formatPKR(totalPaidMinor)}
             </div>
-            <span className="text-[11px] text-slate-400 mt-0.5 block">
-              {paidTeachers.length} of {teachers.length} Teachers Paid
+            <span className="text-[11px] text-slate-500 mt-0.5 block font-medium">
+              {totalPaidMinor === 0
+                ? `0 disbursed (0 of ${teachers.length} teachers paid)`
+                : `${paidTeachers.length} of ${teachers.length} Teachers Paid`}
             </span>
           </CardContent>
         </Card>
@@ -149,8 +151,10 @@ export function TeacherSalariesManager({ teachers, initialMonth }: Props) {
             <div className="text-2xl font-bold font-mono text-amber-600 mt-1">
               {formatPKR(totalPendingMinor)}
             </div>
-            <span className="text-[11px] text-slate-400 mt-0.5 block">
-              {teachers.length - paidTeachers.length} Teachers Pending
+            <span className="text-[11px] text-slate-500 mt-0.5 block font-medium">
+              {totalPendingMinor > 0
+                ? `${teachers.length - paidTeachers.length} Teachers Pending (${formatPKR(totalPendingMinor)} pending)`
+                : "All Salaries Disbursed"}
             </span>
           </CardContent>
         </Card>

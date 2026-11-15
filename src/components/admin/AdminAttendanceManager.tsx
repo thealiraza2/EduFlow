@@ -36,9 +36,15 @@ interface BatchItem {
 
 interface Props {
   batches: BatchItem[];
+  initialMonthlyData?: {
+    students: any[];
+    atRiskStudents: any[];
+    totalStudents: number;
+    atRiskCount: number;
+  };
 }
 
-export function AdminAttendanceManager({ batches }: Props) {
+export function AdminAttendanceManager({ batches, initialMonthlyData }: Props) {
   const [activeTab, setActiveTab] = useState<"monthly" | "daily">("monthly");
 
   // Filter States
@@ -56,12 +62,14 @@ export function AdminAttendanceManager({ batches }: Props) {
     atRiskStudents: any[];
     totalStudents: number;
     atRiskCount: number;
-  }>({
-    students: [],
-    atRiskStudents: [],
-    totalStudents: 0,
-    atRiskCount: 0,
-  });
+  }>(
+    initialMonthlyData || {
+      students: [],
+      atRiskStudents: [],
+      totalStudents: 0,
+      atRiskCount: 0,
+    }
+  );
   const [loadingMonthly, setLoadingMonthly] = useState(false);
 
   // Daily sheet state
@@ -78,6 +86,16 @@ export function AdminAttendanceManager({ batches }: Props) {
 
   // Load monthly stats
   useEffect(() => {
+    // If initial data matches current default filters and hasn't changed, skip refetch
+    if (
+      initialMonthlyData &&
+      selectedMonth === currentMonthStr &&
+      selectedBatchId === "ALL" &&
+      monthlyData === initialMonthlyData
+    ) {
+      return;
+    }
+
     let isMounted = true;
     setLoadingMonthly(true);
 
@@ -120,7 +138,7 @@ export function AdminAttendanceManager({ batches }: Props) {
         setDailyRoster(
           res.roster.map((s) => ({
             ...s,
-            status: s.currentStatus || "PRESENT",
+            status: s.currentStatus || null,
           }))
         );
       })
@@ -146,8 +164,21 @@ export function AdminAttendanceManager({ batches }: Props) {
     );
   };
 
+  const handleMarkAllDaily = (status: "PRESENT" | "ABSENT") => {
+    setDailyRoster((prev) => prev.map((r) => ({ ...r, status })));
+  };
+
   const handleDailySave = () => {
     if (!dailyBatchId || !dailyDate || dailyRoster.length === 0) return;
+
+    const unmarked = dailyRoster.filter((r) => !r.status);
+    if (unmarked.length > 0) {
+      setFeedback({
+        type: "error",
+        text: `Please select an attendance status for all students before saving (${unmarked.length} unmarked).`,
+      });
+      return;
+    }
 
     setFeedback(null);
     startTransition(async () => {
@@ -415,13 +446,19 @@ export function AdminAttendanceManager({ batches }: Props) {
                             {st.lateCount}
                           </td>
                           <td className="py-3 px-4 text-center">
-                            <span
-                              className={`font-mono font-bold text-sm ${
-                                st.isAtRisk ? "text-rose-600" : "text-slate-800"
-                              }`}
-                            >
-                              {st.percentage}%
-                            </span>
+                            {st.totalSessions === 0 ? (
+                              <span className="text-slate-400 text-xs italic font-normal">
+                                No sessions recorded
+                              </span>
+                            ) : (
+                              <span
+                                className={`font-mono font-bold text-sm ${
+                                  st.isAtRisk ? "text-rose-600" : "text-slate-800"
+                                }`}
+                              >
+                                {st.percentage}%
+                              </span>
+                            )}
                           </td>
                           <td className="py-3 px-4 text-center">
                             {st.isAtRisk ? (
@@ -539,24 +576,46 @@ export function AdminAttendanceManager({ batches }: Props) {
                   Modifications will update existing database records.
                 </CardDescription>
               </div>
-              <Button
-                type="button"
-                onClick={handleDailySave}
-                disabled={isSavingDaily || loadingDaily || dailyRoster.length === 0}
-                className="bg-slate-900 text-white"
-              >
-                {isSavingDaily ? (
-                  <>
-                    <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-                    <span>Saving...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-4 w-4 mr-2" />
-                    <span>Save Daily Attendance</span>
-                  </>
-                )}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleMarkAllDaily("PRESENT")}
+                  disabled={isSavingDaily || loadingDaily || dailyRoster.length === 0}
+                  className="text-xs text-emerald-700 hover:bg-emerald-50"
+                >
+                  Mark All Present
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleMarkAllDaily("ABSENT")}
+                  disabled={isSavingDaily || loadingDaily || dailyRoster.length === 0}
+                  className="text-xs text-rose-700 hover:bg-rose-50"
+                >
+                  Mark All Absent
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleDailySave}
+                  disabled={isSavingDaily || loadingDaily || dailyRoster.length === 0}
+                  className="bg-slate-900 text-white"
+                >
+                  {isSavingDaily ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4 mr-2" />
+                      <span>Save Daily Attendance</span>
+                    </>
+                  )}
+                </Button>
+              </div>
             </CardHeader>
 
             <CardContent className="p-0">
@@ -594,6 +653,11 @@ export function AdminAttendanceManager({ batches }: Props) {
                       </div>
 
                       <div className="flex items-center space-x-2">
+                        {!st.status && (
+                          <Badge variant="outline" className="text-[10px] bg-slate-100 text-slate-500 border-slate-300 mr-1">
+                            Unmarked
+                          </Badge>
+                        )}
                         {(["PRESENT", "ABSENT", "LEAVE", "LATE"] as const).map((stat) => (
                           <button
                             key={stat}

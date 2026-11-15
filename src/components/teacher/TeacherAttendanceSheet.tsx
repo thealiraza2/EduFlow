@@ -37,7 +37,7 @@ interface StudentRow {
   name: string;
   guardianName: string;
   guardianPhone: string;
-  status: "PRESENT" | "ABSENT" | "LEAVE" | "LATE";
+  status: ("PRESENT" | "ABSENT" | "LEAVE" | "LATE") | null;
   remarks: string;
 }
 
@@ -83,8 +83,8 @@ export function TeacherAttendanceSheet({ batches, userRole }: Props) {
           name: s.name,
           guardianName: s.guardianName,
           guardianPhone: s.guardianPhone,
-          // Default to existing marked status, or default to PRESENT for quick marking
-          status: (s.currentStatus as "PRESENT" | "ABSENT" | "LEAVE" | "LATE") || "PRESENT",
+          // Default to existing recorded status, or null (unmarked) if no record exists
+          status: (s.currentStatus as "PRESENT" | "ABSENT" | "LEAVE" | "LATE" | null) || null,
           remarks: s.remarks || "",
         }));
         setRoster(mapped);
@@ -127,6 +127,15 @@ export function TeacherAttendanceSheet({ batches, userRole }: Props) {
   const handleSave = () => {
     if (!selectedBatchId || !selectedDate || roster.length === 0) return;
 
+    const unmarked = roster.filter((r) => !r.status);
+    if (unmarked.length > 0) {
+      setMessage({
+        type: "error",
+        text: `Please select an attendance status for all students before saving (${unmarked.length} unmarked).`,
+      });
+      return;
+    }
+
     setMessage(null);
     startTransition(async () => {
       try {
@@ -135,7 +144,7 @@ export function TeacherAttendanceSheet({ batches, userRole }: Props) {
           date: selectedDate,
           records: roster.map((r) => ({
             enrollmentId: r.enrollmentId,
-            status: r.status,
+            status: r.status!,
             remarks: r.remarks || undefined,
           })),
         };
@@ -159,6 +168,7 @@ export function TeacherAttendanceSheet({ batches, userRole }: Props) {
   const absentCount = roster.filter((r) => r.status === "ABSENT").length;
   const leaveCount = roster.filter((r) => r.status === "LEAVE").length;
   const lateCount = roster.filter((r) => r.status === "LATE").length;
+  const unmarkedCount = roster.filter((r) => !r.status).length;
 
   return (
     <div className="space-y-6">
@@ -275,6 +285,11 @@ export function TeacherAttendanceSheet({ batches, userRole }: Props) {
           <Badge variant="outline" className="bg-sky-50 text-sky-700 border-sky-200">
             {lateCount} Late
           </Badge>
+          {unmarkedCount > 0 && (
+            <Badge variant="outline" className="bg-slate-100 text-slate-600 border-slate-300">
+              {unmarkedCount} Unmarked
+            </Badge>
+          )}
           <span className="text-xs text-slate-400 font-mono ml-2">Total: {roster.length}</span>
         </div>
 
@@ -369,6 +384,11 @@ export function TeacherAttendanceSheet({ batches, userRole }: Props) {
 
                     {/* Status Buttons */}
                     <div className="flex items-center space-x-1 sm:space-x-2 shrink-0">
+                      {!student.status && (
+                        <Badge variant="outline" className="text-[10px] bg-slate-100 text-slate-500 border-slate-300 mr-1 shrink-0">
+                          Unmarked
+                        </Badge>
+                      )}
                       <button
                         type="button"
                         disabled={isLocked || isSaving}

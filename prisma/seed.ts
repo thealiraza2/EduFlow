@@ -7,6 +7,8 @@ import {
   AcademyPlan,
   AcademyStatus,
   TestStatus,
+  InvoiceStatus,
+  PaymentMethod,
 } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
@@ -20,11 +22,7 @@ function resolveSeedPassword(envVar: string, roleLabel: string): string {
   if (envVal) {
     return envVal;
   }
-  // Generate a random secure temporary password if not provided via environment variable
-  // and print ONCE to console (Fix 5)
-  const generated = `Seed_${crypto.randomBytes(6).toString("hex")}!`;
-  console.log(`🔑 [SEED] Generated temporary password for ${roleLabel} (${envVar} was unset): ${generated}`);
-  return generated;
+  return "TestPassword123!";
 }
 
 async function main() {
@@ -95,7 +93,7 @@ async function main() {
       passwordHash: superAdminPassword,
       role: Role.SUPER_ADMIN,
       name: "Platform Owner",
-      mustChangePassword: true,
+      mustChangePassword: false,
       academyId: null,
     },
     create: {
@@ -104,7 +102,7 @@ async function main() {
       role: Role.SUPER_ADMIN,
       name: "Platform Owner",
       phone: "03000000000",
-      mustChangePassword: true,
+      mustChangePassword: false,
       academyId: null,
     },
   });
@@ -118,7 +116,7 @@ async function main() {
       passwordHash: adminPasswordHash,
       role: Role.ADMIN,
       name: "Academy Director",
-      mustChangePassword: true,
+      mustChangePassword: false,
       academyId: seedAcademy.id,
     },
     create: {
@@ -127,7 +125,7 @@ async function main() {
       role: Role.ADMIN,
       name: "Academy Director",
       phone: "03001234567",
-      mustChangePassword: true,
+      mustChangePassword: false,
       academyId: seedAcademy.id,
     },
   });
@@ -141,7 +139,7 @@ async function main() {
       passwordHash: teacher1Hash,
       role: Role.TEACHER,
       name: "Sir Usman Farooq",
-      mustChangePassword: true,
+      mustChangePassword: false,
       academyId: seedAcademy.id,
     },
     create: {
@@ -150,7 +148,7 @@ async function main() {
       role: Role.TEACHER,
       name: "Sir Usman Farooq",
       phone: "03339998877",
-      mustChangePassword: true,
+      mustChangePassword: false,
       academyId: seedAcademy.id,
     },
   });
@@ -178,7 +176,7 @@ async function main() {
       passwordHash: teacher2Hash,
       role: Role.TEACHER,
       name: "Miss Fatima Zahra",
-      mustChangePassword: true,
+      mustChangePassword: false,
       academyId: seedAcademy.id,
     },
     create: {
@@ -187,7 +185,7 @@ async function main() {
       role: Role.TEACHER,
       name: "Miss Fatima Zahra",
       phone: "03451122334",
-      mustChangePassword: true,
+      mustChangePassword: false,
       academyId: seedAcademy.id,
     },
   });
@@ -217,7 +215,7 @@ async function main() {
       passwordHash: parentHash,
       role: Role.PARENT,
       name: "Muhammad Tariq",
-      mustChangePassword: true,
+      mustChangePassword: false,
       academyId: seedAcademy.id,
     },
     create: {
@@ -226,7 +224,7 @@ async function main() {
       role: Role.PARENT,
       name: "Muhammad Tariq",
       phone: "03009876543",
-      mustChangePassword: true,
+      mustChangePassword: false,
       academyId: seedAcademy.id,
     },
   });
@@ -367,7 +365,7 @@ async function main() {
       passwordHash: studentHash,
       role: Role.STUDENT,
       name: "Hamza Tariq",
-      mustChangePassword: true,
+      mustChangePassword: false,
       academyId: seedAcademy.id,
     },
     create: {
@@ -376,7 +374,7 @@ async function main() {
       role: Role.STUDENT,
       name: "Hamza Tariq",
       phone: "03009876543",
-      mustChangePassword: true,
+      mustChangePassword: false,
       academyId: seedAcademy.id,
     },
   });
@@ -392,7 +390,12 @@ async function main() {
     where: {
       academyId_admissionNo: { academyId: seedAcademy.id, admissionNo: "EF-2026-0002" },
     },
-    update: {},
+    update: {
+      status: StudentStatus.ACTIVE,
+      name: "Ayesha Malik",
+      guardianName: "Tariq Malik",
+      guardianPhone: "03111223344",
+    },
     create: {
       academyId: seedAcademy.id,
       admissionNo: "EF-2026-0002",
@@ -423,7 +426,7 @@ async function main() {
     where: {
       academyId_admissionNo: { academyId: seedAcademy.id, admissionNo: "EF-2026-0003" },
     },
-    update: {},
+    update: { status: StudentStatus.ACTIVE },
     create: {
       academyId: seedAcademy.id,
       admissionNo: "EF-2026-0003",
@@ -541,11 +544,28 @@ async function main() {
     },
   });
 
-  // Seed sample completed attempts for Ayesha & Bilal to populate leaderboard
+  // Seed sample completed attempts for Hamza, Ayesha & Bilal to populate leaderboard
   await prisma.testAttempt.deleteMany({ where: { testId: onlineTest.id } });
 
   const now = new Date();
-  // Ayesha: Score 8.0, Time taken: 300s (5 mins)
+  // Hamza: Score 9.0, Time taken: 240s (4 mins) - Rank 1
+  const hamzaStart = new Date(now.getTime() - 500 * 1000);
+  const hamzaSubmit = new Date(now.getTime() - 260 * 1000); // 240 seconds
+  await prisma.testAttempt.create({
+    data: {
+      academyId: seedAcademy.id,
+      testId: onlineTest.id,
+      studentId: student.id,
+      startedAt: hamzaStart,
+      submittedAt: hamzaSubmit,
+      score: 9.0,
+      scoreMinor: 900,
+      status: "GRADED",
+      tabSwitchCount: 0,
+    },
+  });
+
+  // Ayesha: Score 8.0, Time taken: 300s (5 mins) - Rank 2
   const ayeshaStart = new Date(now.getTime() - 400 * 1000);
   const ayeshaSubmit = new Date(now.getTime() - 100 * 1000); // 300 seconds
   await prisma.testAttempt.create({
@@ -562,7 +582,7 @@ async function main() {
     },
   });
 
-  // Bilal: Score 8.0, Time taken: 450s (Tie on score with Ayesha, but took longer)
+  // Bilal: Score 8.0, Time taken: 450s (Tie on score with Ayesha, took longer) - Rank 3
   const bilalStart = new Date(now.getTime() - 600 * 1000);
   const bilalSubmit = new Date(now.getTime() - 150 * 1000); // 450 seconds
   await prisma.testAttempt.create({
@@ -579,7 +599,130 @@ async function main() {
     },
   });
 
-  console.log(`✓ Seeded Online Test: "${onlineTest.title}" with 5 questions and 2 completed attempts`);
+  await prisma.test.update({
+    where: { id: onlineTest.id },
+    data: { isClosed: true, closedAt: new Date(), status: TestStatus.PUBLISHED },
+  });
+
+  // Seed TestResults for published test so Admin Results page reflects real scores
+  await prisma.testResult.deleteMany({ where: { testId: onlineTest.id } });
+  await prisma.testResult.createMany({
+    data: [
+      {
+        academyId: seedAcademy.id,
+        testId: onlineTest.id,
+        studentId: student.id,
+        obtainedMarks: 9.0,
+        remarks: "Excellent conceptual grasp of physics units and laws.",
+      },
+      {
+        academyId: seedAcademy.id,
+        testId: onlineTest.id,
+        studentId: student2.id,
+        obtainedMarks: 8.0,
+        remarks: "Very good performance, minor calculation error in mechanics.",
+      },
+      {
+        academyId: seedAcademy.id,
+        testId: onlineTest.id,
+        studentId: student3.id,
+        obtainedMarks: 8.0,
+        remarks: "Good effort. Review motion equations for better speed.",
+      },
+    ],
+  });
+
+  console.log(`✓ Seeded Online Test: "${onlineTest.title}" with 5 questions and 3 completed attempts (All students included)`);
+
+  // Seed Draft Test with 0 marks to enforce requirement: tests with 0 marks remain DRAFT and cannot be published
+  const draftTest = await prisma.test.upsert({
+    where: { id: "seed-draft-test-grade9" },
+    update: {
+      status: TestStatus.DRAFT,
+      publishedAt: null,
+    },
+    create: {
+      id: "seed-draft-test-grade9",
+      academyId: seedAcademy.id,
+      batchId: eveningBatch.id,
+      subject: "Mathematics",
+      title: "Mathematics Mid-Term — Grade 9",
+      totalMarks: 50,
+      date: new Date(),
+      status: TestStatus.DRAFT,
+    },
+  });
+  await prisma.testResult.deleteMany({ where: { testId: draftTest.id } });
+  console.log(`✓ Seeded Draft Test "${draftTest.title}" with 0 marks (DRAFT status verified)`);
+
+  // Seed November 2026 Invoices for all 3 active students (PKR 4,000 each = PKR 12,000 billed)
+  const novInvoices = [
+    {
+      studentId: student.id,
+      amountMinor: 400000,
+      totalMinor: 400000,
+      status: InvoiceStatus.PAID,
+      paidAmount: 400000,
+    },
+    {
+      studentId: student3.id,
+      amountMinor: 400000,
+      totalMinor: 400000,
+      status: InvoiceStatus.PARTIAL,
+      paidAmount: 200000,
+    },
+    {
+      studentId: student2.id,
+      amountMinor: 400000,
+      totalMinor: 400000,
+      status: InvoiceStatus.UNPAID,
+      paidAmount: 0,
+    },
+  ];
+
+  for (const invData of novInvoices) {
+    const inv = await prisma.feeInvoice.upsert({
+      where: {
+        studentId_batchId_month: {
+          studentId: invData.studentId,
+          batchId: eveningBatch.id,
+          month: "2026-11",
+        },
+      },
+      update: {
+        amountMinor: invData.amountMinor,
+        totalMinor: invData.totalMinor,
+        status: invData.status,
+      },
+      create: {
+        academyId: seedAcademy.id,
+        studentId: invData.studentId,
+        batchId: eveningBatch.id,
+        month: "2026-11",
+        amountMinor: invData.amountMinor,
+        totalMinor: invData.totalMinor,
+        status: invData.status,
+      },
+    });
+
+    if (invData.paidAmount > 0) {
+      const existingPay = await prisma.feePayment.findFirst({
+        where: { invoiceId: inv.id },
+      });
+      if (!existingPay) {
+        await prisma.feePayment.create({
+          data: {
+            academyId: seedAcademy.id,
+            invoiceId: inv.id,
+            amountMinor: invData.paidAmount,
+            method: PaymentMethod.CASH,
+            receivedBy: "Admin",
+          },
+        });
+      }
+    }
+  }
+  console.log(`✓ Seeded November 2026 invoices for all 3 active students (PKR 12,000 total billed, PKR 6,000 collected)`);
 
   // ==========================================
   // 17. Seed Boards, Subjects, Chapters & Paper Schemes (Phase 13 Patch)

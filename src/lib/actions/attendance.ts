@@ -319,9 +319,9 @@ export async function getMonthlyAttendanceStatsAction(params: {
 
     const percentage = totalSessions > 0
       ? Math.round((presentCount / totalSessions) * 1000) / 10
-      : 100; // If no sessions held yet, not marked at-risk
+      : null; // If no sessions recorded, percentage is null (not 100%, not 0%)
 
-    const isAtRisk = totalSessions > 0 && percentage < 75;
+    const isAtRisk = totalSessions > 0 && percentage !== null && percentage < 75;
 
     return {
       enrollmentId: enr.id,

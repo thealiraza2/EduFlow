@@ -307,7 +307,7 @@ export default async function AdminDashboardPage() {
                 href="/admin/fees/defaulters"
                 className="text-xs font-medium text-rose-700 hover:text-rose-900 inline-flex items-center"
               >
-                Send Reminders <ArrowRight className="h-3 w-3 ml-1" />
+                View Defaulters <ArrowRight className="h-3 w-3 ml-1" />
               </Link>
             </div>
           </CardContent>

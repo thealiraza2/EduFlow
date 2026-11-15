@@ -37,7 +37,7 @@ export default async function AdminResultsPage() {
     subject: t.subject,
     totalMarks: t.totalMarks,
     date: t.date.toISOString().split("T")[0],
-    status: t.status as "DRAFT" | "PUBLISHED",
+    status: (t.results.length === 0 ? "DRAFT" : t.status) as "DRAFT" | "PUBLISHED",
     publishedAt: t.publishedAt ? t.publishedAt.toISOString() : null,
     batch: {
       id: t.batch.id,

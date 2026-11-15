@@ -83,6 +83,10 @@ export default async function DefaultersPage() {
     }
   }
 
+  const totalInvoicesCount = await db.feeInvoice.count({
+    where: { academyId: tenant.academyId },
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -107,6 +111,7 @@ export default async function DefaultersPage() {
 
       <DefaultersManager
         initialDefaulters={defaulters}
+        totalInvoicesCount={totalInvoicesCount}
         adminName={admin.name || "Administrator"}
       />
     </div>

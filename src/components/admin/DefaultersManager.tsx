@@ -51,10 +51,11 @@ export interface DefaulterItem {
 
 interface Props {
   initialDefaulters: DefaulterItem[];
+  totalInvoicesCount?: number;
   adminName: string;
 }
 
-export function DefaultersManager({ initialDefaulters, adminName }: Props) {
+export function DefaultersManager({ initialDefaulters, totalInvoicesCount = 0, adminName }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [remindingId, setRemindingId] = useState<string | null>(null);
   const [selectedInvoiceForPayment, setSelectedInvoiceForPayment] = useState<any | null>(null);
@@ -184,12 +185,20 @@ export function DefaultersManager({ initialDefaulters, adminName }: Props) {
         </CardHeader>
 
         <CardContent className="p-0">
-          {filtered.length === 0 ? (
+          {totalInvoicesCount === 0 ? (
+            <div className="p-12 text-center text-slate-400">
+              <Calendar className="h-8 w-8 mx-auto mb-2 text-slate-300" />
+              <p className="text-sm font-semibold text-slate-700">No invoices issued yet</p>
+              <p className="text-xs text-slate-400 mt-1">
+                Zero fee invoices have been issued for this academy. Generate monthly fee invoices from the Fees dashboard.
+              </p>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="p-12 text-center text-slate-400">
               <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-emerald-500" />
-              <p className="text-sm font-semibold text-slate-700">No fee defaulters found!</p>
+              <p className="text-sm font-semibold text-slate-700">No fee defaulters found</p>
               <p className="text-xs text-slate-400 mt-1">
-                All invoices due to date are fully collected or on schedule.
+                All issued invoices due to date are fully collected or on schedule.
               </p>
             </div>
           ) : (

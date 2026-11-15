@@ -302,12 +302,17 @@ export function AdminResultsManager({ initialTests, adminName }: Props) {
                   type="button"
                   onClick={() => handlePublish(selectedTest.id, selectedTest.title)}
                   disabled={publishingId === selectedTest.id || selectedTest.results.length === 0}
-                  className="w-full h-10 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center space-x-1.5"
+                  className="w-full h-10 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-500 text-white font-semibold text-xs flex items-center justify-center space-x-1.5"
                 >
                   {publishingId === selectedTest.id ? (
                     <>
                       <RefreshCw className="h-4 w-4 animate-spin mr-1.5" />
                       Publishing...
+                    </>
+                  ) : selectedTest.results.length === 0 ? (
+                    <>
+                      <AlertTriangle className="h-4 w-4 mr-1.5 text-amber-500" />
+                      Cannot Publish (0 Student Marks Entered)
                     </>
                   ) : (
                     <>
