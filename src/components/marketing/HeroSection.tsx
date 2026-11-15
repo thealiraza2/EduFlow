@@ -7,7 +7,7 @@ export function HeroSection() {
   const checkmarks = ["Easy to Use", "Secure & Reliable", "24/7 Support"];
 
   return (
-    <section className="relative overflow-visible pt-6 pb-12 sm:pt-8 sm:pb-16 lg:pt-8 lg:pb-20 bg-white">
+    <section className="relative overflow-visible pt-6 pb-24 sm:pt-8 sm:pb-28 lg:pt-8 lg:pb-32 xl:pb-36 bg-white">
       {/* Background Decorative Accents */}
       <div className="absolute top-0 right-0 -z-10 w-96 h-96 bg-[#FFF9E6] rounded-full blur-3xl opacity-70" />
       <div className="absolute bottom-10 left-10 -z-10 w-80 h-80 bg-amber-50/50 rounded-full blur-2xl opacity-60" />
@@ -65,7 +65,7 @@ export function HeroSection() {
           </div>
 
           {/* Right Column: Hero student photo card + floating dashboard mockup overlapping bottom edge */}
-          <div className="lg:col-span-6 relative pt-2 lg:pt-0 mb-36 sm:mb-40 lg:mb-0">
+          <div className="lg:col-span-6 relative pt-2 lg:pt-0 mb-36 sm:mb-40 lg:mb-24 xl:mb-28">
             <div className="relative max-w-lg mx-auto lg:max-w-none">
               {/* Fully Visible Student Photo Card (NO dark overlays) */}
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-gray-200/80 bg-[#FFF9E6]/30 aspect-[4/3] sm:aspect-[16/11] lg:aspect-[4/3] w-full">

@@ -150,11 +150,11 @@ export function formatRiskFallbackExplanation(
   riskLevel: RiskLevel,
   marksTrend?: MarksTrend
 ): string {
-  const trendNote = marksTrend === "DROPPING" ? " aur test marks mein kami dekhi gayi hai" : "";
+  const trendNote = marksTrend === "DROPPING" ? " and test scores show a declining trend" : "";
   if (overdueMonths === 0) {
-    return `${studentName} ki attendance ${attendancePct}% hai${trendNote} — dropout risk ${riskLevel}.`;
+    return `${studentName}'s attendance is ${attendancePct}%${trendNote} — dropout risk ${riskLevel}.`;
   }
-  return `${studentName} ki attendance ${attendancePct}% hai aur ${overdueMonths} mahine ki fee due hai${trendNote} — dropout risk ${riskLevel}.`;
+  return `${studentName}'s attendance is ${attendancePct}% with ${overdueMonths} month${overdueMonths > 1 ? "s" : ""} fee overdue${trendNote} — dropout risk ${riskLevel}.`;
 }
 
 /**

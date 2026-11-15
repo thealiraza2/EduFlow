@@ -9,12 +9,12 @@ export function TestimonialsSection() {
         <div className="max-w-3xl mx-auto text-center mb-14 sm:mb-16 space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-[#F5B800]/40 bg-[#FFF9E6] px-4 py-1.5 text-xs font-bold text-[#0F2040] uppercase tracking-wider">
             <span className="w-2 h-2 rounded-full bg-[#F5B800]" />
-            <span>WHAT OUR CLIENTS SAY</span>
+            <span>PARTNER WITH US</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F2040] tracking-tight">
-            Trusted by Schools Across the{" "}
-            <span className="text-[#F5B800]">World</span>
+            Transform Your School&apos;s{" "}
+            <span className="text-[#F5B800]">Operations</span>
           </h2>
         </div>
 

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { SignupForm } from "@/components/auth/SignupForm";
+import { Header } from "@/components/marketing/Header";
+import { Footer } from "@/components/marketing/Footer";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -10,46 +12,36 @@ export const metadata: Metadata = {
 
 export default function SignupPage() {
   return (
-    <div className="min-h-screen bg-[#FFF9E6]/30 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      {/* Header Logo & Subtitle */}
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-6">
-        <Link href="/" className="inline-flex items-center gap-3 focus:outline-none">
-          <Image
-            src="/images/logo.svg"
-            alt="EduFlow Logo"
-            width={180}
-            height={45}
-            priority
-            className="h-11 w-auto mx-auto"
-          />
-        </Link>
-        <p className="mt-3 text-sm font-medium text-[#4B5563]">
-          Streamline your school operations with an all-in-one platform.
-        </p>
-      </div>
+    <div className="min-h-screen bg-[#FFF9E6]/30 flex flex-col justify-between">
+      {/* Header Navigation */}
+      <Header />
 
-      <div className="sm:mx-auto sm:w-full sm:max-w-lg px-4">
-        <SignupForm />
-      </div>
+      <main className="flex-1 flex flex-col justify-center py-10 sm:px-6 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-6">
+          <Link href="/" className="inline-flex items-center gap-3 focus:outline-none">
+            <Image
+              src="/images/logo.svg"
+              alt="EduFlow Logo"
+              width={180}
+              height={45}
+              priority
+              className="h-11 w-auto mx-auto"
+            />
+          </Link>
+          <h1 className="mt-3 text-2xl font-bold text-[#0F2040]">
+            Start Your 14-Day Free Trial
+          </h1>
+          <p className="mt-1 text-sm text-[#4B5563]">
+            No credit card required. Full access to all 12 modules.
+          </p>
+        </div>
 
-      {/* Footer Links */}
-      <div className="mt-8 text-center text-xs text-gray-500 space-x-4">
-        <Link href="/" className="hover:text-[#0F2040] transition-colors">
-          Home
-        </Link>
-        <span>•</span>
-        <Link href="/privacy" className="hover:text-[#0F2040] transition-colors">
-          Privacy Policy
-        </Link>
-        <span>•</span>
-        <Link href="/terms" className="hover:text-[#0F2040] transition-colors">
-          Terms of Service
-        </Link>
-        <span>•</span>
-        <Link href="/login" className="hover:text-[#0F2040] transition-colors font-semibold">
-          Login
-        </Link>
-      </div>
+        <div className="sm:mx-auto sm:w-full sm:max-w-lg px-4">
+          <SignupForm />
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

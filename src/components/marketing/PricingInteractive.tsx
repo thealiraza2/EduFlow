@@ -115,7 +115,7 @@ export function PricingInteractive() {
         </h1>
 
         <p className="text-base sm:text-lg text-[#4B5563] max-w-2xl mx-auto">
-          Choose the plan that fits your school or academy size. All plans include core management modules with zero setup fees.
+          Choose the plan that fits your school or academy size. Every plan includes a 14-day free trial with full access to all 12 modules. No credit card required.
         </p>
 
         {/* Monthly / Yearly Toggle */}

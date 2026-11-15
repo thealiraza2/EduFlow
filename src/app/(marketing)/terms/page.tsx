@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/marketing/Header";
 import { Footer } from "@/components/marketing/Footer";
-import { ArrowLeft, FileText } from "lucide-react";
+import { ArrowLeft, FileText, Scale, Mail, ShieldAlert, Baby } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Terms of Service — EduFlow",
@@ -44,24 +44,59 @@ export default function TermsPage() {
             </section>
 
             <section className="space-y-2">
-              <h2 className="text-xl font-bold text-[#0F2040]">2. Subscription & Payments</h2>
+              <h2 className="text-xl font-bold text-[#0F2040]">2. Subscription, Trials & Payments</h2>
               <p>
-                EduFlow is provided on a monthly or annual subscription basis. Tiered plans (Starter, Growth, Pro) are determined by the count of active enrolled students. Payments are processed in Pakistani Rupees (PKR) without hidden setup fees.
+                EduFlow is provided on a monthly or annual subscription basis following an initial 14-day free trial. Tiered plans (Starter, Growth, Pro) are determined by the count of active enrolled students. Payments are processed in Pakistani Rupees (PKR) without hidden setup fees. Subscriptions can be cancelled at any time without penalty.
               </p>
             </section>
 
             <section className="space-y-2">
-              <h2 className="text-xl font-bold text-[#0F2040]">3. WhatsApp Cloud API Terms</h2>
+              <h2 className="text-xl font-bold text-[#0F2040] flex items-center gap-2">
+                <Baby className="w-5 h-5 text-[#F5B800]" />
+                3. Children&apos;s & Student Records Protection
+              </h2>
               <p>
-                WhatsApp notification features utilize Meta&apos;s Cloud API. Message delivery costs are determined by Meta&apos;s utility message pricing (~PKR 4.20/msg). Institutions must adhere to WhatsApp&apos;s business messaging guidelines and obtain guardian consent before dispatching transactional notifications.
+                Institutions using EduFlow warrant that they have lawful authority and requisite parental consent to record, manage, and process educational records of minor students. EduFlow acts as a data processor and implements strict tenant encryption boundaries to prevent unauthorized exposure.
               </p>
             </section>
 
             <section className="space-y-2">
-              <h2 className="text-xl font-bold text-[#0F2040]">4. Service Availability & Uptime</h2>
+              <h2 className="text-xl font-bold text-[#0F2040]">4. WhatsApp Cloud API Terms</h2>
+              <p>
+                WhatsApp notification features utilize Meta&apos;s official Cloud API. Message delivery costs are determined by Meta&apos;s utility message pricing (~PKR 4.20/msg). Institutions must adhere to WhatsApp&apos;s business messaging guidelines and obtain guardian consent before dispatching transactional notifications.
+              </p>
+            </section>
+
+            <section className="space-y-2">
+              <h2 className="text-xl font-bold text-[#0F2040]">5. Service Availability & Uptime</h2>
               <p>
                 We aim for 99.9% platform availability. Regular maintenance windows are scheduled during low-usage overnight hours. Emergency data backups occur continuously to safeguard student and financial ledgers.
               </p>
+            </section>
+
+            <section className="space-y-2">
+              <h2 className="text-xl font-bold text-[#0F2040] flex items-center gap-2">
+                <Scale className="w-5 h-5 text-[#F5B800]" />
+                6. Governing Law & Dispute Resolution
+              </h2>
+              <p>
+                These Terms of Service shall be governed by, construed, and enforced in accordance with the laws of the Islamic Republic of Pakistan. Any legal action, dispute, or proceeding arising under these Terms shall be instituted exclusively in the competent courts located in Lahore, Pakistan.
+              </p>
+            </section>
+
+            <section className="space-y-2">
+              <h2 className="text-xl font-bold text-[#0F2040] flex items-center gap-2">
+                <Mail className="w-5 h-5 text-[#F5B800]" />
+                7. Legal Inquiries & Notices
+              </h2>
+              <p>
+                For official legal notices or contractual inquiries, please contact our administrative team:
+              </p>
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm space-y-1">
+                <div><strong>Legal Department:</strong> <a href="mailto:legal@eduflow.app" className="text-blue-600 underline">legal@eduflow.app</a></div>
+                <div><strong>Support:</strong> <a href="mailto:support@eduflow.app" className="text-blue-600 underline">support@eduflow.app</a></div>
+                <div><strong>Jurisdiction:</strong> Lahore, Punjab, Pakistan</div>
+              </div>
             </section>
           </div>
         </div>

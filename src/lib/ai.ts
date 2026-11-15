@@ -150,10 +150,10 @@ export async function explainRisk(input: RiskExplanationInput): Promise<string> 
 
   const config = getLLMConfig();
   if (!config.apiKey) {
-    return `${fallback} (AI unavailable — showing data only)`;
+    return `${fallback} (AI insights unavailable — connect an AI key in Settings)`;
   }
 
-  const prompt = `Write ONE concise, plain-language sentence in Urdu-English mix explaining this student's dropout risk.
+  const prompt = `Write ONE concise, plain-language sentence in English explaining this student's dropout risk.
 Facts:
 - Student: ${input.studentName}
 - Attendance (last 30 days): ${input.attendancePct}%
@@ -161,7 +161,7 @@ Facts:
 - Marks trend: ${input.marksTrend}
 - Dropout Risk Level (computed by system): ${input.riskLevel}
 
-Example output format: "${input.studentName} ki attendance ${input.attendancePct}% hai aur ${input.overdueMonths} mahine ki fee due hai — dropout risk ${input.riskLevel}."
+Example output format: "${input.studentName}'s attendance is ${input.attendancePct}% and fee is ${input.overdueMonths} months overdue — dropout risk is ${input.riskLevel}."
 Return ONLY the one sentence, without quotes or additional commentary.`;
 
   try {
@@ -169,7 +169,7 @@ Return ONLY the one sentence, without quotes or additional commentary.`;
     return response.replace(/^["']|["']$/g, "").trim() || fallback;
   } catch (err: any) {
     console.warn("[AI RISK EXPLANATION FALLBACK]", err.message);
-    return `${fallback} (AI unavailable — showing data only)`;
+    return `${fallback} (AI insights unavailable — connect an AI key in Settings)`;
   }
 }
 

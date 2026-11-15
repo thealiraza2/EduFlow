@@ -95,7 +95,11 @@ export function ContactFormInteractive() {
         </h1>
 
         <p className="text-base sm:text-lg text-[#4B5563] max-w-2xl mx-auto">
-          Have questions, need a live walkthrough, or want to discuss a custom setup? We are here to help your academy modernize with confidence.
+          Have questions, need a live walkthrough, or want to discuss a custom setup? Email us directly at{" "}
+          <a href="mailto:support@eduflow.app" className="font-bold text-[#0F2040] underline hover:text-[#F5B800]">
+            support@eduflow.app
+          </a>{" "}
+          or send a message through the form below.
         </p>
       </div>
 
@@ -157,7 +161,7 @@ export function ContactFormInteractive() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Professor Tariq Mahmood"
+                  placeholder="Your full name"
                   className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm text-[#0F2040] focus:outline-none focus:ring-2 focus:ring-[#F5B800]"
                 />
               </div>
@@ -172,7 +176,7 @@ export function ContactFormInteractive() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. principal@school.edu.pk"
+                  placeholder="you@example.com"
                   className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm text-[#0F2040] focus:outline-none focus:ring-2 focus:ring-[#F5B800]"
                 />
               </div>
@@ -186,7 +190,7 @@ export function ContactFormInteractive() {
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="e.g. 03001234567"
+                  placeholder="Your phone number"
                   className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm text-[#0F2040] focus:outline-none focus:ring-2 focus:ring-[#F5B800]"
                 />
               </div>
@@ -200,7 +204,7 @@ export function ContactFormInteractive() {
                   type="text"
                   value={schoolName}
                   onChange={(e) => setSchoolName(e.target.value)}
-                  placeholder="e.g. Al-Huda Science Academy"
+                  placeholder="Your school or academy name"
                   className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm text-[#0F2040] focus:outline-none focus:ring-2 focus:ring-[#F5B800]"
                 />
               </div>

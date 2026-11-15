@@ -16,7 +16,7 @@ export function CtaSection() {
             </h2>
 
             <p className="text-lg text-gray-300 max-w-xl mx-auto leading-relaxed">
-              Join schools already using our platform.
+              Automate attendance, fees, and results with a 14-day free trial. Setup takes under 5 minutes.
             </p>
 
             <div className="pt-2 flex justify-center">

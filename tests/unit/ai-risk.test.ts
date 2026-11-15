@@ -82,13 +82,13 @@ describe("Phase 13: Deterministic Dropout Risk Model (Invariant 12)", () => {
 
   it("formats deterministic risk explanation without LLM", () => {
     const text1 = formatRiskFallbackExplanation("Ahmed Ali", 62, 2, "HIGH", "STABLE");
-    expect(text1).toBe("Ahmed Ali ki attendance 62% hai aur 2 mahine ki fee due hai — dropout risk HIGH.");
+    expect(text1).toBe("Ahmed Ali's attendance is 62% with 2 months fee overdue — dropout risk HIGH.");
 
     const text2 = formatRiskFallbackExplanation("Fatima Khan", 92, 0, "LOW", "STABLE");
-    expect(text2).toBe("Fatima Khan ki attendance 92% hai — dropout risk LOW.");
+    expect(text2).toBe("Fatima Khan's attendance is 92% — dropout risk LOW.");
 
     const text3 = formatRiskFallbackExplanation("Bilal", 55, 1, "HIGH", "DROPPING");
-    expect(text3).toContain("aur test marks mein kami dekhi gayi hai");
+    expect(text3).toContain("and test scores show a declining trend");
     expect(text3).toContain("dropout risk HIGH");
   });
 });
@@ -241,9 +241,9 @@ describe("Phase 13: LLM Graceful Fallbacks (Missing API Key / Timeout)", () => {
       riskLevel: "HIGH",
     });
 
-    expect(explanation).toContain("Hamza Tariq ki attendance 58% hai aur 2 mahine ki fee due hai");
+    expect(explanation).toContain("Hamza Tariq's attendance is 58% with 2 months fee overdue");
     expect(explanation).toContain("dropout risk HIGH");
-    expect(explanation).toContain("(AI unavailable — showing data only)");
+    expect(explanation).toContain("(AI insights unavailable — connect an AI key in Settings)");
   });
 
   it("generateQuestions returns structured curriculum template without crashing when LLM_API_KEY is empty", async () => {

@@ -31,6 +31,7 @@ export function LoginForm() {
 
   const [email, setEmail] = useState(defaultEmail);
   const [password, setPassword] = useState("");
+  const [showForgotNote, setShowForgotNote] = useState(false);
 
   // Ensure password is unconditionally blank on mount/navigation (Fix: logout password bug)
   useEffect(() => {
@@ -102,7 +103,19 @@ export function LoginForm() {
             <label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-gray-700">
               Password
             </label>
+            <button
+              type="button"
+              onClick={() => setShowForgotNote(!showForgotNote)}
+              className="text-xs font-semibold text-slate-500 hover:text-[#0F2040] hover:underline"
+            >
+              Forgot password?
+            </button>
           </div>
+          {showForgotNote && (
+            <div className="rounded-lg bg-blue-50 border border-blue-200 p-2.5 text-xs text-blue-900">
+              Please contact your school or academy administrator to reset your account password.
+            </div>
+          )}
           <div className="relative">
             <Input
               id="password"

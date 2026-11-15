@@ -49,7 +49,7 @@ export function AtRiskStudentsCard({
                   }
                 >
                   <Brain className="h-3 w-3 mr-1" />
-                  {isAiAvailable ? "Groq LLM Active" : "AI unavailable — showing data only"}
+                  {isAiAvailable ? "Groq LLM Active" : "AI insights unavailable — connect an AI key in Settings"}
                 </Badge>
               </div>
               <CardDescription className="text-xs text-slate-500 mt-0.5">

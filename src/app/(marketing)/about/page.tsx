@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Header } from "@/components/marketing/Header";
 import { Footer } from "@/components/marketing/Footer";
 import {
@@ -202,8 +203,14 @@ export default function AboutPage() {
 
             <div className="rounded-3xl border border-gray-200 bg-[#FAFAFA] p-8 sm:p-10 shadow-sm max-w-xl mx-auto">
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
-                <div className="w-20 h-20 rounded-2xl bg-[#0F2040] text-[#F5B800] flex items-center justify-center shrink-0 shadow-md">
-                  <Code2 className="w-10 h-10" />
+                <div className="relative w-24 h-24 rounded-2xl overflow-hidden shadow-md border border-gray-200 shrink-0">
+                  <Image
+                    src="/images/ali-raza.jpg"
+                    alt="Ali Raza — Founder & Developer"
+                    fill
+                    sizes="96px"
+                    className="object-cover"
+                  />
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-2xl font-bold text-[#0F2040]">Ali Raza</h3>
