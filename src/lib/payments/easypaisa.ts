@@ -22,11 +22,35 @@ export interface EasypaisaConfig {
   sandboxUrl: string;
 }
 
-export function getEasypaisaConfig(): EasypaisaConfig {
-  const isProduction = process.env.NODE_ENV === "production";
+export const EASYPAISA_SANDBOX_DEFAULTS = {
+  storeId: "12345",
+  hashKey: "easypaisa_sandbox_hash_key_12345",
+  returnUrl: "http://localhost:3000/api/webhooks/easypaisa",
+  sandboxUrl: "http://localhost:3000/sandbox/checkout/easypaisa",
+};
 
-  // Production requires real merchant environment variables — fail loudly if unset
-  if (isProduction) {
+/**
+ * Dedicated sandbox config provider. Never requires merchant env vars and never throws.
+ */
+export function getSandboxEasypaisaConfig(): EasypaisaConfig {
+  return {
+    storeId: process.env.EASYPAISA_SANDBOX_STORE_ID || process.env.EASYPAISA_STORE_ID || EASYPAISA_SANDBOX_DEFAULTS.storeId,
+    hashKey: process.env.EASYPAISA_SANDBOX_HASH_KEY || process.env.EASYPAISA_HASH_KEY || EASYPAISA_SANDBOX_DEFAULTS.hashKey,
+    returnUrl: process.env.EASYPAISA_RETURN_URL || EASYPAISA_SANDBOX_DEFAULTS.returnUrl,
+    sandboxUrl: process.env.EASYPAISA_SANDBOX_URL || EASYPAISA_SANDBOX_DEFAULTS.sandboxUrl,
+  };
+}
+
+/**
+ * Returns Easypaisa configuration.
+ * - In live mode (PAYMENT_MODE=live or isLive: true): enforces presence of merchant env vars
+ *   AND verifies they differ from known sandbox defaults (Fix 6).
+ * - Otherwise (sandbox mode): returns sandbox config without throwing.
+ */
+export function getEasypaisaConfig(options?: { isLive?: boolean }): EasypaisaConfig {
+  const isLive = options?.isLive ?? (process.env.PAYMENT_MODE?.toLowerCase() === "live");
+
+  if (isLive) {
     const storeId = process.env.EASYPAISA_STORE_ID?.trim();
     const hashKey = process.env.EASYPAISA_HASH_KEY?.trim();
     const returnUrl = process.env.EASYPAISA_RETURN_URL?.trim();
@@ -34,19 +58,24 @@ export function getEasypaisaConfig(): EasypaisaConfig {
 
     if (!storeId || !hashKey || !returnUrl) {
       throw new Error(
-        "Production Easypaisa configuration error: EASYPAISA_STORE_ID, EASYPAISA_HASH_KEY, and EASYPAISA_RETURN_URL must all be set in production."
+        "Production Easypaisa configuration error: EASYPAISA_STORE_ID, EASYPAISA_HASH_KEY, and EASYPAISA_RETURN_URL must all be set for live payments."
       );
     }
+
+    // Fix 6: Verify values differ from known sandbox defaults
+    if (
+      storeId === EASYPAISA_SANDBOX_DEFAULTS.storeId ||
+      hashKey === EASYPAISA_SANDBOX_DEFAULTS.hashKey
+    ) {
+      throw new Error(
+        "Production Easypaisa configuration error: Live gateway credentials must not match known sandbox default values."
+      );
+    }
+
     return { storeId, hashKey, returnUrl, sandboxUrl };
   }
 
-  // Non-production: Sandbox defaults for local testing ONLY
-  return {
-    storeId: process.env.EASYPAISA_STORE_ID || "12345",
-    hashKey: process.env.EASYPAISA_HASH_KEY || "easypaisa_sandbox_hash_key_12345",
-    returnUrl: process.env.EASYPAISA_RETURN_URL || "http://localhost:3000/api/webhooks/easypaisa",
-    sandboxUrl: process.env.EASYPAISA_SANDBOX_URL || "http://localhost:3000/sandbox/checkout/easypaisa",
-  };
+  return getSandboxEasypaisaConfig();
 }
 
 /**

@@ -1,12 +1,23 @@
 import { test, expect } from "@playwright/test";
+import { getTestCredentials } from "../helpers/credentials";
 
 test.describe("E2E Phase 12: Online Test Engine & Student Portal", () => {
   test("student can access portal, take test, view score and leaderboard", async ({ page }) => {
+    const { studentPassword } = getTestCredentials();
     // 1. Sign in as the seed student
     await page.goto("/login");
     await page.fill('input[type="email"]', "student@academyhub.test");
-    await page.fill('input[type="password"]', "Student123!");
+    await page.fill('input[type="password"]', studentPassword);
     await page.click('button[type="submit"]');
+
+    await page.waitForURL(/\/(change-password|student)/, { timeout: 15000 });
+
+    if (page.url().includes("/change-password")) {
+      await page.fill('input[name="currentPassword"]', studentPassword);
+      await page.fill('input[name="newPassword"]', studentPassword);
+      await page.fill('input[name="confirmPassword"]', studentPassword);
+      await page.click('button[type="submit"]');
+    }
 
     await expect(page).toHaveURL(/\/student/);
     await expect(page.getByText("Student Portal")).toBeVisible();
@@ -27,11 +38,21 @@ test.describe("E2E Phase 12: Online Test Engine & Student Portal", () => {
   });
 
   test("teacher can access marking queue and review test leaderboards", async ({ page }) => {
+    const { teacherPassword } = getTestCredentials();
     // 1. Sign in as teacher
     await page.goto("/login");
     await page.fill('input[type="email"]', "usman.teacher@academyhub.test");
-    await page.fill('input[type="password"]', "Teacher123!");
+    await page.fill('input[type="password"]', teacherPassword);
     await page.click('button[type="submit"]');
+
+    await page.waitForURL(/\/(change-password|teacher)/, { timeout: 15000 });
+
+    if (page.url().includes("/change-password")) {
+      await page.fill('input[name="currentPassword"]', teacherPassword);
+      await page.fill('input[name="newPassword"]', teacherPassword);
+      await page.fill('input[name="confirmPassword"]', teacherPassword);
+      await page.click('button[type="submit"]');
+    }
 
     await expect(page).toHaveURL(/\/teacher/);
     await expect(page.getByText("Teacher Portal")).toBeVisible();

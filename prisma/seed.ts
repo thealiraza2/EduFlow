@@ -9,8 +9,23 @@ import {
   TestStatus,
 } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
+import fs from "fs";
+import path from "path";
 
 const prisma = new PrismaClient();
+
+function resolveSeedPassword(envVar: string, roleLabel: string): string {
+  const envVal = process.env[envVar]?.trim();
+  if (envVal) {
+    return envVal;
+  }
+  // Generate a random secure temporary password if not provided via environment variable
+  // and print ONCE to console (Fix 5)
+  const generated = `Seed_${crypto.randomBytes(6).toString("hex")}!`;
+  console.log(`🔑 [SEED] Generated temporary password for ${roleLabel} (${envVar} was unset): ${generated}`);
+  return generated;
+}
 
 async function main() {
   console.log("Starting AcademyHub Multi-Tenant Seed...");
@@ -19,6 +34,35 @@ async function main() {
   if (process.env.NODE_ENV === "production") {
     console.log("ℹ️ Production environment detected (NODE_ENV=production). Skipping all demo accounts.");
     return;
+  }
+
+  // Resolve seed passwords from environment variables or generate randomly
+  const superAdminPasswordRaw = resolveSeedPassword("SEED_SUPERADMIN_PASSWORD", "Super Admin");
+  const adminPasswordRaw = resolveSeedPassword("SEED_ADMIN_PASSWORD", "Admin Director");
+  const teacherPasswordRaw = resolveSeedPassword("SEED_TEACHER_PASSWORD", "Teachers");
+  const parentPasswordRaw = resolveSeedPassword("SEED_PARENT_PASSWORD", "Parent");
+  const studentPasswordRaw = resolveSeedPassword("SEED_STUDENT_PASSWORD", "Student");
+
+  // Save resolved credentials to .seed-passwords.json (gitignored) for automated test suites
+  try {
+    const credsPath = path.join(__dirname, "../.seed-passwords.json");
+    fs.writeFileSync(
+      credsPath,
+      JSON.stringify(
+        {
+          superadmin: superAdminPasswordRaw,
+          admin: adminPasswordRaw,
+          teacher: teacherPasswordRaw,
+          parent: parentPasswordRaw,
+          student: studentPasswordRaw,
+        },
+        null,
+        2
+      ),
+      "utf8"
+    );
+  } catch (err) {
+    // Graceful fallback if filesystem is read-only
   }
 
   // 1. Seed Default Academy (Main Campus)
@@ -44,7 +88,7 @@ async function main() {
   console.log(`✓ Seed Academy: ${seedAcademy.name} (slug: ${seedAcademy.slug})`);
 
   // 2. Platform SUPER_ADMIN Account (No specific academy)
-  const superAdminPassword = await bcrypt.hash("SuperAdmin123!", 10);
+  const superAdminPassword = await bcrypt.hash(superAdminPasswordRaw, 10);
   const superAdmin = await prisma.user.upsert({
     where: { email: "superadmin@academyhub.test" },
     update: {
@@ -67,7 +111,7 @@ async function main() {
   console.log(`✓ Super Admin: ${superAdmin.email}`);
 
   // 3. Tenant ADMIN Account (Academy Director)
-  const adminPasswordHash = await bcrypt.hash("Admin123!", 10);
+  const adminPasswordHash = await bcrypt.hash(adminPasswordRaw, 10);
   const admin = await prisma.user.upsert({
     where: { email: "admin@academyhub.test" },
     update: {
@@ -90,7 +134,7 @@ async function main() {
   console.log(`✓ Admin user: ${admin.email}`);
 
   // 4. Teachers
-  const teacher1Hash = await bcrypt.hash("Teacher123!", 10);
+  const teacher1Hash = await bcrypt.hash(teacherPasswordRaw, 10);
   const teacherUser1 = await prisma.user.upsert({
     where: { email: "usman.teacher@academyhub.test" },
     update: {
@@ -127,7 +171,7 @@ async function main() {
     },
   });
 
-  const teacher2Hash = await bcrypt.hash("Teacher123!", 10);
+  const teacher2Hash = await bcrypt.hash(teacherPasswordRaw, 10);
   const teacherUser2 = await prisma.user.upsert({
     where: { email: "fatima.teacher@academyhub.test" },
     update: {
@@ -166,7 +210,7 @@ async function main() {
   console.log(`✓ Teachers: ${teacherUser1.name}, ${teacherUser2.name}`);
 
   // 5. Parent User
-  const parentHash = await bcrypt.hash("Parent123!", 10);
+  const parentHash = await bcrypt.hash(parentPasswordRaw, 10);
   const parentUser = await prisma.user.upsert({
     where: { email: "parent@academyhub.test" },
     update: {
@@ -313,7 +357,7 @@ async function main() {
   console.log(`✓ Seeded ${slotsToSeed.length} weekly timetable slots for ${eveningBatch.name}`);
 
   // 11. Student User Account
-  const studentHash = await bcrypt.hash("Student123!", 10);
+  const studentHash = await bcrypt.hash(studentPasswordRaw, 10);
   const studentUser = await prisma.user.upsert({
     where: { email: "student@academyhub.test" },
     update: {
@@ -338,7 +382,7 @@ async function main() {
     where: { id: student.id },
     data: { userId: studentUser.id },
   });
-  console.log(`✓ Seeded student login: ${studentUser.email} (Student123!)`);
+  console.log(`✓ Seeded student login: ${studentUser.email} (${studentPasswordRaw})`);
 
   // 12. Additional Students for Leaderboard
   const student2 = await prisma.student.upsert({

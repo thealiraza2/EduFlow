@@ -25,13 +25,14 @@ export function ChangePasswordForm() {
 
   useEffect(() => {
     if (state?.success) {
+      const destination = state.redirectTo || "/admin";
       const timer = setTimeout(() => {
-        router.push("/");
+        router.push(destination);
         router.refresh();
-      }, 1500);
+      }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [state?.success, router]);
+  }, [state?.success, state?.redirectTo, router]);
 
   return (
     <Card className="w-full max-w-md shadow-lg border-amber-200">

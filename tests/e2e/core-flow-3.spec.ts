@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { db } from "@/lib/db";
+import { getTestCredentials } from "../helpers/credentials";
 import { StudentStatus } from "@prisma/client";
 
 test.describe("E2E Core Flow 3: Parent Isolation (Invariant 5)", () => {
@@ -37,11 +38,12 @@ test.describe("E2E Core Flow 3: Parent Isolation (Invariant 5)", () => {
   });
 
   test("parent can access own child but gets 403 when attempting to access another child", async ({ page }) => {
+    const { parentPassword } = getTestCredentials();
     // 1. Log in as Parent
     await page.context().clearCookies();
     await page.goto("/login");
     await page.fill('input[name="email"]', "parent@academyhub.test");
-    await page.fill('input[name="password"]', "Parent123!");
+    await page.fill('input[name="password"]', parentPassword);
     await page.click('button[type="submit"]');
     await page.waitForURL("**/parent", { timeout: 15000 });
 

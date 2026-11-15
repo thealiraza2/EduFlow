@@ -11,7 +11,7 @@ export const authConfig: NextAuthConfig = {
     signIn: "/login",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id as string;
         token.role = user.role as Role;
@@ -21,6 +21,13 @@ export const authConfig: NextAuthConfig = {
         token.academyId = user.academyId;
         token.academySlug = user.academySlug;
         token.academyStatus = user.academyStatus;
+      }
+      if (trigger === "update" && session) {
+        if (session.user?.mustChangePassword !== undefined) {
+          token.mustChangePassword = session.user.mustChangePassword;
+        } else if (session.mustChangePassword !== undefined) {
+          token.mustChangePassword = session.mustChangePassword;
+        }
       }
       return token;
     },

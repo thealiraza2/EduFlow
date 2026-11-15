@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { db } from "@/lib/db";
 import { createQRToken } from "@/lib/qr";
+import { getTestCredentials } from "../helpers/credentials";
 
 test.describe("Phase 15: Full System End-to-End User Journey", () => {
   const ts = Date.now();
@@ -71,12 +72,23 @@ test.describe("Phase 15: Full System End-to-End User Journey", () => {
     // -------------------------------------------------------------------------
     // C. Seed Parent & Invoice Payment Flow on Seed Academy
     // -------------------------------------------------------------------------
+    const { adminPassword, parentPassword, studentPassword } = getTestCredentials();
     // Log in as seeded parent to test the complete sandbox wallet payment flow
     await page.context().clearCookies();
     await page.goto("/login");
     await page.fill('input[name="email"]', "parent@academyhub.test");
-    await page.fill('input[name="password"]', "Parent123!");
+    await page.fill('input[name="password"]', parentPassword);
     await page.click('button[type="submit"]');
+
+    await page.waitForURL(/\/(change-password|parent)/, { timeout: 15000 });
+
+    if (page.url().includes("/change-password")) {
+      await page.fill('input[name="currentPassword"]', parentPassword);
+      await page.fill('input[name="newPassword"]', parentPassword);
+      await page.fill('input[name="confirmPassword"]', parentPassword);
+      await page.click('button[type="submit"]');
+    }
+
     await page.waitForURL("**/parent", { timeout: 15000 });
 
     // Check child profile and fee tab
@@ -107,10 +119,21 @@ test.describe("Phase 15: Full System End-to-End User Journey", () => {
   test("2. Online test attempt -> auto-grading and leaderboard", async ({ page }) => {
     // 1. Sign in as student
     await page.context().clearCookies();
+    const { studentPassword } = getTestCredentials();
     await page.goto("/login");
     await page.fill('input[name="email"]', "student@academyhub.test");
-    await page.fill('input[name="password"]', "Student123!");
+    await page.fill('input[name="password"]', studentPassword);
     await page.click('button[type="submit"]');
+
+    await page.waitForURL(/\/(change-password|student)/, { timeout: 15000 });
+
+    if (page.url().includes("/change-password")) {
+      await page.fill('input[name="currentPassword"]', studentPassword);
+      await page.fill('input[name="newPassword"]', studentPassword);
+      await page.fill('input[name="confirmPassword"]', studentPassword);
+      await page.click('button[type="submit"]');
+    }
+
     await page.waitForURL("**/student", { timeout: 15000 });
 
     await expect(page.getByText("Student Portal")).toBeVisible();
@@ -127,12 +150,23 @@ test.describe("Phase 15: Full System End-to-End User Journey", () => {
   test("3. Risk dashboard displays HIGH-risk seeded student with retention insights", async ({
     page,
   }) => {
+    const { adminPassword } = getTestCredentials();
     // Log in as main academy admin
     await page.context().clearCookies();
     await page.goto("/login");
     await page.fill('input[name="email"]', "admin@academyhub.test");
-    await page.fill('input[name="password"]', "Admin123!");
+    await page.fill('input[name="password"]', adminPassword);
     await page.click('button[type="submit"]');
+
+    await page.waitForURL(/\/(change-password|admin)/, { timeout: 15000 });
+
+    if (page.url().includes("/change-password")) {
+      await page.fill('input[name="currentPassword"]', adminPassword);
+      await page.fill('input[name="newPassword"]', adminPassword);
+      await page.fill('input[name="confirmPassword"]', adminPassword);
+      await page.click('button[type="submit"]');
+    }
+
     await page.waitForURL("**/admin", { timeout: 15000 });
 
     // Verify Retention & Dropout Risk Card
@@ -144,12 +178,23 @@ test.describe("Phase 15: Full System End-to-End User Journey", () => {
   });
 
   test("4. Parent portal isolation and QR attendance flow", async ({ page }) => {
+    const { parentPassword } = getTestCredentials();
     // 1. Verify Parent Portal
     await page.context().clearCookies();
     await page.goto("/login");
     await page.fill('input[name="email"]', "parent@academyhub.test");
-    await page.fill('input[name="password"]', "Parent123!");
+    await page.fill('input[name="password"]', parentPassword);
     await page.click('button[type="submit"]');
+
+    await page.waitForURL(/\/(change-password|parent)/, { timeout: 15000 });
+
+    if (page.url().includes("/change-password")) {
+      await page.fill('input[name="currentPassword"]', parentPassword);
+      await page.fill('input[name="newPassword"]', parentPassword);
+      await page.fill('input[name="confirmPassword"]', parentPassword);
+      await page.click('button[type="submit"]');
+    }
+
     await page.waitForURL("**/parent", { timeout: 15000 });
 
     await expect(page.getByRole("heading", { name: "Parent Portal" })).toBeVisible();
@@ -177,10 +222,21 @@ test.describe("Phase 15: Full System End-to-End User Journey", () => {
 
     // Log in as student and visit scan confirmation page
     await page.context().clearCookies();
+    const { studentPassword } = getTestCredentials();
     await page.goto("/login");
     await page.fill('input[name="email"]', "student@academyhub.test");
-    await page.fill('input[name="password"]', "Student123!");
+    await page.fill('input[name="password"]', studentPassword);
     await page.click('button[type="submit"]');
+
+    await page.waitForURL(/\/(change-password|student)/, { timeout: 15000 });
+
+    if (page.url().includes("/change-password")) {
+      await page.fill('input[name="currentPassword"]', studentPassword);
+      await page.fill('input[name="newPassword"]', studentPassword);
+      await page.fill('input[name="confirmPassword"]', studentPassword);
+      await page.click('button[type="submit"]');
+    }
+
     await page.waitForURL("**/student", { timeout: 15000 });
 
     await page.goto(`/student/attendance/scan?token=${encodeURIComponent(token)}`);
@@ -194,7 +250,7 @@ test.describe("Phase 15: Full System End-to-End User Journey", () => {
       await expect(page.getByText(enrollment!.batch.name)).toBeVisible();
 
       // Confirm QR scan
-      const confirmBtn = page.getByRole("button", { name: /Confirm Attendance/i });
+      const confirmBtn = page.getByRole("button", { name: /Confirm.*Attendance/i });
       await confirmBtn.click();
 
       // Expect attendance marked confirmation

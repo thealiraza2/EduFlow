@@ -12,6 +12,8 @@ import {
   _clearRateLimits,
 } from "@/lib/rate-limit";
 import { changePasswordAction } from "@/lib/actions/auth";
+import { getJazzCashConfig, getSandboxJazzCashConfig } from "@/lib/payments/jazzcash";
+import { getEasypaisaConfig, getSandboxEasypaisaConfig } from "@/lib/payments/easypaisa";
 
 describe("Security Hardening: Fix 1 - Fail-Closed WhatsApp Inbound Webhook", () => {
   const originalSecret = process.env.WHATSAPP_APP_SECRET;
@@ -239,6 +241,106 @@ describe("Security Hardening: Fix 4 - Brute-Force Login Rate Limiting", () => {
     // Reset upon correct credentials
     resetLoginRateLimit(targetEmail);
     expect(checkLoginRateLimit(targetEmail).remainingAttempts).toBe(5);
+  });
+
+  it("5 failed attempts from one IP across different emails -> IP locked", () => {
+    const attackerIp = "192.168.1.100";
+    const ipKey = `ip:${attackerIp}`;
+
+    // 5 attempts with 5 different target emails from the same IP
+    for (let i = 1; i <= 5; i++) {
+      const emailKey = `email:victim${i}@academyhub.test`;
+      recordFailedLogin(emailKey);
+      const res = recordFailedLogin(ipKey);
+      if (i < 5) {
+        expect(res.locked).toBe(false);
+      } else {
+        expect(res.locked).toBe(true);
+        expect(res.remainingAttempts).toBe(0);
+      }
+    }
+
+    // A 6th attempt from the same IP targeting an untouched email address must be rejected
+    const freshEmailKey = "email:victim6@academyhub.test";
+    const emailCheck = checkLoginRateLimit(freshEmailKey);
+    const ipCheck = checkLoginRateLimit(ipKey);
+
+    expect(emailCheck.allowed).toBe(true); // Untouched email itself is not locked
+    expect(ipCheck.allowed).toBe(false); // Attacker IP is locked!
+    expect(ipCheck.remainingAttempts).toBe(0);
+    expect(ipCheck.retryAfterMs).toBeGreaterThan(0);
+  });
+});
+
+describe("Security Hardening Patch 2: Payment Production Validation (Fix 6)", () => {
+  const originalEnv = process.env.NODE_ENV;
+  const originalPaymentMode = process.env.PAYMENT_MODE;
+  const originalJcMerchant = process.env.JAZZCASH_MERCHANT_ID;
+  const originalJcPassword = process.env.JAZZCASH_PASSWORD;
+  const originalJcSalt = process.env.JAZZCASH_INTEGRITY_SALT;
+  const originalJcReturn = process.env.JAZZCASH_RETURN_URL;
+  const originalEpStore = process.env.EASYPAISA_STORE_ID;
+  const originalEpHash = process.env.EASYPAISA_HASH_KEY;
+  const originalEpReturn = process.env.EASYPAISA_RETURN_URL;
+
+  afterEach(() => {
+    (process.env as any).NODE_ENV = originalEnv;
+    process.env.PAYMENT_MODE = originalPaymentMode;
+    process.env.JAZZCASH_MERCHANT_ID = originalJcMerchant;
+    process.env.JAZZCASH_PASSWORD = originalJcPassword;
+    process.env.JAZZCASH_INTEGRITY_SALT = originalJcSalt;
+    process.env.JAZZCASH_RETURN_URL = originalJcReturn;
+    process.env.EASYPAISA_STORE_ID = originalEpStore;
+    process.env.EASYPAISA_HASH_KEY = originalEpHash;
+    process.env.EASYPAISA_RETURN_URL = originalEpReturn;
+  });
+
+  it("sandbox config returns valid defaults without throwing even when payment env vars are missing", () => {
+    delete process.env.JAZZCASH_MERCHANT_ID;
+    delete process.env.JAZZCASH_PASSWORD;
+    delete process.env.JAZZCASH_INTEGRITY_SALT;
+    delete process.env.EASYPAISA_STORE_ID;
+    delete process.env.EASYPAISA_HASH_KEY;
+
+    const jcConfig = getSandboxJazzCashConfig();
+    expect(jcConfig.merchantId).toBe("MC12345_SANDBOX");
+
+    const epConfig = getSandboxEasypaisaConfig();
+    expect(epConfig.storeId).toBe("12345");
+  });
+
+  it("live mode throws if credentials match known sandbox defaults in production", () => {
+    process.env.PAYMENT_MODE = "live";
+    process.env.JAZZCASH_MERCHANT_ID = "MC12345_SANDBOX";
+    process.env.JAZZCASH_PASSWORD = "sandbox_password_123";
+    process.env.JAZZCASH_INTEGRITY_SALT = "sandbox_salt_secret_9876543210";
+    process.env.JAZZCASH_RETURN_URL = "https://myschool.com/webhook";
+
+    expect(() => getJazzCashConfig({ isLive: true })).toThrow(/must not match known sandbox default values/i);
+
+    process.env.EASYPAISA_STORE_ID = "12345";
+    process.env.EASYPAISA_HASH_KEY = "easypaisa_sandbox_hash_key_12345";
+    process.env.EASYPAISA_RETURN_URL = "https://myschool.com/webhook";
+
+    expect(() => getEasypaisaConfig({ isLive: true })).toThrow(/must not match known sandbox default values/i);
+  });
+
+  it("live mode succeeds when valid non-sandbox merchant credentials are provided", () => {
+    process.env.PAYMENT_MODE = "live";
+    process.env.JAZZCASH_MERCHANT_ID = "GENUINE_MERCHANT_999";
+    process.env.JAZZCASH_PASSWORD = "live_secret_password_xyz";
+    process.env.JAZZCASH_INTEGRITY_SALT = "live_integrity_salt_123456789";
+    process.env.JAZZCASH_RETURN_URL = "https://myschool.com/webhook/jazzcash";
+
+    const jcConfig = getJazzCashConfig({ isLive: true });
+    expect(jcConfig.merchantId).toBe("GENUINE_MERCHANT_999");
+
+    process.env.EASYPAISA_STORE_ID = "GENUINE_STORE_777";
+    process.env.EASYPAISA_HASH_KEY = "live_easypaisa_hash_key_98765";
+    process.env.EASYPAISA_RETURN_URL = "https://myschool.com/webhook/easypaisa";
+
+    const epConfig = getEasypaisaConfig({ isLive: true });
+    expect(epConfig.storeId).toBe("GENUINE_STORE_777");
   });
 });
 

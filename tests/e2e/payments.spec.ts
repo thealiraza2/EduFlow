@@ -1,14 +1,25 @@
 import { test, expect } from "@playwright/test";
+import { getTestCredentials } from "../helpers/credentials";
 
 test.describe("E2E Phase 11: Real Payments (JazzCash + Easypaisa Sandbox)", () => {
   test("parent can initiate payment, complete sandbox checkout, and see invoice marked PAID", async ({
     page,
   }) => {
+    const { parentPassword } = getTestCredentials();
     // 1. Sign in as the seed parent
     await page.goto("/login");
     await page.fill('input[type="email"]', "parent@academyhub.test");
-    await page.fill('input[type="password"]', "Parent123!");
+    await page.fill('input[type="password"]', parentPassword);
     await page.click('button[type="submit"]');
+
+    await page.waitForURL(/\/(change-password|parent)/, { timeout: 15000 });
+
+    if (page.url().includes("/change-password")) {
+      await page.fill('input[name="currentPassword"]', parentPassword);
+      await page.fill('input[name="newPassword"]', parentPassword);
+      await page.fill('input[name="confirmPassword"]', parentPassword);
+      await page.click('button[type="submit"]');
+    }
 
     await expect(page).toHaveURL(/\/parent/);
     await expect(page.getByRole("heading", { name: "Parent Portal" })).toBeVisible();

@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { db } from "@/lib/db";
+import { getTestCredentials } from "../helpers/credentials";
 
 test.describe("E2E Core Flow 1: Admission → Attendance → Fee Invoicing → Payment → Challan PDF", () => {
   const ts = Date.now();
@@ -20,12 +21,14 @@ test.describe("E2E Core Flow 1: Admission → Attendance → Fee Invoicing → P
   });
 
   test("completes full student lifecycle from admission to fee receipt PDF", async ({ page, request }) => {
+    const { adminPassword, teacherPassword } = getTestCredentials();
+
     // -------------------------------------------------------------------------
     // Step 1: Admin Logs In & Admits New Student
     // -------------------------------------------------------------------------
     await page.goto("/login");
     await page.fill('input[name="email"]', "admin@academyhub.test");
-    await page.fill('input[name="password"]', "Admin123!");
+    await page.fill('input[name="password"]', adminPassword);
     await page.click('button[type="submit"]');
     await page.waitForURL("**/admin", { timeout: 15000 });
 
@@ -80,7 +83,7 @@ test.describe("E2E Core Flow 1: Admission → Attendance → Fee Invoicing → P
     await page.context().clearCookies();
     await page.goto("/login");
     await page.fill('input[name="email"]', "usman.teacher@academyhub.test");
-    await page.fill('input[name="password"]', "Teacher123!");
+    await page.fill('input[name="password"]', teacherPassword);
     await page.click('button[type="submit"]');
     await page.waitForURL("**/teacher", { timeout: 15000 });
 
@@ -103,7 +106,7 @@ test.describe("E2E Core Flow 1: Admission → Attendance → Fee Invoicing → P
     await page.context().clearCookies();
     await page.goto("/login");
     await page.fill('input[name="email"]', "admin@academyhub.test");
-    await page.fill('input[name="password"]', "Admin123!");
+    await page.fill('input[name="password"]', adminPassword);
     await page.click('button[type="submit"]');
     await page.waitForURL("**/admin", { timeout: 15000 });
 

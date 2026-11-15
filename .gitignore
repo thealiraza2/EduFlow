@@ -19,6 +19,7 @@ out/
 *.p12
 credentials*.json
 *secret*.json
+.seed-passwords.json
 
 # Debug and test outputs
 npm-debug.log*

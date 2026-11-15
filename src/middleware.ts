@@ -19,7 +19,7 @@ export default auth((req) => {
   requestHeaders.set("x-tenant-slug", tenantSlug);
   requestHeaders.set("x-tenant-id", tenantId);
 
-  // Forced Password Change Protection (Fix 3)
+  // Forced Password Change Protection (Fix 1 & Fix 7)
   if (
     user?.mustChangePassword &&
     !pathname.startsWith("/change-password") &&
@@ -27,6 +27,13 @@ export default auth((req) => {
     !pathname.startsWith("/login") &&
     !pathname.startsWith("/api/webhooks")
   ) {
+    // API routes under mustChangePassword return JSON 403 (Fix 7)
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json(
+        { error: "Forbidden: Password change required before accessing API." },
+        { status: 403 }
+      );
+    }
     const changePwdUrl = new URL("/change-password", req.nextUrl.origin);
     return NextResponse.redirect(changePwdUrl);
   }

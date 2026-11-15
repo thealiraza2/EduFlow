@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { getTestCredentials } from "../helpers/credentials";
 import * as path from "path";
 
 test.describe("Phase 2 — Rebrand Login + Signup to EduFlow", () => {
@@ -109,14 +110,24 @@ test.describe("Phase 2 — Rebrand Login + Signup to EduFlow", () => {
   });
 
   test("3. Real Auth Verification — Sign in with demo account works", async ({ page }) => {
+    const { adminPassword } = getTestCredentials();
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/login");
     await page.waitForLoadState("networkidle");
 
     // Sign in with admin demo account
     await page.fill('input[name="email"]', "admin@academyhub.test");
-    await page.fill('input[name="password"]', "Admin123!");
+    await page.fill('input[name="password"]', adminPassword);
     await page.click('button[type="submit"]');
+
+    await page.waitForURL(/\/(change-password|admin)/, { timeout: 15000 });
+
+    if (page.url().includes("/change-password")) {
+      await page.fill('input[name="currentPassword"]', adminPassword);
+      await page.fill('input[name="newPassword"]', adminPassword);
+      await page.fill('input[name="confirmPassword"]', adminPassword);
+      await page.click('button[type="submit"]');
+    }
 
     // Should redirect to /admin and display dashboard
     await page.waitForURL("**/admin", { timeout: 15000 });

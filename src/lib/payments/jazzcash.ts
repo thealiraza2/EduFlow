@@ -23,11 +23,37 @@ export interface JazzCashConfig {
   sandboxUrl: string;
 }
 
-export function getJazzCashConfig(): JazzCashConfig {
-  const isProduction = process.env.NODE_ENV === "production";
+export const JAZZCASH_SANDBOX_DEFAULTS = {
+  merchantId: "MC12345_SANDBOX",
+  password: "sandbox_password_123",
+  integritySalt: "sandbox_salt_secret_9876543210",
+  returnUrl: "http://localhost:3000/api/webhooks/jazzcash",
+  sandboxUrl: "http://localhost:3000/sandbox/checkout/jazzcash",
+};
 
-  // Production requires real merchant environment variables — fail loudly if unset
-  if (isProduction) {
+/**
+ * Dedicated sandbox config provider. Never requires merchant env vars and never throws.
+ */
+export function getSandboxJazzCashConfig(): JazzCashConfig {
+  return {
+    merchantId: process.env.JAZZCASH_SANDBOX_MERCHANT_ID || process.env.JAZZCASH_MERCHANT_ID || JAZZCASH_SANDBOX_DEFAULTS.merchantId,
+    password: process.env.JAZZCASH_SANDBOX_PASSWORD || process.env.JAZZCASH_PASSWORD || JAZZCASH_SANDBOX_DEFAULTS.password,
+    integritySalt: process.env.JAZZCASH_SANDBOX_INTEGRITY_SALT || process.env.JAZZCASH_INTEGRITY_SALT || JAZZCASH_SANDBOX_DEFAULTS.integritySalt,
+    returnUrl: process.env.JAZZCASH_RETURN_URL || JAZZCASH_SANDBOX_DEFAULTS.returnUrl,
+    sandboxUrl: process.env.JAZZCASH_SANDBOX_URL || JAZZCASH_SANDBOX_DEFAULTS.sandboxUrl,
+  };
+}
+
+/**
+ * Returns JazzCash configuration.
+ * - In live mode (PAYMENT_MODE=live or isLive: true): enforces presence of merchant env vars
+ *   AND verifies they differ from known sandbox defaults (Fix 6).
+ * - Otherwise (sandbox mode): returns sandbox config without throwing.
+ */
+export function getJazzCashConfig(options?: { isLive?: boolean }): JazzCashConfig {
+  const isLive = options?.isLive ?? (process.env.PAYMENT_MODE?.toLowerCase() === "live");
+
+  if (isLive) {
     const merchantId = process.env.JAZZCASH_MERCHANT_ID?.trim();
     const password = process.env.JAZZCASH_PASSWORD?.trim();
     const integritySalt = process.env.JAZZCASH_INTEGRITY_SALT?.trim();
@@ -36,20 +62,25 @@ export function getJazzCashConfig(): JazzCashConfig {
 
     if (!merchantId || !password || !integritySalt || !returnUrl) {
       throw new Error(
-        "Production JazzCash configuration error: JAZZCASH_MERCHANT_ID, JAZZCASH_PASSWORD, JAZZCASH_INTEGRITY_SALT, and JAZZCASH_RETURN_URL must all be set in production."
+        "Production JazzCash configuration error: JAZZCASH_MERCHANT_ID, JAZZCASH_PASSWORD, JAZZCASH_INTEGRITY_SALT, and JAZZCASH_RETURN_URL must all be set for live payments."
       );
     }
+
+    // Fix 6: Verify values differ from known sandbox defaults
+    if (
+      merchantId === JAZZCASH_SANDBOX_DEFAULTS.merchantId ||
+      password === JAZZCASH_SANDBOX_DEFAULTS.password ||
+      integritySalt === JAZZCASH_SANDBOX_DEFAULTS.integritySalt
+    ) {
+      throw new Error(
+        "Production JazzCash configuration error: Live gateway credentials must not match known sandbox default values."
+      );
+    }
+
     return { merchantId, password, integritySalt, returnUrl, sandboxUrl };
   }
 
-  // Non-production: Sandbox defaults for local testing ONLY
-  return {
-    merchantId: process.env.JAZZCASH_MERCHANT_ID || "MC12345_SANDBOX",
-    password: process.env.JAZZCASH_PASSWORD || "sandbox_password_123",
-    integritySalt: process.env.JAZZCASH_INTEGRITY_SALT || "sandbox_salt_secret_9876543210",
-    returnUrl: process.env.JAZZCASH_RETURN_URL || "http://localhost:3000/api/webhooks/jazzcash",
-    sandboxUrl: process.env.JAZZCASH_SANDBOX_URL || "http://localhost:3000/sandbox/checkout/jazzcash",
-  };
+  return getSandboxJazzCashConfig();
 }
 
 /**

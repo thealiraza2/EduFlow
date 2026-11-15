@@ -419,9 +419,14 @@ npm run dev
 | `LLM_MODEL` | Groq model identifier | `llama-3.1-70b-versatile` |
 | `WHATSAPP_TOKEN` | Meta WhatsApp Cloud API permanent system user token | `""` |
 | `WHATSAPP_PHONE_NUMBER_ID` | Meta WhatsApp Business Phone Number ID | `""` |
-| `WHATSAPP_VERIFY_TOKEN` | Secret token for Meta webhook subscription verification | `academyhub_wa_verify_token_secret` |
-| `WHATSAPP_APP_SECRET` | Meta App Secret for X-Hub-Signature-256 HMAC validation | `whatsapp_app_secret_12345` |
+| `WHATSAPP_VERIFY_TOKEN` | Secret token for Meta webhook subscription verification | `change-me-to-a-secure-random-token` |
+| `WHATSAPP_APP_SECRET` | Meta App Secret for X-Hub-Signature-256 HMAC validation | `change-me-to-meta-app-secret` |
 | `QR_HMAC_SECRET` | Dedicated secret for HMAC-SHA256 student QR attendance | `change-me-to-a-secure-random-hex-string` |
+| `SEED_ADMIN_PASSWORD` | Optional: Password for seeded admin user (development only) | `change-me-seed-admin-password` |
+| `SEED_SUPERADMIN_PASSWORD`| Optional: Password for seeded superadmin (development only) | `change-me-seed-superadmin-password` |
+| `SEED_TEACHER_PASSWORD` | Optional: Password for seeded teacher (development only) | `change-me-seed-teacher-password` |
+| `SEED_PARENT_PASSWORD`  | Optional: Password for seeded parent (development only) | `change-me-seed-parent-password` |
+| `SEED_STUDENT_PASSWORD` | Optional: Password for seeded student (development only) | `change-me-seed-student-password` |
 
 ---
 
@@ -441,18 +446,22 @@ An independent security audit reviewed the public codebase and implemented the f
 2. **Dedicated QR Attendance Secret (HIGH)**:
    - Replaced public default fallback strings with dedicated `QR_HMAC_SECRET`.
    - `getQRSecret()` throws immediately if unset; attendance tokens cannot be minted or verified without an explicit secret.
-3. **Forced Password Rotation & Demo Account Protection (MEDIUM)**:
+3. **Forced Password Rotation & Seed Password Security (MEDIUM & LOW)**:
    - Added `mustChangePassword` flag to `User` schema.
    - All seeded users are flagged for mandatory rotation; middleware intercepts and forces redirection to `/change-password` upon login.
+   - Session refresh via Auth.js `unstable_update()` seamlessly issues a fresh token with `mustChangePassword: false` upon password change without manual sign-out.
    - Seed scripts automatically skip demo user creation in production (`NODE_ENV === "production"`).
-   - Removed all default passwords from public documentation.
+   - In development/testing, seed passwords are read from `SEED_*_PASSWORD` environment variables. If unset, secure random passwords are generated at seed time and printed ONCE to console. No default passwords exist in the codebase.
 4. **Brute-Force Login Rate Limiting (MEDIUM)**:
-   - Enforced 5-attempt per-account and per-IP lockout (15-minute freeze) in `src/lib/rate-limit.ts`.
-   - Generic error messages prevent user enumeration.
+   - Enforced dual-key rate limiting: 5 failed attempts per account (normalized email) OR per IP (`x-forwarded-for` first entry, fallback to request IP) triggers a 15-minute freeze in `src/lib/rate-limit.ts`.
+   - *Architecture Note*: The rate limiter currently uses an in-memory `Map`. In a multi-instance or Vercel Serverless environment, instances do not share memory; for distributed production deployments, upgrading the backing store to Redis (e.g., Upstash Redis) is recommended.
+   - Per-email lockout prevents online brute-force against specific accounts, while per-IP lockout prevents distributed credential-stuffing attacks across multiple accounts.
 5. **Next.js Dependency Upgrade (MEDIUM)**:
    - Upgraded framework from `14.2.5` to patched `14.2.35`.
-6. **Self-Contained Automated Tests (MEDIUM)**:
-   - Unit tests provision their own database fixtures in `beforeAll` hooks, enabling tests to pass on fresh, unseeded databases.
+6. **Payment Gateway Sandbox vs Live Isolation (MEDIUM & LOW)**:
+   - Sandbox checkout works out-of-the-box with ZERO payment environment variables set in all environments, ensuring testing and CI workflows never fail.
+   - LIVE payments require an approved merchant account with live credentials (`JAZZCASH_MERCHANT_ID`, `JAZZCASH_PASSWORD`, `JAZZCASH_INTEGRITY_SALT`, `JAZZCASH_RETURN_URL` for JazzCash; `EASYPAISA_STORE_ID`, `EASYPAISA_HASH_KEY`, `EASYPAISA_RETURN_URL` for Easypaisa).
+   - In live mode, gateway drivers strictly verify that credentials differ from known sandbox defaults, throwing a hard error if sandbox defaults are supplied in production.
 7. **Defense-in-Depth & PII Redaction (LOW)**:
    - Added `@@unique([referenceId])` constraint to `NotificationLog` table to guarantee atomic absence notification deduplication at the database level.
    - Stripped full message bodies containing student names and fee amounts from console output (logs only record IDs and event statuses).

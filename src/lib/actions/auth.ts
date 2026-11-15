@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn, requireUser } from "@/lib/auth";
+import { signIn, requireUser, unstable_update } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { AuthError } from "next-auth";
 import bcrypt from "bcryptjs";
@@ -99,6 +99,7 @@ export interface ChangePasswordState {
     confirmPassword?: string[];
   };
   success?: boolean;
+  redirectTo?: string;
 }
 
 export async function changePasswordAction(
@@ -148,5 +149,27 @@ export async function changePasswordAction(
     },
   });
 
-  return { success: true };
+  // Re-issue JWT session token with mustChangePassword: false (Fix 1)
+  try {
+    await unstable_update({
+      user: {
+        mustChangePassword: false,
+      },
+    });
+  } catch (err) {
+    console.error("[AUTH] Error refreshing session after password change:", err);
+  }
+
+  let redirectTo = "/admin";
+  if (user.role === "SUPER_ADMIN") {
+    redirectTo = "/superadmin";
+  } else if (user.role === "TEACHER") {
+    redirectTo = "/teacher";
+  } else if (user.role === "PARENT") {
+    redirectTo = "/parent";
+  } else if (user.role === "STUDENT") {
+    redirectTo = "/student";
+  }
+
+  return { success: true, redirectTo };
 }

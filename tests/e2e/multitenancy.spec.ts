@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { db } from "@/lib/db";
+import { getTestCredentials } from "../helpers/credentials";
 
 test.describe("E2E Phase 10: Multi-Branch SaaS & Super Admin", () => {
   const ts = Date.now();
@@ -42,11 +43,21 @@ test.describe("E2E Phase 10: Multi-Branch SaaS & Super Admin", () => {
   });
 
   test("2. Super Admin can view all academies and control tenant status", async ({ page }) => {
+    const { superadminPassword } = getTestCredentials();
     // 1. Log in as superadmin
     await page.goto("/login");
     await page.fill('input[type="email"]', "superadmin@academyhub.test");
-    await page.fill('input[type="password"]', "SuperAdmin123!");
+    await page.fill('input[type="password"]', superadminPassword);
     await page.click('button[type="submit"]');
+
+    await page.waitForURL(/\/(change-password|superadmin)/, { timeout: 15000 });
+
+    if (page.url().includes("/change-password")) {
+      await page.fill('input[name="currentPassword"]', superadminPassword);
+      await page.fill('input[name="newPassword"]', superadminPassword);
+      await page.fill('input[name="confirmPassword"]', superadminPassword);
+      await page.click('button[type="submit"]');
+    }
 
     // 2. Redirects to /superadmin
     await page.waitForURL("**/superadmin", { timeout: 15000 });

@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import * as path from "path";
+import { getTestCredentials } from "../helpers/credentials";
 
 test.describe("PHASE 4 — Final Verification (Whole Site)", () => {
   const viewports = [
@@ -122,12 +123,22 @@ test.describe("PHASE 4 — Final Verification (Whole Site)", () => {
   });
 
   test("5. Forms Check — Login signs in with real demo account", async ({ page }) => {
+    const { adminPassword } = getTestCredentials();
     await page.goto("/login");
     await page.waitForLoadState("networkidle");
 
     await page.fill('input[name="email"]', "admin@academyhub.test");
-    await page.fill('input[name="password"]', "Admin123!");
+    await page.fill('input[name="password"]', adminPassword);
     await page.click('button[type="submit"]');
+
+    await page.waitForURL(/\/(change-password|admin)/, { timeout: 15000 });
+
+    if (page.url().includes("/change-password")) {
+      await page.fill('input[name="currentPassword"]', adminPassword);
+      await page.fill('input[name="newPassword"]', adminPassword);
+      await page.fill('input[name="confirmPassword"]', adminPassword);
+      await page.click('button[type="submit"]');
+    }
 
     await page.waitForURL("**/admin", { timeout: 15000 });
     await expect(page.getByText("Admin Control Center")).toBeVisible();

@@ -1,11 +1,21 @@
 /**
- * AcademyHub - Login Rate Limiting & Account Lockout (Phase 15 Security Hardening)
+ * AcademyHub - Login Rate Limiting & Account Lockout (Phase 15 Security Hardening & Patch 2)
  *
- * Implements brute-force protection:
- * - 5 failed attempts locks the target account/IP for 15 minutes.
- * - Prevents user enumeration by maintaining generic error responses.
- * - In-memory store for single-instance / development environments.
- *   Production upgrade note: Replace with Redis/Upstash for multi-region serverless clustering.
+ * Implements dual-key brute-force & credential-stuffing protection:
+ * - 5 failed attempts locks the target account (email) OR client IP for 15 minutes.
+ * - Enforces BOTH keys: 5 failed attempts per account OR per IP -> 15-minute lockout.
+ *
+ * TRADE-OFF & THREAT MODEL NOTE:
+ * Per-email lockout means an attacker could theoretically lock a victim's login for 15 minutes
+ * by intentionally entering 5 bad attempts for that email. This is an intentional defense-in-depth
+ * trade-off to prevent online credential brute-forcing against known accounts, combined with
+ * per-IP rate limiting to prevent distributed credential stuffing across different accounts.
+ *
+ * ARCHITECTURE & SERVERLESS UPGRADE NOTE:
+ * This implementation uses an in-memory Map. In a multi-region or Vercel serverless environment,
+ * instances do not share state across distinct lambdas or container instances.
+ * Redis (e.g., Upstash Redis) is the recommended production upgrade for shared, distributed rate limiting.
+ * Do not add Redis in this patch; document and track for infrastructure rollout.
  */
 
 interface RateLimitRecord {
@@ -86,6 +96,55 @@ export function recordFailedLogin(key: string, now: number = Date.now()): {
 export function resetLoginRateLimit(key: string): void {
   const normalizedKey = key.toLowerCase().trim();
   attemptsStore.delete(normalizedKey);
+}
+
+export function checkDualRateLimit(
+  email: string,
+  ip: string,
+  now: number = Date.now()
+): {
+  allowed: boolean;
+  remainingAttempts: number;
+  retryAfterMs?: number;
+} {
+  const emailKey = `email:${email.toLowerCase().trim()}`;
+  const ipKey = `ip:${ip.toLowerCase().trim()}`;
+  const emailCheck = checkLoginRateLimit(emailKey, now);
+  const ipCheck = checkLoginRateLimit(ipKey, now);
+
+  if (!emailCheck.allowed) return emailCheck;
+  if (!ipCheck.allowed) return ipCheck;
+
+  return {
+    allowed: true,
+    remainingAttempts: Math.min(emailCheck.remainingAttempts, ipCheck.remainingAttempts),
+  };
+}
+
+export function recordDualFailedLogin(
+  email: string,
+  ip: string,
+  now: number = Date.now()
+): {
+  locked: boolean;
+  remainingAttempts: number;
+} {
+  const emailKey = `email:${email.toLowerCase().trim()}`;
+  const ipKey = `ip:${ip.toLowerCase().trim()}`;
+  const emailRes = recordFailedLogin(emailKey, now);
+  const ipRes = recordFailedLogin(ipKey, now);
+
+  return {
+    locked: emailRes.locked || ipRes.locked,
+    remainingAttempts: Math.min(emailRes.remainingAttempts, ipRes.remainingAttempts),
+  };
+}
+
+export function resetDualRateLimit(email: string, ip: string): void {
+  const emailKey = `email:${email.toLowerCase().trim()}`;
+  const ipKey = `ip:${ip.toLowerCase().trim()}`;
+  resetLoginRateLimit(emailKey);
+  resetLoginRateLimit(ipKey);
 }
 
 export function _clearRateLimits(): void {

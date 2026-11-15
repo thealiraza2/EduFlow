@@ -1,7 +1,7 @@
 import React from "react";
 import { notFound } from "next/navigation";
-import { getJazzCashConfig, calculateJazzCashHash } from "@/lib/payments/jazzcash";
-import { getEasypaisaConfig, calculateEasypaisaHash } from "@/lib/payments/easypaisa";
+import { getSandboxJazzCashConfig, calculateJazzCashHash } from "@/lib/payments/jazzcash";
+import { getSandboxEasypaisaConfig, calculateEasypaisaHash } from "@/lib/payments/easypaisa";
 import { SandboxWalletCheckout } from "@/components/sandbox/SandboxWalletCheckout";
 
 interface PageProps {
@@ -45,7 +45,7 @@ export default async function SandboxCheckoutPage({ params, searchParams }: Page
   let webhookUrl = `/api/webhooks/${gateway}`;
 
   if (gateway === "jazzcash") {
-    const config = getJazzCashConfig();
+    const config = getSandboxJazzCashConfig();
     const now = new Date();
     const txnDateTime =
       now.getFullYear().toString() +
@@ -76,7 +76,7 @@ export default async function SandboxCheckoutPage({ params, searchParams }: Page
       pp_Amount: "100", // Tampered amount (1 PKR instead of genuine fee)
     };
   } else {
-    const config = getEasypaisaConfig();
+    const config = getSandboxEasypaisaConfig();
     validPayload = {
       storeId: config.storeId,
       orderId: transactionId,

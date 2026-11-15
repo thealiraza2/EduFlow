@@ -21,5 +21,10 @@ export default defineConfig({
     url: "http://localhost:3000/api/health",
     reuseExistingServer: true,
     timeout: 120000,
+    env: {
+      QR_HMAC_SECRET:
+        process.env.QR_HMAC_SECRET ||
+        "local_dev_qr_hmac_secret_64_bytes_secure_test_key_1234567890",
+    },
   },
 });
