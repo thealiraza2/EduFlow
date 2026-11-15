@@ -135,6 +135,7 @@ export function extractSubdomain(host: string | null): string | null {
     cleanHost === "127.0.0.1" ||
     cleanHost === "eduflow.app" ||
     cleanHost === "academyhub.app" ||
+    cleanHost.endsWith(".vercel.app") ||
     cleanHost.startsWith("www.") ||
     cleanHost.startsWith("app.")
   ) {
