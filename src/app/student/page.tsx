@@ -140,15 +140,27 @@ export default async function StudentPortalPage() {
     });
   }
 
-  // 2. Fetch real attendance history
+  // 2. Fetch real attendance history and announcements in parallel
   const enrollmentIds = student?.enrollments.map((e) => e.id) || [];
-  const attendanceRecords = enrollmentIds.length > 0
-    ? await db.attendance.findMany({
-        where: { enrollmentId: { in: enrollmentIds } },
-        orderBy: { date: "desc" },
-        take: 30,
-      })
-    : [];
+  const [attendanceRecords, announcements] = await Promise.all([
+    enrollmentIds.length > 0
+      ? db.attendance.findMany({
+          where: { enrollmentId: { in: enrollmentIds } },
+          orderBy: { date: "desc" },
+          take: 30,
+        })
+      : Promise.resolve([]),
+    student
+      ? db.announcement.findMany({
+          where: {
+            academyId: student.academyId,
+            audience: { in: ["ALL"] },
+          },
+          orderBy: { createdAt: "desc" },
+          take: 5,
+        })
+      : Promise.resolve([]),
+  ]);
 
   const totalSessions = attendanceRecords.length;
   const presentCount = attendanceRecords.filter((a) => a.status === "PRESENT").length;
@@ -157,18 +169,6 @@ export default async function StudentPortalPage() {
   const leaveCount = attendanceRecords.filter((a) => a.status === "LEAVE").length;
   const attendancePct =
     totalSessions > 0 ? Math.round(((presentCount + lateCount) / totalSessions) * 100) : 0;
-
-  // 3. Fetch academy announcements
-  const announcements = student
-    ? await db.announcement.findMany({
-        where: {
-          academyId: student.academyId,
-          audience: { in: ["ALL"] },
-        },
-        orderBy: { createdAt: "desc" },
-        take: 5,
-      })
-    : [];
 
   // 4. Extract and classify tests
   const allTests =

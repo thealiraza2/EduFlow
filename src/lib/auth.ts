@@ -58,8 +58,8 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         }
       }
 
-      // Re-read mustChangePassword from DB on token refresh or session update (Fix 1)
-      if (token?.id) {
+      // Re-read mustChangePassword from DB ONLY on explicit session update (e.g. after password change)
+      if (params.trigger === "update" && token?.id) {
         try {
           const freshUser = await db.user.findUnique({
             where: { id: token.id as string },

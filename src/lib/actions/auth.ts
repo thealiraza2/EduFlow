@@ -42,25 +42,14 @@ export async function loginAction(
 
   try {
     let defaultRedirect = "/admin";
-    try {
-      const existingUser = await db.user.findUnique({
-        where: { email },
-        select: { role: true, mustChangePassword: true },
-      });
-
-      if (existingUser?.mustChangePassword) {
-        defaultRedirect = "/change-password";
-      } else if (existingUser?.role === "SUPER_ADMIN") {
-        defaultRedirect = "/superadmin";
-      } else if (existingUser?.role === "TEACHER") {
-        defaultRedirect = "/teacher";
-      } else if (existingUser?.role === "PARENT") {
-        defaultRedirect = "/parent";
-      } else if (existingUser?.role === "STUDENT") {
-        defaultRedirect = "/student";
-      }
-    } catch {
-      // Default to /admin if lookup fails
+    if (email.startsWith("superadmin")) {
+      defaultRedirect = "/superadmin";
+    } else if (email.includes("teacher")) {
+      defaultRedirect = "/teacher";
+    } else if (email.includes("parent")) {
+      defaultRedirect = "/parent";
+    } else if (email.includes("student")) {
+      defaultRedirect = "/student";
     }
 
     await signIn("credentials", {

@@ -12,19 +12,17 @@ import { User, ShieldCheck, HeartHandshake } from "lucide-react";
 export default async function ParentPortalDashboardPage() {
   const user = await requireRole([Role.PARENT, Role.ADMIN]);
 
-  const dashboardData = await getParentDashboardData(
-    user.id,
-    user.role as Role
-  );
-
-  const announcements = await db.announcement.findMany({
-    where: {
-      audience: { in: ["ALL", "PARENTS"] },
-      ...(user.academyId ? { academyId: user.academyId } : {}),
-    },
-    orderBy: { createdAt: "desc" },
-    take: 5,
-  });
+  const [dashboardData, announcements] = await Promise.all([
+    getParentDashboardData(user.id, user.role as Role),
+    db.announcement.findMany({
+      where: {
+        audience: { in: ["ALL", "PARENTS"] },
+        ...(user.academyId ? { academyId: user.academyId } : {}),
+      },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    }),
+  ]);
 
   const serializedAnnouncements = announcements.map((a) => ({
     id: a.id,

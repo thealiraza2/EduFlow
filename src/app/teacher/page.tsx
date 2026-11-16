@@ -41,33 +41,41 @@ export default async function TeacherDashboardPage() {
     });
   }
 
-  const slots = teacher
-    ? await db.timetableSlot.findMany({
-        where: {
-          teacherId: teacher.id,
-          ...(user.academyId ? { academyId: user.academyId } : {}),
-        },
-        include: {
-          batch: {
-            include: {
-              class: true,
+  const teacherBatchIds = teacher ? teacher.batches.map((b) => b.id) : [];
+
+  // Fetch slots, announcements, and at-risk students in parallel
+  const [slots, announcements, atRiskStudents] = await Promise.all([
+    teacher
+      ? db.timetableSlot.findMany({
+          where: {
+            teacherId: teacher.id,
+            ...(user.academyId ? { academyId: user.academyId } : {}),
+          },
+          include: {
+            batch: {
+              include: {
+                class: true,
+              },
             },
           },
-        },
-        orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
-      })
-    : [];
+          orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
+        })
+      : Promise.resolve([]),
+    db.announcement.findMany({
+      where: {
+        audience: { in: ["ALL", "TEACHERS"] },
+        ...(user.academyId ? { academyId: user.academyId } : {}),
+      },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    }),
+    getAcademyStudentsRiskOverview(
+      user.academyId || "",
+      teacherBatchIds.length > 0 ? teacherBatchIds : undefined
+    ),
+  ]);
 
   const displayDays = DAYS_OF_WEEK.filter((d) => d.id >= 1 && d.id <= 6);
-
-  const announcements = await db.announcement.findMany({
-    where: {
-      audience: { in: ["ALL", "TEACHERS"] },
-      ...(user.academyId ? { academyId: user.academyId } : {}),
-    },
-    orderBy: { createdAt: "desc" },
-    take: 5,
-  });
 
   const serializedAnnouncements = announcements.map((a) => ({
     id: a.id,
@@ -77,12 +85,6 @@ export default async function TeacherDashboardPage() {
     createdAt: a.createdAt.toISOString(),
   }));
 
-  // Fetch at-risk students for this teacher's batches
-  const teacherBatchIds = teacher ? teacher.batches.map((b) => b.id) : [];
-  const atRiskStudents = await getAcademyStudentsRiskOverview(
-    user.academyId || "",
-    teacherBatchIds.length > 0 ? teacherBatchIds : undefined
-  );
   const isAiAvailable = !!process.env.LLM_API_KEY?.trim();
 
   return (

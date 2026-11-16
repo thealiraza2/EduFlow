@@ -34,17 +34,99 @@ export default async function AdminDashboardPage() {
 
   const now = new Date();
   const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+  const monthStart = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1));
+  const monthEnd = new Date(
+    Date.UTC(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
+  );
 
-  // 1. Fee collection for current month (collected vs due)
-  const currentMonthInvoices = await db.feeInvoice.findMany({
-    where: {
-      academyId: tenant.academyId,
-      month: currentMonth,
-    },
-    include: {
-      payments: true,
-    },
-  });
+  // Parallelize all dashboard queries in a single concurrent batch
+  const [
+    currentMonthInvoices,
+    unpaidInvoices,
+    todayAttendances,
+    activeStudentsCount,
+    activeBatchesCount,
+    totalTeachersCount,
+    testsData,
+    monthlyEnrollments,
+    recentAnnouncements,
+    atRiskStudents,
+  ] = await Promise.all([
+    // 1. Fee collection for current month
+    db.feeInvoice.findMany({
+      where: {
+        academyId: tenant.academyId,
+        month: currentMonth,
+      },
+      include: {
+        payments: true,
+      },
+    }),
+    // 2. Defaulters
+    db.feeInvoice.findMany({
+      where: {
+        academyId: tenant.academyId,
+        status: { in: ["UNPAID", "PARTIAL"] },
+      },
+      include: {
+        batch: {
+          include: { feePlan: true },
+        },
+        payments: true,
+      },
+    }),
+    // 3. Today's attendance
+    db.attendance.findMany({
+      where: {
+        academyId: tenant.academyId,
+        date: { gte: startOfDay, lte: endOfDay },
+      },
+    }),
+    // 4. Counts
+    db.student.count({ where: { academyId: tenant.academyId, status: "ACTIVE" } }),
+    db.batch.count({ where: { academyId: tenant.academyId } }),
+    db.teacher.count({ where: { academyId: tenant.academyId, status: "ACTIVE" } }),
+    // 5. Tests
+    db.test.findMany({
+      where: { academyId: tenant.academyId },
+      include: {
+        batch: {
+          include: { class: true },
+        },
+      },
+      orderBy: { date: "desc" },
+      take: 4,
+    }),
+    // 6. Monthly Enrollments for attendance check
+    db.enrollment.findMany({
+      where: {
+        academyId: tenant.academyId,
+        status: "ACTIVE",
+        student: { status: "ACTIVE" },
+      },
+      include: {
+        student: true,
+        batch: {
+          include: { class: true },
+        },
+        attendance: {
+          where: {
+            date: { gte: monthStart, lte: monthEnd },
+          },
+        },
+      },
+    }),
+    // 7. Recent Announcements
+    db.announcement.findMany({
+      where: { academyId: tenant.academyId },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    }),
+    // 8. Academic Retention Analysis
+    getAcademyStudentsRiskOverview(tenant.academyId),
+  ]);
 
   const totalDueMinor = currentMonthInvoices.reduce((sum, inv) => sum + inv.totalMinor, 0);
   const collectedMinor = currentMonthInvoices.reduce((sum, inv) => {
@@ -52,20 +134,6 @@ export default async function AdminDashboardPage() {
   }, 0);
   const collectionPct =
     totalDueMinor > 0 ? Math.round((collectedMinor / totalDueMinor) * 100) : 0;
-
-  // 2. Defaulters count (unpaid/partial past due date)
-  const unpaidInvoices = await db.feeInvoice.findMany({
-    where: {
-      academyId: tenant.academyId,
-      status: { in: ["UNPAID", "PARTIAL"] },
-    },
-    include: {
-      batch: {
-        include: { feePlan: true },
-      },
-      payments: true,
-    },
-  });
 
   let defaultersCount = 0;
   for (const inv of unpaidInvoices) {
@@ -84,17 +152,6 @@ export default async function AdminDashboardPage() {
     }
   }
 
-  // 3. Today's attendance %
-  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
-
-  const todayAttendances = await db.attendance.findMany({
-    where: {
-      academyId: tenant.academyId,
-      date: { gte: startOfDay, lte: endOfDay },
-    },
-  });
-
   const todayPresentCount = todayAttendances.filter(
     (a) => a.status === "PRESENT" || a.status === "LATE"
   ).length;
@@ -103,66 +160,7 @@ export default async function AdminDashboardPage() {
       ? Math.round((todayPresentCount / todayAttendances.length) * 1000) / 10
       : null;
 
-  // 4. Active students & active batches
-  const [activeStudentsCount, activeBatchesCount, totalTeachersCount] = await Promise.all([
-    db.student.count({ where: { academyId: tenant.academyId, status: "ACTIVE" } }),
-    db.batch.count({ where: { academyId: tenant.academyId } }),
-    db.teacher.count({ where: { academyId: tenant.academyId, status: "ACTIVE" } }),
-  ]);
-
-  // 5. Upcoming / recent tests
-  const upcomingTests = await db.test.findMany({
-    where: {
-      academyId: tenant.academyId,
-      date: { gte: startOfDay },
-    },
-    include: {
-      batch: {
-        include: { class: true },
-      },
-    },
-    orderBy: { date: "asc" },
-    take: 4,
-  });
-
-  const recentTests =
-    upcomingTests.length > 0
-      ? upcomingTests
-      : await db.test.findMany({
-          where: { academyId: tenant.academyId },
-          include: {
-            batch: {
-              include: { class: true },
-            },
-          },
-          orderBy: { date: "desc" },
-          take: 4,
-        });
-
-  // 6. Low-attendance students (<75% for current month)
-  const monthStart = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1));
-  const monthEnd = new Date(
-    Date.UTC(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
-  );
-
-  const monthlyEnrollments = await db.enrollment.findMany({
-    where: {
-      academyId: tenant.academyId,
-      status: "ACTIVE",
-      student: { status: "ACTIVE" },
-    },
-    include: {
-      student: true,
-      batch: {
-        include: { class: true },
-      },
-      attendance: {
-        where: {
-          date: { gte: monthStart, lte: monthEnd },
-        },
-      },
-    },
-  });
+  const recentTests = testsData;
 
   const lowAttendanceStudents = monthlyEnrollments
     .map((enr) => {
@@ -185,13 +183,6 @@ export default async function AdminDashboardPage() {
     })
     .filter((s) => s.isAtRisk);
 
-  // 7. Recent Announcements
-  const recentAnnouncements = await db.announcement.findMany({
-    where: { academyId: tenant.academyId },
-    orderBy: { createdAt: "desc" },
-    take: 5,
-  });
-
   const serializedAnnouncements = recentAnnouncements.map((a) => ({
     id: a.id,
     title: a.title,
@@ -200,8 +191,6 @@ export default async function AdminDashboardPage() {
     createdAt: a.createdAt.toISOString(),
   }));
 
-  // 8. AI Dropout Risk & Academic Retention Analysis (Phase 13)
-  const atRiskStudents = await getAcademyStudentsRiskOverview(tenant.academyId);
   const isAiAvailable = !!process.env.LLM_API_KEY?.trim();
 
   return (
