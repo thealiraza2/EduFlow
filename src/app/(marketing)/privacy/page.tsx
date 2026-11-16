@@ -4,6 +4,8 @@ import { Header } from "@/components/marketing/Header";
 import { Footer } from "@/components/marketing/Footer";
 import { ArrowLeft, ShieldCheck, Mail, Scale, Cookie, Baby } from "lucide-react";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Privacy Policy — EduFlow",
   description: "Privacy policy regarding student data isolation, security, cookies, and communications.",

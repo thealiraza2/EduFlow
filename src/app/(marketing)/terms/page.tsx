@@ -4,6 +4,8 @@ import { Header } from "@/components/marketing/Header";
 import { Footer } from "@/components/marketing/Footer";
 import { ArrowLeft, FileText, Scale, Mail, ShieldAlert, Baby } from "lucide-react";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Terms of Service — EduFlow",
   description: "Terms and conditions for utilizing the EduFlow school management platform.",

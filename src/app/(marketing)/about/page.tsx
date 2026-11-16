@@ -15,6 +15,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "About Us — EduFlow",
   description:

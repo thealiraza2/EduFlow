@@ -3,6 +3,8 @@ import { Header } from "@/components/marketing/Header";
 import { Footer } from "@/components/marketing/Footer";
 import { ContactFormInteractive } from "@/components/marketing/ContactFormInteractive";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Contact Us — EduFlow",
   description:

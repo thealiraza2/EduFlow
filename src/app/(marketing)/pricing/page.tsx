@@ -3,6 +3,8 @@ import { Header } from "@/components/marketing/Header";
 import { Footer } from "@/components/marketing/Footer";
 import { PricingInteractive } from "@/components/marketing/PricingInteractive";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Pricing Plans — EduFlow",
   description:

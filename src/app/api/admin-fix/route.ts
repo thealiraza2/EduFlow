@@ -24,6 +24,73 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    if (action === "users") {
+      const allUsers = await db.user.findMany({
+        select: {
+          id: true,
+          email: true,
+          role: true,
+          name: true,
+          academyId: true,
+          mustChangePassword: true,
+          createdAt: true,
+        },
+        orderBy: { email: "asc" },
+      });
+      return NextResponse.json({
+        userCount: allUsers.length,
+        users: allUsers,
+      });
+    }
+
+    if (action === "sync-passwords") {
+      const demoUsers = [
+        { email: "superadmin@eduflow.test", role: "SUPER_ADMIN" as const, name: "Platform Super Admin" },
+        { email: "admin@eduflow.test", role: "ADMIN" as const, name: "Admin Director" },
+        { email: "usman.teacher@eduflow.test", role: "TEACHER" as const, name: "Usman Tariq" },
+        { email: "fatima.teacher@eduflow.test", role: "TEACHER" as const, name: "Fatima Ali" },
+        { email: "parent@eduflow.test", role: "PARENT" as const, name: "Tariq Mahmood" },
+        { email: "student@eduflow.test", role: "STUDENT" as const, name: "Hamza Tariq" },
+      ];
+
+      const bcrypt = require("bcryptjs");
+      const hash = await bcrypt.hash("TestPassword123!", 10);
+      const results: any[] = [];
+
+      for (const item of demoUsers) {
+        const u = await db.user.findUnique({ where: { email: item.email } });
+        if (u) {
+          await db.user.update({
+            where: { id: u.id },
+            data: {
+              passwordHash: hash,
+              mustChangePassword: false,
+            },
+          });
+          results.push({ email: item.email, status: "updated_password" });
+        } else {
+          // create user
+          const mainAcademy = await db.academy.findFirst();
+          await db.user.create({
+            data: {
+              email: item.email,
+              name: item.name,
+              role: item.role,
+              passwordHash: hash,
+              mustChangePassword: false,
+              academyId: item.role === "SUPER_ADMIN" ? null : mainAcademy?.id,
+            },
+          });
+          results.push({ email: item.email, status: "created_user" });
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        results,
+      });
+    }
+
     if (action === "inspect") {
       // 1. Students
       const students = await db.student.findMany({

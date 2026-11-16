@@ -7,6 +7,8 @@ import { TestimonialsSection } from "@/components/marketing/TestimonialsSection"
 import { CtaSection } from "@/components/marketing/CtaSection";
 import { Footer } from "@/components/marketing/Footer";
 
+export const dynamic = "force-static";
+
 export default function MarketingHomePage() {
   const jsonLd = {
     "@context": "https://schema.org",
