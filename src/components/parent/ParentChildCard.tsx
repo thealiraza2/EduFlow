@@ -62,7 +62,7 @@ export function ParentChildCard({ child }: Props) {
           <div className="bg-slate-50 border p-2 rounded-lg text-center min-w-[90px]">
             <span className="text-[10px] uppercase text-slate-400 font-semibold block">Attendance</span>
             <span className="font-bold font-mono text-emerald-600 text-sm">
-              {child.attendance.percentage}%
+              {child.attendance.totalSessions === 0 ? "No sessions recorded" : `${child.attendance.percentage}%`}
             </span>
           </div>
 
@@ -142,7 +142,7 @@ export function ParentChildCard({ child }: Props) {
             <div className="bg-white p-3 rounded-lg border text-center">
               <span className="text-[10px] text-slate-400 font-semibold uppercase block">Monthly %</span>
               <span className="text-xl font-bold font-mono text-emerald-600">
-                {child.attendance.percentage}%
+                {child.attendance.totalSessions === 0 ? "No sessions recorded" : `${child.attendance.percentage}%`}
               </span>
             </div>
             <div className="bg-white p-3 rounded-lg border text-center">

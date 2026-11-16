@@ -170,7 +170,7 @@ export default async function AdminDashboardPage() {
       const present = enr.attendance.filter(
         (a) => a.status === "PRESENT" || a.status === "LATE"
       ).length;
-      const pct = total > 0 ? Math.round((present / total) * 1000) / 10 : 100;
+      const pct = total > 0 ? Math.round((present / total) * 1000) / 10 : null;
       return {
         studentId: enr.student.id,
         name: enr.student.name,
@@ -180,7 +180,7 @@ export default async function AdminDashboardPage() {
         totalSessions: total,
         presentSessions: present,
         percentage: pct,
-        isAtRisk: total > 0 && pct < 75,
+        isAtRisk: total > 0 && pct !== null && pct < 75,
       };
     })
     .filter((s) => s.isAtRisk);

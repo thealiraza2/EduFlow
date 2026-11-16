@@ -149,13 +149,13 @@ export function AcademySettingsForm({ initialData }: AcademySettingsFormProps) {
           </div>
 
           <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-2 text-xs text-slate-600">
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-slate-700">Platform Subscription Plan:</span>
-              <Badge className="bg-indigo-50 text-indigo-700 border-indigo-200">
-                <ShieldCheck className="h-3 w-3 mr-1" />
-                {initialData.plan} Tier
-              </Badge>
-            </div>
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-slate-700">Platform Subscription Plan:</span>
+                <Badge className="bg-indigo-50 text-indigo-700 border-indigo-200">
+                  <ShieldCheck className="h-3 w-3 mr-1" />
+                  {initialData.plan}
+                </Badge>
+              </div>
             <div className="flex justify-between items-center text-slate-500">
               <span>Account Administrator:</span>
               <span className="font-medium text-slate-700">{initialData.adminEmail}</span>

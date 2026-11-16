@@ -534,7 +534,7 @@ export function SuperAdminManager({
                           <td className="py-3 px-4">
                             {academy.isOnTrial ? (
                               <Badge className="bg-amber-100 text-amber-800 border-amber-300 text-[10px] font-bold">
-                                14-Day Trial
+                                14-Day Free Trial ({academy.plan})
                               </Badge>
                             ) : (
                               <Badge
@@ -766,7 +766,7 @@ export function SuperAdminManager({
                           </td>
                           <td className="py-2.5 px-4">
                             <span className="text-[10px] font-semibold text-slate-600">
-                              {a.isOnTrial ? "Trial" : a.plan}
+                              {a.isOnTrial ? `14-Day Free Trial (${a.plan})` : a.plan}
                             </span>
                           </td>
                           <td className="py-2.5 px-4 text-right">
@@ -876,7 +876,7 @@ export function SuperAdminManager({
                 <div>
                   <span className="text-[10px] text-slate-400 uppercase font-semibold block">Current Plan</span>
                   <span className="font-semibold text-slate-800">
-                    {selectedAcademy.isOnTrial ? "14-Day Free Trial" : selectedAcademy.plan}
+                    {selectedAcademy.isOnTrial ? `14-Day Free Trial (${selectedAcademy.plan})` : selectedAcademy.plan}
                   </span>
                 </div>
                 <div>

@@ -129,7 +129,7 @@ export function DefaultersManager({ initialDefaulters, totalInvoicesCount = 0, a
           <CardContent className="p-5 flex flex-col justify-center">
             <span className="text-xs font-semibold text-slate-500 uppercase">Action Guideline</span>
             <p className="text-xs text-slate-600 mt-1">
-              Send one-tap SMS reminders to guardians or download updated fee challans for cash counter collection.
+              Download updated fee challans for cash counter collection or record manual fee receipts.
             </p>
           </CardContent>
         </Card>

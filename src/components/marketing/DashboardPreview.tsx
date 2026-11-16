@@ -25,8 +25,8 @@ export function DashboardPreview() {
     },
     {
       label: "Pending Fees",
-      value: "PKR 0",
-      change: "Current billing cycle",
+      value: "PKR 12,600",
+      change: "3 unpaid invoices",
       icon: CreditCard,
       iconBg: "bg-emerald-50 text-emerald-600",
     },

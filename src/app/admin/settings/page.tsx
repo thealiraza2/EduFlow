@@ -43,11 +43,13 @@ export default async function AdminSettingsPage() {
     },
   });
 
+  const isOnTrial = academy.trialEndsAt !== null && new Date(academy.trialEndsAt) > new Date();
+
   const formattedData = {
     name: academy.name,
     slug: academy.slug,
     subdomain: academy.subdomain,
-    plan: academy.plan,
+    plan: isOnTrial ? "14-Day Free Trial (PRO)" : `${academy.plan} Tier`,
     status: academy.status,
     phone: user?.phone || null,
     academicYear: `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`,

@@ -121,17 +121,23 @@ export function AtRiskStudentsCard({
                     {/* Risk Factor Badges */}
                     <div className="flex flex-wrap items-center gap-1.5 self-start">
                       {/* Attendance */}
-                      <span
-                        className={`text-[11px] px-2 py-0.5 rounded font-mono font-medium border ${
-                          st.attendancePct < 60
-                            ? "bg-rose-50 text-rose-700 border-rose-200 font-bold"
-                            : st.attendancePct < 75
-                            ? "bg-amber-50 text-amber-700 border-amber-200"
-                            : "bg-slate-50 text-slate-700 border-slate-200"
-                        }`}
-                      >
-                        Att: {st.attendancePct}%
-                      </span>
+                      {st.attendancePct === null ? (
+                        <span className="text-[11px] px-2 py-0.5 rounded font-mono font-medium border bg-slate-50 text-slate-600 border-slate-200">
+                          No sessions recorded
+                        </span>
+                      ) : (
+                        <span
+                          className={`text-[11px] px-2 py-0.5 rounded font-mono font-medium border ${
+                            st.attendancePct < 60
+                              ? "bg-rose-50 text-rose-700 border-rose-200 font-bold"
+                              : st.attendancePct < 75
+                              ? "bg-amber-50 text-amber-700 border-amber-200"
+                              : "bg-slate-50 text-slate-700 border-slate-200"
+                          }`}
+                        >
+                          Att: {st.attendancePct}%
+                        </span>
+                      )}
 
                       {/* Fee Overdue */}
                       <span

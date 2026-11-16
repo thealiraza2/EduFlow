@@ -18,7 +18,7 @@ export interface StudentRiskMetrics {
   admissionNo: string;
   batchName?: string;
   guardianPhone?: string;
-  attendancePct: number;
+  attendancePct: number | null;
   overdueMonths: number;
   marksTrend: MarksTrend;
   riskScore: number;
@@ -101,17 +101,19 @@ export const CURRICULUM_TOPICS: Record<string, string[]> = {
  * - LOW: score < 25
  */
 export function calculateDropoutRiskScore(
-  attendancePct: number,
+  attendancePct: number | null,
   overdueMonths: number,
   marksTrend: MarksTrend = "STABLE"
 ): { riskScore: number; riskLevel: RiskLevel } {
   let score = 0;
 
-  // 1. Attendance Penalty
-  if (attendancePct < 60) {
-    score += 40;
-  } else if (attendancePct < 75) {
-    score += 20;
+  // 1. Attendance Penalty (only if attendance recorded)
+  if (attendancePct !== null) {
+    if (attendancePct < 60) {
+      score += 40;
+    } else if (attendancePct < 75) {
+      score += 20;
+    }
   }
 
   // 2. Overdue Fee Penalty
@@ -145,16 +147,17 @@ export function calculateDropoutRiskScore(
  */
 export function formatRiskFallbackExplanation(
   studentName: string,
-  attendancePct: number,
+  attendancePct: number | null,
   overdueMonths: number,
   riskLevel: RiskLevel,
   marksTrend?: MarksTrend
 ): string {
   const trendNote = marksTrend === "DROPPING" ? " and test scores show a declining trend" : "";
+  const attNote = attendancePct !== null ? `${studentName}'s attendance is ${attendancePct}%` : `${studentName} has no sessions recorded yet`;
   if (overdueMonths === 0) {
-    return `${studentName}'s attendance is ${attendancePct}%${trendNote} — dropout risk ${riskLevel}.`;
+    return `${attNote}${trendNote} — dropout risk ${riskLevel}.`;
   }
-  return `${studentName}'s attendance is ${attendancePct}% with ${overdueMonths} month${overdueMonths > 1 ? "s" : ""} fee overdue${trendNote} — dropout risk ${riskLevel}.`;
+  return `${attNote} with ${overdueMonths} month${overdueMonths > 1 ? "s" : ""} fee overdue${trendNote} — dropout risk ${riskLevel}.`;
 }
 
 /**
@@ -276,7 +279,7 @@ export async function getAcademyStudentsRiskOverview(
     // 1. Attendance %
     const allAtt = s.enrollments.flatMap((e) => e.attendance);
     const presentCount = allAtt.filter((a) => a.status === "PRESENT" || a.status === "LATE").length;
-    const attPct = allAtt.length > 0 ? Math.round((presentCount / allAtt.length) * 100) : 100;
+    const attPct = allAtt.length > 0 ? Math.round((presentCount / allAtt.length) * 100) : null;
 
     // 2. Overdue Months
     const overdueMonths = s.invoices.length;

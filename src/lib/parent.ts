@@ -42,7 +42,7 @@ export interface ParentChildSummary {
     absentCount: number;
     leaveCount: number;
     lateCount: number;
-    percentage: number;
+    percentage: number | null;
     records: Array<{
       id: string;
       date: string;
@@ -206,7 +206,7 @@ export async function getParentDashboardData(
     const absentCount = attendanceRecords.filter((a) => a.status === "ABSENT").length;
     const leaveCount = attendanceRecords.filter((a) => a.status === "LEAVE").length;
     const lateCount = attendanceRecords.filter((a) => a.status === "LATE").length;
-    const percentage = totalSessions > 0 ? Math.round((presentCount / totalSessions) * 1000) / 10 : 100;
+    const percentage = totalSessions > 0 ? Math.round((presentCount / totalSessions) * 1000) / 10 : null;
 
     const mappedAttendance = {
       monthStr: currentMonthStr,
