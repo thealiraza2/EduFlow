@@ -196,11 +196,14 @@ export async function GET(req: NextRequest) {
         logs.push(`Deleted student ${st.admissionNo} (${st.name}) and linked records`);
       }
 
-      // Target old teachers: usman.teacher@academyhub.test, fatima.teacher@academyhub.test, audittest.teacher@example.com
+      // Target old teachers and old academyhub users:
       const oldTeacherEmails = [
         "usman.teacher@academyhub.test",
         "fatima.teacher@academyhub.test",
         "audittest.teacher@example.com",
+        "admin@academyhub.test",
+        "parent@academyhub.test",
+        "student@academyhub.test",
       ];
 
       for (const email of oldTeacherEmails) {
@@ -497,9 +500,14 @@ export async function GET(req: NextRequest) {
         const shouldDelete = req.nextUrl.searchParams.get("deleteQuaid") === "true";
         if (shouldDelete) {
           // Cascade delete Quaid e Azam test tenant
+          await db.timetableSlot.deleteMany({ where: { academyId: qeAcademy.id } });
+          await db.teacherSalary.deleteMany({ where: { academyId: qeAcademy.id } });
+          await db.batch.deleteMany({ where: { academyId: qeAcademy.id } });
+          await db.class.deleteMany({ where: { academyId: qeAcademy.id } });
+          await db.teacher.deleteMany({ where: { academyId: qeAcademy.id } });
           await db.user.deleteMany({ where: { academyId: qeAcademy.id } });
           await db.academy.delete({ where: { id: qeAcademy.id } });
-          logs.push(`Deleted test tenant Quaid e Azam and its test users`);
+          logs.push(`Deleted test tenant Quaid e Azam, classes, batches, teachers, and its test users`);
         }
       }
 

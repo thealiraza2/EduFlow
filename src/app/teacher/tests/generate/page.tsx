@@ -22,8 +22,21 @@ export default async function TeacherGenerateTestPage() {
     },
   });
 
-  // Admin fallback
+  // Teacher batches or timetable slot batches or academy batches fallback
   let batches = teacher ? teacher.batches : [];
+  if (teacher && batches.length === 0) {
+    batches = await db.batch.findMany({
+      where: {
+        OR: [
+          { timetableSlots: { some: { teacherId: teacher.id } } },
+          { academyId: teacher.academyId },
+        ],
+      },
+      include: { class: true },
+    });
+  }
+
+  // Admin fallback
   if (!teacher && (user.role === Role.ADMIN || (user.role as string) === "SUPER_ADMIN")) {
     batches = await db.batch.findMany({
       where: user.academyId ? { academyId: user.academyId } : {},
