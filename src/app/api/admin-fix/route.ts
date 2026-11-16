@@ -24,6 +24,68 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    if (action === "db-info") {
+      const dbUrl = process.env.DATABASE_URL || "";
+      const directUrl = process.env.DIRECT_URL || "";
+
+      const sanitize = (raw: string) => {
+        if (!raw) return { set: false };
+        try {
+          const u = new URL(raw);
+          return {
+            set: true,
+            protocol: u.protocol,
+            host: u.host,
+            hostname: u.hostname,
+            port: u.port,
+            pathname: u.pathname,
+            search: u.search,
+            isPooler: u.host.includes("pooler.supabase.com") || u.port === "6543",
+            hasPgbouncer: u.search.includes("pgbouncer=true"),
+            hasConnectionLimit: u.search.includes("connection_limit="),
+            masked: `${u.protocol}//${u.username}:****@${u.host}${u.pathname}${u.search}`,
+          };
+        } catch (e: any) {
+          return { set: true, parseError: e.message, length: raw.length };
+        }
+      };
+
+      return NextResponse.json({
+        DATABASE_URL: sanitize(dbUrl),
+        DIRECT_URL: sanitize(directUrl),
+      });
+    }
+
+    if (action === "benchmark") {
+      const timings: any = {};
+      const t0 = Date.now();
+      await db.user.findFirst({ select: { id: true } });
+      timings.singleQueryMs = Date.now() - t0;
+
+      const t1 = Date.now();
+      await Promise.all([
+        db.student.count(),
+        db.teacher.count(),
+        db.feeInvoice.count(),
+      ]);
+      timings.parallel3QueriesMs = Date.now() - t1;
+
+      const t2 = Date.now();
+      await db.student.count();
+      await db.teacher.count();
+      await db.feeInvoice.count();
+      timings.sequential3QueriesMs = Date.now() - t2;
+
+      const rawSettings = await db.$queryRawUnsafe<any[]>(
+        "SELECT name, setting FROM pg_settings WHERE name IN ('max_connections', 'port', 'shared_buffers', 'work_mem')"
+      ).catch((e: any) => ({ error: e.message }));
+
+      return NextResponse.json({
+        timings,
+        rawSettings,
+      });
+    }
+
     if (action === "users") {
       const allUsers = await db.user.findMany({
         select: {
