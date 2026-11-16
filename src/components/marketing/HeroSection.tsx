@@ -7,13 +7,13 @@ export function HeroSection() {
   const checkmarks = ["Easy to Use", "Secure & Reliable", "24/7 Support"];
 
   return (
-    <section className="relative overflow-visible pt-6 pb-16 sm:pt-8 sm:pb-20 lg:pt-8 lg:pb-28 xl:pb-32 bg-white">
+    <section className="relative overflow-visible pt-6 pb-20 sm:pt-8 sm:pb-24 lg:pt-10 lg:pb-28 bg-white">
       {/* Background Decorative Accents */}
       <div className="absolute top-0 right-0 -z-10 w-96 h-96 bg-[#FFF9E6] rounded-full blur-3xl opacity-70" />
       <div className="absolute bottom-10 left-10 -z-10 w-80 h-80 bg-amber-50/50 rounded-full blur-2xl opacity-60" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* Left Column: Eyebrow, H1, Copy, Checkmarks, Buttons */}
           <div className="lg:col-span-6 space-y-5 sm:space-y-6">
             {/* Eyebrow */}
@@ -64,28 +64,24 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Right Column: Hero student photo card + floating dashboard mockup */}
-          <div className="lg:col-span-6 relative pt-2 lg:pt-0 lg:mb-12 xl:mb-14">
-            <div className="relative max-w-lg mx-auto lg:max-w-none">
-              {/* Fully Visible Student Photo Card (NO dark overlays) */}
-              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-gray-200/80 bg-[#FFF9E6]/30 aspect-[4/3] sm:aspect-[16/11] lg:aspect-[4/3] w-full">
-                <Image
-                  src="/images/hero-student.jpg"
-                  alt="Smiling schoolgirl in uniform holding books in bright classroom"
-                  fill
-                  priority
-                  quality={95}
-                  sizes="(max-width: 1024px) 100vw, 600px"
-                  className="object-cover object-[center_12%] select-none"
-                />
-              </div>
+          {/* Right Column: Pure vertical stack: hero image on top, portal card below (NO overlap) */}
+          <div className="lg:col-span-6 flex flex-col space-y-6 sm:space-y-7">
+            {/* Fully Visible Student Photo Card (NO dark overlays) */}
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl border border-gray-200/80 bg-[#FFF9E6]/30 aspect-[4/3] sm:aspect-[16/11] lg:aspect-[4/3] w-full">
+              <Image
+                src="/images/hero-student.jpg"
+                alt="Smiling schoolgirl in uniform holding books in bright classroom"
+                fill
+                priority
+                quality={95}
+                sizes="(max-width: 1024px) 100vw, 600px"
+                className="object-cover object-[center_12%] select-none"
+              />
+            </div>
 
-              {/* Real JSX Dashboard Mockup:
-                  - On mobile/tablet (< lg): stacks cleanly below the photo with natural flow & no overlap
-                  - On desktop (lg+): floats gracefully at the bottom-left corner with generous clearance */}
-              <div className="mt-5 sm:mt-6 lg:mt-0 lg:absolute lg:-bottom-10 xl:-bottom-12 lg:-left-6 xl:-left-10 lg:w-[88%] xl:w-[85%] max-w-md z-20">
-                <DashboardPreview />
-              </div>
+            {/* Real JSX Dashboard Mockup: Clean vertical stack below image */}
+            <div className="w-full">
+              <DashboardPreview />
             </div>
           </div>
         </div>
