@@ -36,7 +36,7 @@ export function DashboardPreview() {
     {
       id: 1,
       title: "Enrolled Hamza Tariq in 10th-A (Evening Batch)",
-      timestamp: "Today",
+      timestamp: "15 Nov 2026",
       icon: CheckCircle2,
       iconColor: "text-emerald-500",
       badge: "Admission",
@@ -44,7 +44,7 @@ export function DashboardPreview() {
     {
       id: 2,
       title: "Attendance registered for 10th-A Evening Batch",
-      timestamp: "Today",
+      timestamp: "15 Nov 2026",
       icon: QrCode,
       iconColor: "text-blue-500",
       badge: "Attendance",
@@ -52,7 +52,7 @@ export function DashboardPreview() {
     {
       id: 3,
       title: "Midterm Physics Online Test graded and recorded",
-      timestamp: "Today",
+      timestamp: "16 Nov 2026",
       icon: FileText,
       iconColor: "text-[#F5B800]",
       badge: "Assessment",
@@ -60,9 +60,9 @@ export function DashboardPreview() {
   ];
 
   return (
-    <div className="w-full max-w-lg bg-white/95 backdrop-blur-md rounded-2xl border border-gray-200/90 shadow-2xl p-4 sm:p-5 text-[#0F2040] space-y-3 select-none">
+    <div className="w-full max-w-md lg:max-w-[420px] bg-white/95 backdrop-blur-md rounded-2xl border border-gray-200/90 shadow-xl p-3 sm:p-4 text-[#0F2040] space-y-2.5 select-none">
       {/* Top Bar with Demo Indicator */}
-      <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
+      <div className="flex items-center justify-between pb-2 border-b border-gray-100">
         <div className="flex items-center gap-2">
           <div className="w-2.5 h-2.5 rounded-full bg-[#F5B800] animate-pulse" />
           <span className="font-bold text-xs sm:text-sm tracking-tight text-[#0F2040]">
@@ -75,23 +75,23 @@ export function DashboardPreview() {
       </div>
 
       {/* 4 Stat Tiles */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
         {stats.map((s) => {
           const Icon = s.icon;
           return (
             <div
               key={s.label}
-              className="bg-[#FAFAFA] rounded-xl p-2 sm:p-2.5 border border-gray-100/90 flex flex-col justify-between"
+              className="bg-[#FAFAFA] rounded-xl py-1.5 px-2.5 sm:py-2 sm:px-2.5 border border-gray-100/90 flex flex-col justify-between"
             >
               <div className="flex items-center justify-between">
                 <span className="text-[10px] sm:text-[11px] font-medium text-gray-500 truncate mr-1">
                   {s.label}
                 </span>
-                <div className={`p-1 sm:p-1.5 rounded-lg ${s.iconBg}`}>
+                <div className={`p-1 rounded-md ${s.iconBg}`}>
                   <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </div>
               </div>
-              <div className="mt-1">
+              <div className="mt-0.5">
                 <span className="text-base sm:text-lg font-extrabold text-[#0F2040] tracking-tight">
                   {s.value}
                 </span>
@@ -104,22 +104,22 @@ export function DashboardPreview() {
 
       {/* Recent Activity (3 Lines) */}
       <div className="pt-0.5">
-        <div className="flex items-center justify-between mb-1.5">
+        <div className="flex items-center justify-between mb-1">
           <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-gray-500">
             Recent Activity (Demo)
           </span>
           <span className="text-[9px] sm:text-[10px] text-gray-400">Real-time sync</span>
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-1">
           {activities.map((act) => {
             const Icon = act.icon;
             return (
               <div
                 key={act.id}
-                className="flex items-center justify-between p-1.5 sm:p-2 rounded-lg bg-gray-50/80 border border-gray-100 text-xs"
+                className="flex items-center justify-between py-1 px-2 rounded-lg bg-gray-50/80 border border-gray-100 text-xs"
               >
-                <div className="flex items-center gap-2 min-w-0 pr-2">
+                <div className="flex items-center gap-1.5 min-w-0 pr-2">
                   <Icon className={`w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 ${act.iconColor}`} />
                   <span className="text-gray-700 font-medium truncate text-[10px] sm:text-xs">
                     {act.title}
