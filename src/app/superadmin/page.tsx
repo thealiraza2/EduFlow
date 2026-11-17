@@ -182,7 +182,26 @@ export default async function SuperAdminDashboardPage() {
   const currentMonthName = now.toLocaleString("en-US", { month: "long", year: "numeric" });
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-8 max-w-7xl mx-auto w-full">
+    <div className="min-h-screen bg-[#F8FAFC]">
+      {/* Page Header */}
+      <div className="bg-white border-b border-slate-200/80 px-6 sm:px-8 py-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-xs">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#0F2040]">
+              Platform Administration
+            </h1>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          </div>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            Multi-tenant SaaS root control • <strong className="text-slate-800">{totalAcademies}</strong> tenant academies registered
+          </p>
+        </div>
+        <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF9E6] border border-[#F5B800]/40 text-xs font-bold text-[#0F2040] shadow-xs">
+          <span className="w-2 h-2 rounded-full bg-[#F5B800]" />
+          <span>Super Admin</span>
+        </span>
+      </div>
+
       <SuperAdminManager
         stats={{
           totalAcademies,

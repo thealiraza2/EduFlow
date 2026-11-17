@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CountUp } from "@/components/common/CountUp";
 import {
   Dialog,
   DialogContent,
@@ -177,126 +178,95 @@ export function SuperAdminManager({
   const newestTen = filteredAcademies.slice(0, 10);
 
   return (
-    <div className="space-y-8">
-      {/* Top Header Card */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-        <div>
-          <div className="flex items-center space-x-3">
-            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
-              Platform Administration
-            </h1>
-            <Badge className="bg-purple-100 text-purple-800 border-purple-300 font-mono text-xs">
-              <ShieldCheck className="h-3.5 w-3.5 mr-1 text-purple-600" />
-              Super Admin
-            </Badge>
-          </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Logged in as <strong>{superAdminEmail}</strong> • Multi-branch SaaS control center
-          </p>
-        </div>
-      </div>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-8 max-w-7xl mx-auto w-full">
 
-      {/* TOP ROW: 6 Stat Cards (All computed live from database) */}
+      {/* TOP ROW: 6 Stat Cards — Midnight SaaS Style with Card Lift and CountUp */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {/* Card 1: Total Academies */}
-        <Card className="shadow-sm border-slate-200">
-          <CardHeader className="flex flex-row items-center justify-between pb-1 pt-4 px-4">
-            <CardTitle className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-              Total Academies
-            </CardTitle>
-            <Building2 className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent className="px-4 pb-4 pt-1">
-            <div className="text-2xl font-bold text-slate-900">{stats.totalAcademies}</div>
-            <p className="text-[11px] text-slate-500 mt-1 font-medium">
-              {stats.activeAcademies} active · {stats.onTrialAcademies} on trial · {stats.suspendedAcademies} suspended
-            </p>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 card-lift">
+          <div className="w-10 h-10 rounded-xl bg-[#FFF9E6] border border-[#F5B800]/30 flex items-center justify-center mb-3 shadow-xs">
+            <Building2 className="h-5 w-5 text-[#F5B800]" />
+          </div>
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Total Academies</p>
+          <div className="text-2xl sm:text-3xl font-extrabold text-[#0F2040]">
+            <CountUp value={stats.totalAcademies} />
+          </div>
+          <p className="text-[11px] text-slate-500 mt-1 font-medium">
+            {stats.activeAcademies} active · {stats.onTrialAcademies} on trial · {stats.suspendedAcademies} suspended
+          </p>
+        </div>
 
         {/* Card 2: Total Students */}
-        <Card className="shadow-sm border-slate-200">
-          <CardHeader className="flex flex-row items-center justify-between pb-1 pt-4 px-4">
-            <CardTitle className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-              Total Students
-            </CardTitle>
-            <Users className="h-4 w-4 text-indigo-600" />
-          </CardHeader>
-          <CardContent className="px-4 pb-4 pt-1">
-            <div className="text-2xl font-bold text-slate-900">{stats.totalStudents}</div>
-            <p className="text-[11px] text-slate-400 mt-1">Across all registered academies</p>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 card-lift">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200/50 flex items-center justify-center mb-3 shadow-xs">
+            <Users className="h-5 w-5 text-blue-600" />
+          </div>
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Total Students</p>
+          <div className="text-2xl sm:text-3xl font-extrabold text-[#0F2040]">
+            <CountUp value={stats.totalStudents} />
+          </div>
+          <p className="text-[11px] text-slate-400 mt-1">Across all registered academies</p>
+        </div>
 
         {/* Card 3: Total Teachers */}
-        <Card className="shadow-sm border-slate-200">
-          <CardHeader className="flex flex-row items-center justify-between pb-1 pt-4 px-4">
-            <CardTitle className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-              Total Teachers
-            </CardTitle>
-            <GraduationCap className="h-4 w-4 text-purple-600" />
-          </CardHeader>
-          <CardContent className="px-4 pb-4 pt-1">
-            <div className="text-2xl font-bold text-slate-900">{stats.totalTeachers}</div>
-            <p className="text-[11px] text-slate-400 mt-1">Across all registered academies</p>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 card-lift">
+          <div className="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200/50 flex items-center justify-center mb-3 shadow-xs">
+            <GraduationCap className="h-5 w-5 text-purple-600" />
+          </div>
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Total Teachers</p>
+          <div className="text-2xl sm:text-3xl font-extrabold text-[#0F2040]">
+            <CountUp value={stats.totalTeachers} />
+          </div>
+          <p className="text-[11px] text-slate-400 mt-1">Across all registered academies</p>
+        </div>
 
         {/* Card 4: Platform MRR */}
-        <Card className="shadow-sm border-slate-200 bg-gradient-to-br from-white to-emerald-50/20">
-          <CardHeader className="flex flex-row items-center justify-between pb-1 pt-4 px-4">
-            <CardTitle className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-              Platform MRR
-            </CardTitle>
-            <TrendingUp className="h-4 w-4 text-emerald-600" />
-          </CardHeader>
-          <CardContent className="px-4 pb-4 pt-1">
-            <div className="text-2xl font-bold font-mono text-emerald-700">
-              {formatPKR(stats.monthlyRevenueMinor)}
-            </div>
-            <p className="text-[10px] text-slate-500 mt-1 leading-snug">
-              Starter 2,500 · Growth 5,000 · Pro 9,000 / mo (trials & suspended = PKR 0)
-            </p>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 card-lift">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/50 flex items-center justify-center mb-3 shadow-xs">
+            <TrendingUp className="h-5 w-5 text-emerald-600" />
+          </div>
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Platform MRR</p>
+          <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 font-mono">
+            <CountUp value={stats.monthlyRevenueMinor / 100} prefix="PKR " />
+          </div>
+          <p className="text-[10px] text-slate-500 mt-1 leading-snug">
+            Starter 2,500 · Growth 5,000 · Pro 9,000 / mo
+          </p>
+        </div>
 
         {/* Card 5: Active Trials */}
-        <Card className="shadow-sm border-slate-200">
-          <CardHeader className="flex flex-row items-center justify-between pb-1 pt-4 px-4">
-            <CardTitle className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-              Active Trials
-            </CardTitle>
-            <Clock className="h-4 w-4 text-amber-500" />
-          </CardHeader>
-          <CardContent className="px-4 pb-4 pt-1">
-            <div className="text-2xl font-bold text-slate-900">{stats.activeTrialsCount}</div>
-            <p className="text-[11px] text-slate-500 mt-1 font-medium">
-              {stats.activeTrialsCount} in 14-day trial · {stats.trialsExpiringSoonCount} expiring within 3 days
-            </p>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 card-lift">
+          <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200/50 flex items-center justify-center mb-3 shadow-xs">
+            <Clock className="h-5 w-5 text-amber-600" />
+          </div>
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Active Trials</p>
+          <div className="text-2xl sm:text-3xl font-extrabold text-[#0F2040]">
+            <CountUp value={stats.activeTrialsCount} />
+          </div>
+          <p className="text-[11px] text-slate-500 mt-1 font-medium">
+            {stats.activeTrialsCount} on trial · {stats.trialsExpiringSoonCount} expiring soon
+          </p>
+        </div>
 
         {/* Card 6: New This Month */}
-        <Card className="shadow-sm border-slate-200">
-          <CardHeader className="flex flex-row items-center justify-between pb-1 pt-4 px-4">
-            <CardTitle className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-              New This Month
-            </CardTitle>
-            <CalendarPlus className="h-4 w-4 text-teal-600" />
-          </CardHeader>
-          <CardContent className="px-4 pb-4 pt-1">
-            <div className="text-2xl font-bold text-slate-900">{stats.newThisMonthCount}</div>
-            <p className="text-[11px] text-slate-400 mt-1 truncate">
-              Joined in {stats.currentMonthName}
-            </p>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 card-lift">
+          <div className="w-10 h-10 rounded-xl bg-[#FFF9E6] border border-[#F5B800]/30 flex items-center justify-center mb-3 shadow-xs">
+            <CalendarPlus className="h-5 w-5 text-[#F5B800]" />
+          </div>
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">New This Month</p>
+          <div className="text-2xl sm:text-3xl font-extrabold text-[#0F2040]">
+            <CountUp value={stats.newThisMonthCount} />
+          </div>
+          <p className="text-[11px] text-slate-400 mt-1 truncate">
+            Joined in {stats.currentMonthName}
+          </p>
+        </div>
       </div>
 
       {/* CHARTS SECTION (Real data only) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Chart 1: Revenue Trend */}
-        <Card className="shadow-sm border-slate-200">
+        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift overflow-hidden">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div>
@@ -363,7 +333,7 @@ export function SuperAdminManager({
         </Card>
 
         {/* Chart 2: Plan Distribution */}
-        <Card className="shadow-sm border-slate-200">
+        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift overflow-hidden">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div>
@@ -446,7 +416,7 @@ export function SuperAdminManager({
       {/* TABLES SECTION */}
       <div id="academies" className="space-y-6">
         {/* Table 1: Recent Academies (Newest 10) */}
-        <Card className="shadow-sm border-slate-200">
+        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift overflow-hidden">
           <CardHeader className="pb-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>

@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   ShieldCheck,
   LayoutDashboard,
@@ -13,11 +12,10 @@ import {
   ExternalLink,
   LogOut,
   KeyRound,
-  Menu,
-  X,
-  Sparkles,
+  ChevronRight,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
+import { AnimatedMenuButton } from "@/components/common/AnimatedMenuButton";
 
 interface SuperAdminSidebarProps {
   user?: {
@@ -31,16 +29,36 @@ export function SuperAdminSidebar({ user }: SuperAdminSidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown);
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mobileOpen]);
+
   const navItems = [
     {
       href: "/superadmin",
-      label: "Dashboard",
+      label: "Platform Overview",
       icon: LayoutDashboard,
       active: pathname === "/superadmin",
     },
     {
       href: "/superadmin#academies",
-      label: "Academies",
+      label: "Academies Directory",
       icon: Building2,
       active: false,
     },
@@ -52,7 +70,7 @@ export function SuperAdminSidebar({ user }: SuperAdminSidebarProps) {
     },
     {
       href: "/admin",
-      label: "Admin Portal",
+      label: "Academy Admin View",
       icon: ExternalLink,
       active: false,
       external: true,
@@ -61,107 +79,165 @@ export function SuperAdminSidebar({ user }: SuperAdminSidebarProps) {
 
   return (
     <>
-      {/* Mobile Top Header (< 768px) */}
-      <div className="md:hidden flex items-center justify-between px-4 h-16 bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40">
-        <div className="flex items-center space-x-2">
-          <ShieldCheck className="h-6 w-6 text-purple-400" />
-          <span className="font-bold text-lg tracking-tight">EduFlow</span>
-          <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-purple-900/80 text-purple-300 border border-purple-700/60">
-            Super Admin
-          </span>
+      {/* ── Mobile Top Bar (< 768px) ── */}
+      <header className="md:hidden flex items-center justify-between px-4 h-16 bg-[#0F2040] text-white sticky top-0 z-40 shadow-md border-b border-white/10">
+        <div className="flex items-center space-x-2.5">
+          <div className="h-9 w-9 rounded-xl bg-[#F5B800] flex items-center justify-center shadow-sm">
+            <ShieldCheck className="h-5 w-5 text-[#0F2040]" />
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className="font-extrabold text-base tracking-tight text-white">EduFlow</span>
+              <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-[#F5B800] text-[#0F2040]">
+                Super Admin
+              </span>
+            </div>
+            <span className="text-[10px] text-slate-300 font-medium">SaaS Platform Root</span>
+          </div>
         </div>
+
         <div className="flex items-center space-x-1">
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
+            type="button"
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="text-slate-300 hover:text-red-400 hover:bg-slate-800 h-8 w-8 p-0"
+            className="p-2 rounded-xl text-slate-300 hover:text-red-400 hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B800]"
             title="Sign Out"
+            aria-label="Sign Out"
           >
             <LogOut className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
+          </button>
+          <AnimatedMenuButton
+            isOpen={mobileOpen}
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="text-slate-300 hover:text-white hover:bg-slate-800"
-          >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
+            ariaLabel="Toggle Navigation Drawer"
+          />
         </div>
-      </div>
+      </header>
 
-      {/* Mobile Dropdown Menu (< 768px) */}
+      {/* ── Mobile Slide-in Drawer with Backdrop (< 768px) ── */}
       {mobileOpen && (
-        <div className="md:hidden bg-slate-900 border-b border-slate-800 px-4 py-3 space-y-2 sticky top-16 z-30">
-          <nav className="space-y-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              return (
+        <div className="md:hidden fixed inset-0 z-50 flex">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 animate-in fade-in"
+            onClick={() => setMobileOpen(false)}
+            aria-hidden="true"
+          />
+
+          <div className="relative w-72 max-w-[85vw] bg-[#0F2040] text-white min-h-screen flex flex-col justify-between shadow-2xl z-10 border-r border-white/10 animate-in slide-in-from-left duration-300 ease-out">
+            <div className="p-5 border-b border-white/10 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="h-9 w-9 rounded-xl bg-[#F5B800] flex items-center justify-center shadow-md">
+                  <ShieldCheck className="h-5 w-5 text-[#0F2040]" />
+                </div>
+                <div>
+                  <div className="font-extrabold text-base text-white tracking-tight">EduFlow</div>
+                  <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-[#F5B800] text-[#0F2040]">
+                    Super Admin
+                  </span>
+                </div>
+              </div>
+              <AnimatedMenuButton
+                isOpen={mobileOpen}
+                onClick={() => setMobileOpen(false)}
+                ariaLabel="Close Menu"
+              />
+            </div>
+
+            <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+              <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3 mb-2">
+                Platform Navigation
+              </div>
+              {navItems.map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    style={{ animationDelay: `${idx * 30}ms` }}
+                    className={cn(
+                      "animate-stagger-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B800] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F2040]",
+                      item.active
+                        ? "bg-[#F5B800] text-[#0F2040] font-bold shadow-md shadow-[#F5B800]/20"
+                        : "text-slate-200 hover:text-white hover:bg-white/[0.08]"
+                    )}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <Icon
+                        className={cn(
+                          "h-4 w-4 shrink-0 transition-transform group-hover:scale-110",
+                          item.active ? "text-[#0F2040]" : "text-slate-300"
+                        )}
+                      />
+                      <span>{item.label}</span>
+                    </div>
+                    {item.external && (
+                      <span className="text-[10px] font-bold text-slate-300 bg-white/10 px-1.5 py-0.5 rounded border border-white/10">
+                        Switch
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="p-4 border-t border-white/10 space-y-2 bg-[#0B1730]">
+              <div className="px-3 py-2 rounded-xl bg-white/5 border border-white/10">
+                <div className="text-xs font-semibold text-white truncate">
+                  {user?.name || "Platform Owner"}
+                </div>
+                <div className="text-[10px] text-slate-300 font-mono truncate">
+                  {user?.email || "superadmin@eduflow.test"}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
                 <Link
-                  key={item.label}
-                  href={item.href}
+                  href="/change-password"
                   onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    "flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
-                    item.active
-                      ? "bg-purple-600 text-white font-semibold"
-                      : "text-slate-300 hover:text-white hover:bg-slate-800"
-                  )}
+                  className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-200 bg-white/5 hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B800]"
                 >
-                  <Icon className="h-4 w-4" />
-                  <span>{item.label}</span>
+                  <KeyRound className="h-3.5 w-3.5 text-slate-300" />
+                  <span>Password</span>
                 </Link>
-              );
-            })}
-          </nav>
-          <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-            <span className="truncate max-w-[180px]">{user?.email || "Super Admin"}</span>
-            <div className="flex items-center space-x-1">
-              <Link href="/change-password" onClick={() => setMobileOpen(false)}>
-                <Button variant="ghost" size="sm" className="h-7 text-xs text-slate-300">
-                  Password
-                </Button>
-              </Link>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => signOut({ callbackUrl: "/login" })}
-                className="h-7 text-xs text-rose-400 hover:text-rose-300"
-              >
-                Sign Out
-              </Button>
+                <button
+                  type="button"
+                  onClick={() => signOut({ callbackUrl: "/login" })}
+                  className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-medium text-red-300 bg-red-500/10 hover:bg-red-500/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Persistent Desktop / Tablet Sidebar (>= 768px: visible at both 768px and 1440px) */}
-      <aside className="hidden md:flex flex-col w-64 bg-slate-900 text-slate-100 border-r border-slate-800 shrink-0 min-h-screen sticky top-0 h-screen">
-        {/* Brand & Badge */}
-        <div className="p-5 border-b border-slate-800/80">
-          <div className="flex items-center space-x-2.5">
-            <div className="h-9 w-9 rounded-lg bg-purple-600/20 border border-purple-500/40 flex items-center justify-center text-purple-400">
-              <ShieldCheck className="h-5 w-5" />
+      {/* ── Persistent Desktop Midnight Navy Sidebar (≥ 768px) ── */}
+      <aside className="hidden md:flex flex-col w-64 bg-[#0F2040] text-white shrink-0 min-h-screen sticky top-0 h-screen shadow-xl border-r border-white/10 z-30">
+        <div className="p-5 border-b border-white/10">
+          <div className="flex items-center space-x-3">
+            <div className="h-10 w-10 rounded-xl bg-[#F5B800] flex items-center justify-center shrink-0 shadow-md">
+              <ShieldCheck className="h-5 w-5 text-[#0F2040]" />
             </div>
-            <div>
-              <div className="font-bold text-base text-white tracking-tight flex items-center space-x-1.5">
+            <div className="min-w-0">
+              <div className="font-extrabold text-base text-white tracking-tight flex items-center gap-1.5">
                 <span>EduFlow</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#F5B800]" />
               </div>
               <div className="flex items-center space-x-1.5 mt-0.5">
-                <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-purple-900/80 text-purple-300 border border-purple-700/60 font-mono">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#F5B800] text-[#0F2040]">
                   Super Admin
                 </span>
-                <span className="text-[11px] text-slate-400">Platform</span>
+                <span className="text-[11px] text-slate-300">Root</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Navigation Items */}
-        <div className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3 mb-2">
-            Navigation
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3 mb-2.5">
+            Platform Navigation
           </div>
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -170,78 +246,77 @@ export function SuperAdminSidebar({ user }: SuperAdminSidebarProps) {
                 key={item.label}
                 href={item.href}
                 className={cn(
-                  "flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all group",
+                  "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B800] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F2040]",
                   item.active
-                    ? "bg-purple-600 text-white font-semibold shadow-sm shadow-purple-900/40"
-                    : "text-slate-300 hover:text-white hover:bg-slate-800/70"
+                    ? "bg-[#F5B800] text-[#0F2040] font-bold shadow-md shadow-[#F5B800]/20"
+                    : "text-slate-200 hover:text-white hover:bg-white/[0.08]"
                 )}
               >
-                <Icon
-                  className={cn(
-                    "h-4 w-4 transition-transform group-hover:scale-105",
-                    item.active ? "text-white" : "text-slate-400 group-hover:text-purple-400"
-                  )}
-                />
-                <span className="flex-1">{item.label}</span>
-                {item.external && (
-                  <span className="text-[10px] text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">
+                <div className="flex items-center space-x-3">
+                  <Icon
+                    className={cn(
+                      "h-4 w-4 shrink-0 transition-transform group-hover:scale-110",
+                      item.active ? "text-[#0F2040]" : "text-slate-300"
+                    )}
+                  />
+                  <span>{item.label}</span>
+                </div>
+                {item.external ? (
+                  <span className="text-[10px] font-bold text-slate-300 bg-white/10 px-1.5 py-0.5 rounded border border-white/10">
                     Switch
                   </span>
-                )}
+                ) : item.active ? (
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0F2040]" />
+                ) : null}
               </Link>
             );
           })}
 
           <div className="pt-6">
             <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3 mb-2">
-              Platform Overview
+              Platform Status
             </div>
-            <div className="px-3 py-2.5 rounded-lg bg-slate-800/50 border border-slate-800 text-[11px] text-slate-400 space-y-1.5">
+            <div className="px-3.5 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-slate-300 space-y-2">
               <div className="flex items-center justify-between">
-                <span>Multi-tenant SaaS</span>
-                <span className="text-emerald-400 font-semibold flex items-center">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 inline-block mr-1"></span>
+                <span className="text-slate-300">Multi-tenant SaaS</span>
+                <span className="text-emerald-400 font-bold flex items-center text-[11px]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 inline-block mr-1.5 animate-pulse" />
                   Active
                 </span>
               </div>
-              <div className="text-[10px] text-slate-400">
-                14-day trials & automated billing engine active
+              <div className="text-[11px] text-slate-400 leading-relaxed">
+                Automated billing, 14-day trials, & Supabase cloud DB online
               </div>
             </div>
           </div>
-        </div>
+        </nav>
 
-        {/* User Card & Action Footer */}
-        <div className="p-3 border-t border-slate-800/80 bg-slate-900/90 space-y-2">
-          <div className="px-3 py-2 rounded-lg bg-slate-800/40 border border-slate-800">
-            <div className="text-[11px] font-semibold text-slate-200 truncate">
+        <div className="p-3 border-t border-white/10 space-y-2 bg-[#0B1730]">
+          <div className="px-3 py-2 rounded-xl bg-white/5 border border-white/10">
+            <div className="text-xs font-semibold text-white truncate">
               {user?.name || "Platform Owner"}
             </div>
-            <div className="text-[10px] text-slate-400 font-mono truncate">
+            <div className="text-[10px] text-slate-300 font-mono truncate">
               {user?.email || "superadmin@eduflow.test"}
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-1.5">
-            <Link href="/change-password" className="w-full">
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full h-8 text-[11px] bg-slate-800/60 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700"
-              >
-                <KeyRound className="h-3 w-3 mr-1" />
-                Password
-              </Button>
-            </Link>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => signOut({ callbackUrl: "/login" })}
-              className="w-full h-8 text-[11px] bg-slate-800/60 border-slate-700 text-rose-300 hover:text-rose-100 hover:bg-rose-900/40 hover:border-rose-700"
+            <Link
+              href="/change-password"
+              className="flex items-center justify-center space-x-1 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-200 bg-white/5 hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B800]"
             >
-              <LogOut className="h-3 w-3 mr-1" />
-              Sign Out
-            </Button>
+              <KeyRound className="h-3.5 w-3.5 text-slate-300" />
+              <span>Password</span>
+            </Link>
+            <button
+              type="button"
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              className="flex items-center justify-center space-x-1 px-2.5 py-2 rounded-xl text-xs font-medium text-red-300 bg-red-500/10 hover:bg-red-500/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span>Sign Out</span>
+            </button>
           </div>
         </div>
       </aside>

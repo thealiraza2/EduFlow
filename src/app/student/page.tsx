@@ -5,6 +5,7 @@ import { Role } from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { CountUp } from "@/components/common/CountUp";
 import {
   FileSpreadsheet,
   Clock,
@@ -204,96 +205,123 @@ export default async function StudentPortalPage() {
   const balanceDueMinor = Math.max(0, totalInvoicedMinor - totalPaidMinor);
 
   return (
-    <div className="p-6 md:p-8">
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* Welcome Header */}
-        <div className="bg-white p-6 rounded-2xl border shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <div className="flex items-center space-x-2">
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Student Portal</h1>
-              <Badge variant="outline" className="text-emerald-700 bg-emerald-50 border-emerald-300 text-xs">
-                Active Student
-              </Badge>
+    <div className="space-y-7 max-w-6xl mx-auto w-full">
+      {/* Welcome Header */}
+      <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 border-t-4 border-t-[#F5B800] shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 card-lift relative overflow-hidden">
+        <div>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F2040]">
+              Student Portal
+            </h1>
+            <Badge className="text-emerald-800 bg-emerald-50 border-emerald-300 text-xs font-semibold px-2.5 py-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1.5 animate-pulse" />
+              Active Student
+            </Badge>
+          </div>
+          <p className="text-sm text-slate-600 mt-1.5">
+            Welcome, <strong className="text-slate-900">{student?.name || user.name}</strong> • Roll No:{" "}
+            <strong className="font-mono text-[#0F2040]">{student?.admissionNo || "—"}</strong>
+            {student?.academy && ` • ${student.academy.name}`}
+          </p>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Button size="sm" asChild className="bg-[#F5B800] hover:bg-[#DF9E00] text-[#0F2040] font-bold text-xs shadow-sm focus-visible:ring-2 focus-visible:ring-[#F5B800]">
+            <Link href="/student/attendance/scan">
+              <QrCode className="h-4 w-4 mr-1.5" />
+              Scan QR Attendance
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      {/* 5 Summary Stat Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
+        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift p-1">
+          <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Attendance</span>
+            <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
+              <CheckCircle2 className="h-4 w-4" />
             </div>
-            <p className="text-sm text-slate-500 mt-1">
-              Welcome, <strong>{student?.name || user.name}</strong> • Roll No:{" "}
-              <strong className="font-mono text-slate-800">{student?.admissionNo || "—"}</strong>
-              {student?.academy && ` • ${student.academy.name}`}
+          </CardHeader>
+          <CardContent className="py-0 px-4 pb-3">
+            <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 font-mono">
+              {totalSessions > 0 ? <CountUp value={attendancePct} suffix="%" /> : "—"}
+            </div>
+            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+              {presentCount} Present / {totalSessions} Sessions
             </p>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="flex items-center space-x-2">
-            <Button size="sm" asChild className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs">
-              <Link href="/student/attendance/scan">
-                <QrCode className="h-4 w-4 mr-1.5" />
-                Scan QR Attendance
-              </Link>
-            </Button>
-          </div>
-        </div>
+        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift p-1">
+          <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Fee Balance</span>
+            <div className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
+              <Banknote className="h-4 w-4" />
+            </div>
+          </CardHeader>
+          <CardContent className="py-0 px-4 pb-3">
+            <div className="text-2xl sm:text-3xl font-extrabold text-[#0F2040] font-mono">
+              <CountUp value={balanceDueMinor / 100} prefix="PKR " />
+            </div>
+            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+              {invoices.length} {invoices.length === 1 ? "Invoice" : "Invoices"} Recorded
+            </p>
+          </CardContent>
+        </Card>
 
-        {/* 4 Summary Stat Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="shadow-sm">
-            <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
-              <span className="text-xs font-medium">Attendance Rate</span>
-              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-            </CardHeader>
-            <CardContent className="py-0 px-4 pb-3">
-              <div className="text-2xl font-bold text-slate-900 font-mono">
-                {totalSessions > 0 ? `${attendancePct}%` : "—"}
-              </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                {presentCount} Present / {totalSessions} Sessions
-              </p>
-            </CardContent>
-          </Card>
+        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift p-1">
+          <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Active Batches</span>
+            <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
+              <School className="h-4 w-4" />
+            </div>
+          </CardHeader>
+          <CardContent className="py-0 px-4 pb-3">
+            <div className="text-2xl sm:text-3xl font-extrabold text-[#0F2040] font-mono">
+              <CountUp value={student?.enrollments.length || 0} />
+            </div>
+            <p className="text-[11px] text-slate-500 mt-0.5 truncate font-medium">
+              {student?.enrollments.map((e) => e.batch.class.name).join(", ") || "Enrolled"}
+            </p>
+          </CardContent>
+        </Card>
 
-          <Card className="shadow-sm">
-            <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
-              <span className="text-xs font-medium">Fee Balance</span>
-              <Banknote className="h-4 w-4 text-blue-600" />
-            </CardHeader>
-            <CardContent className="py-0 px-4 pb-3">
-              <div className="text-2xl font-bold text-slate-900 font-mono">
-                {formatPKR(balanceDueMinor)}
-              </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                {invoices.length} {invoices.length === 1 ? "Invoice" : "Invoices"} Recorded
-              </p>
-            </CardContent>
-          </Card>
+        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift p-1">
+          <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Tests Taken</span>
+            <div className="p-1.5 rounded-lg bg-purple-50 text-purple-600">
+              <Trophy className="h-4 w-4" />
+            </div>
+          </CardHeader>
+          <CardContent className="py-0 px-4 pb-3">
+            <div className="text-2xl sm:text-3xl font-extrabold text-purple-600 font-mono">
+              <CountUp value={completedTests.length} />
+            </div>
+            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+              {completedTests.length} completed
+            </p>
+          </CardContent>
+        </Card>
 
-          <Card className="shadow-sm">
-            <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
-              <span className="text-xs font-medium">Active Batches</span>
-              <School className="h-4 w-4 text-indigo-600" />
-            </CardHeader>
-            <CardContent className="py-0 px-4 pb-3">
-              <div className="text-2xl font-bold text-slate-900 font-mono">
-                {student?.enrollments.length || 0}
-              </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                {student?.enrollments.map((e) => e.batch.class.name).join(", ") || "Enrolled"}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-sm">
-            <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
-              <span className="text-xs font-medium">Pending Tests</span>
-              <FileSpreadsheet className="h-4 w-4 text-amber-600" />
-            </CardHeader>
-            <CardContent className="py-0 px-4 pb-3">
-              <div className="text-2xl font-bold text-slate-900 font-mono">
-                {pendingTests.length}
-              </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                {pendingTests.length > 0 ? "Action required" : "All completed"}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift p-1 col-span-2 sm:col-span-1">
+          <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Pending Tests</span>
+            <div className="p-1.5 rounded-lg bg-amber-50 text-amber-600">
+              <FileSpreadsheet className="h-4 w-4" />
+            </div>
+          </CardHeader>
+          <CardContent className="py-0 px-4 pb-3">
+            <div className="text-2xl sm:text-3xl font-extrabold text-amber-600 font-mono">
+              <CountUp value={pendingTests.length} />
+            </div>
+            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+              {pendingTests.length > 0 ? "Action required" : "All completed"}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
         {/* Pending Assessment Alert Card (NO Trapping: displayed as an interactive card ON dashboard) */}
         {pendingTests.length > 0 && (
@@ -686,6 +714,5 @@ export default async function StudentPortalPage() {
           </Card>
         </div>
       </div>
-    </div>
   );
 }

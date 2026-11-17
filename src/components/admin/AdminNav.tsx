@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   Users,
   GraduationCap,
@@ -17,33 +16,26 @@ import {
   Award,
   Wallet,
   FileSpreadsheet,
-  ShieldAlert,
   Settings,
   KeyRound,
-  Menu,
-  X,
-  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
+import { AnimatedMenuButton } from "@/components/common/AnimatedMenuButton";
 
-const primaryNavItems = [
+const navItems = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/students", label: "Students", icon: Users },
   { href: "/admin/teachers", label: "Teachers", icon: GraduationCap },
-  { href: "/admin/classes", label: "Classes", icon: School },
+  { href: "/admin/classes", label: "Classes & Batches", icon: School },
   { href: "/admin/timetable", label: "Timetable", icon: Calendar },
   { href: "/admin/attendance", label: "Attendance", icon: CheckCircle2 },
-  { href: "/admin/fees", label: "Fees", icon: Banknote },
-  { href: "/admin/results", label: "Results", icon: Award },
+  { href: "/admin/fees", label: "Fee Management", icon: Banknote },
+  { href: "/admin/results", label: "Exams & Results", icon: Award },
+  { href: "/admin/salaries", label: "Faculty Payroll", icon: Wallet },
+  { href: "/admin/reports", label: "Export Reports", icon: FileSpreadsheet },
+  { href: "/admin/settings", label: "Academy Settings", icon: Settings },
 ];
-
-const secondaryNavItems = [
-  { href: "/admin/salaries", label: "Salaries", icon: Wallet },
-  { href: "/admin/reports", label: "Reports", icon: FileSpreadsheet },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
-];
-
-const allNavItems = [...primaryNavItems, ...secondaryNavItems];
 
 interface AdminNavProps {
   academySlug?: string | null;
@@ -52,241 +44,248 @@ interface AdminNavProps {
 
 export function AdminNav({ academySlug, role }: AdminNavProps) {
   const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Close dropdown on outside click
+  // Close drawer on path change or escape key
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setMoreDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    setMobileOpen(false);
+  }, [pathname]);
 
-  const isSecondaryActive = secondaryNavItems.some((item) =>
-    pathname.startsWith(item.href)
-  );
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown);
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mobileOpen]);
+
+  const isActive = (href: string) =>
+    href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
 
   return (
-    <header className="border-b bg-white sticky top-0 z-40 w-full">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          {/* Logo & Academy badge */}
-          <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
-            <Link
-              href="/admin"
-              className="text-xl font-bold tracking-tight text-slate-900 whitespace-nowrap"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              EduFlow
-            </Link>
+    <>
+      {/* ── Mobile Top Header (< 768px) ── */}
+      <header className="md:hidden flex items-center justify-between px-4 h-16 bg-[#0F2040] text-white sticky top-0 z-40 shadow-md border-b border-white/10">
+        <div className="flex items-center space-x-2.5">
+          <div className="h-9 w-9 rounded-xl bg-[#F5B800] flex items-center justify-center shadow-sm">
+            <LayoutDashboard className="h-5 w-5 text-[#0F2040]" />
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className="font-extrabold text-base tracking-tight text-white">EduFlow</span>
+              <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-[#F5B800] text-[#0F2040]">
+                Admin
+              </span>
+            </div>
             {academySlug && (
-              <span className="hidden sm:inline-block px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
+              <span className="text-[10px] text-slate-300 font-medium truncate block max-w-[140px]">
                 {academySlug}
               </span>
             )}
           </div>
+        </div>
 
-          {/* Desktop Navigation (>= 1280px / xl) */}
-          <nav className="hidden xl:flex items-center space-x-1">
-            {role === "SUPER_ADMIN" && (
+        <div className="flex items-center space-x-1">
+          <button
+            type="button"
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className="p-2 rounded-xl text-slate-300 hover:text-red-400 hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B800]"
+            title="Sign Out"
+            aria-label="Sign Out"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
+
+          {/* Morphing Hamburger Menu Button */}
+          <AnimatedMenuButton
+            isOpen={mobileOpen}
+            onClick={() => setMobileOpen(!mobileOpen)}
+            ariaLabel="Toggle Navigation Drawer"
+          />
+        </div>
+      </header>
+
+      {/* ── Mobile Slide-in Drawer with Backdrop (< 768px) ── */}
+      {mobileOpen && (
+        <div className="md:hidden fixed inset-0 z-50 flex">
+          {/* Backdrop Blur */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 animate-in fade-in"
+            onClick={() => setMobileOpen(false)}
+            aria-hidden="true"
+          />
+
+          {/* Drawer Panel */}
+          <div className="relative w-72 max-w-[85vw] bg-[#0F2040] text-white min-h-screen flex flex-col justify-between shadow-2xl z-10 border-r border-white/10 animate-in slide-in-from-left duration-300 ease-out">
+            {/* Drawer Top / Brand */}
+            <div className="p-5 border-b border-white/10 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="h-9 w-9 rounded-xl bg-[#F5B800] flex items-center justify-center shadow-md">
+                  <LayoutDashboard className="h-5 w-5 text-[#0F2040]" />
+                </div>
+                <div>
+                  <div className="font-extrabold text-base text-white tracking-tight">EduFlow</div>
+                  <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-[#F5B800] text-[#0F2040]">
+                    Academy Admin
+                  </span>
+                </div>
+              </div>
+              <AnimatedMenuButton
+                isOpen={mobileOpen}
+                onClick={() => setMobileOpen(false)}
+                ariaLabel="Close Menu"
+              />
+            </div>
+
+            {/* Staggered Navigation Items */}
+            <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+              <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3 mb-2">
+                Main Menu
+              </div>
+              {navItems.map((item, idx) => {
+                const Icon = item.icon;
+                const active = isActive(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    style={{ animationDelay: `${idx * 30}ms` }}
+                    className={cn(
+                      "animate-stagger-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B800] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F2040]",
+                      active
+                        ? "bg-[#F5B800] text-[#0F2040] font-bold shadow-md shadow-[#F5B800]/20"
+                        : "text-slate-200 hover:text-white hover:bg-white/[0.08]"
+                    )}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <Icon
+                        className={cn(
+                          "h-4 w-4 shrink-0 transition-transform group-hover:scale-110",
+                          active ? "text-[#0F2040]" : "text-slate-300"
+                        )}
+                      />
+                      <span>{item.label}</span>
+                    </div>
+                    {active && <ChevronRight className="h-3.5 w-3.5 text-[#0F2040]" />}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Drawer Footer */}
+            <div className="p-4 border-t border-white/10 space-y-1.5 bg-[#0B1730]">
               <Link
-                href="/superadmin"
-                className={cn(
-                  "flex items-center space-x-1.5 px-2.5 py-1.5 rounded-md text-xs font-semibold transition-colors whitespace-nowrap",
-                  pathname.startsWith("/superadmin")
-                    ? "bg-purple-900 text-white"
-                    : "text-purple-700 bg-purple-50 hover:bg-purple-100"
-                )}
+                href="/admin/change-password"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B800]"
               >
-                <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
-                <span>Super Admin</span>
+                <KeyRound className="h-4 w-4 text-slate-300" />
+                <span>Change Password</span>
               </Link>
-            )}
-
-            {primaryNavItems.map((item) => {
-              const Icon = item.icon;
-              const isActive =
-                pathname === item.href ||
-                (item.href !== "/admin" && pathname.startsWith(item.href));
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center space-x-1 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap",
-                    isActive
-                      ? "bg-slate-900 text-white"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  )}
-                >
-                  <Icon className="h-3.5 w-3.5 shrink-0" />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-
-            {/* "More" Dropdown for Salaries, Reports, Settings */}
-            <div className="relative" ref={dropdownRef}>
               <button
                 type="button"
-                onClick={() => setMoreDropdownOpen(!moreDropdownOpen)}
-                className={cn(
-                  "flex items-center space-x-1 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap",
-                  isSecondaryActive
-                    ? "bg-slate-900 text-white"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                )}
+                onClick={() => signOut({ callbackUrl: "/login" })}
+                className="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium text-red-300 hover:text-red-200 hover:bg-red-500/10 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
               >
-                <span>More</span>
-                <ChevronDown className="h-3.5 w-3.5" />
+                <LogOut className="h-4 w-4" />
+                <span>Sign Out</span>
               </button>
-
-              {moreDropdownOpen && (
-                <div className="absolute right-0 mt-1 w-44 bg-white border rounded-lg shadow-lg py-1 z-50">
-                  {secondaryNavItems.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = pathname.startsWith(item.href);
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        onClick={() => setMoreDropdownOpen(false)}
-                        className={cn(
-                          "flex items-center space-x-2 px-3 py-2 text-xs font-medium transition-colors",
-                          isActive
-                            ? "bg-slate-100 text-slate-900 font-semibold"
-                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                        )}
-                      >
-                        <Icon className="h-4 w-4 shrink-0 text-slate-500" />
-                        <span>{item.label}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
             </div>
-          </nav>
-
-          {/* Desktop Right actions */}
-          <div className="hidden xl:flex items-center space-x-2 shrink-0">
-            <Link href="/admin/change-password">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-slate-600 hover:text-slate-900 text-xs whitespace-nowrap"
-              >
-                <KeyRound className="h-3.5 w-3.5 mr-1" />
-                Password
-              </Button>
-            </Link>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => signOut({ callbackUrl: "/login" })}
-              className="text-slate-600 hover:text-red-600 text-xs whitespace-nowrap"
-            >
-              <LogOut className="h-3.5 w-3.5 mr-1" />
-              Sign Out
-            </Button>
-          </div>
-
-          {/* Mobile & Tablet Toggle Button (< 1280px) */}
-          <div className="flex xl:hidden items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => signOut({ callbackUrl: "/login" })}
-              className="text-slate-600 hover:text-red-600 text-xs px-2"
-              title="Sign Out"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-slate-700 hover:bg-slate-100 focus:outline-none"
-              aria-label="Toggle Navigation Menu"
-            >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Mobile & Tablet Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="xl:hidden border-t bg-white shadow-lg px-4 py-4 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
-          {academySlug && (
-            <div className="sm:hidden px-3 py-2 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-md border border-emerald-100 mb-2">
-              Academy: {academySlug}
+      {/* ── Persistent Desktop Midnight Navy Sidebar (≥ 768px) ── */}
+      <aside className="hidden md:flex flex-col w-64 bg-[#0F2040] text-white shrink-0 min-h-screen sticky top-0 h-screen shadow-xl border-r border-white/10 z-30">
+        {/* Brand Header */}
+        <div className="p-5 border-b border-white/10">
+          <div className="flex items-center space-x-3">
+            <div className="h-10 w-10 rounded-xl bg-[#F5B800] flex items-center justify-center shrink-0 shadow-md">
+              <LayoutDashboard className="h-5 w-5 text-[#0F2040]" />
             </div>
-          )}
+            <div className="min-w-0">
+              <div className="font-extrabold text-base text-white tracking-tight flex items-center gap-1.5">
+                <span>EduFlow</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#F5B800]" />
+              </div>
+              <div className="flex items-center space-x-1.5 mt-0.5">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#F5B800] text-[#0F2040]">
+                  Admin
+                </span>
+                {academySlug && (
+                  <span className="text-[10px] text-slate-300 font-medium truncate max-w-[100px]">
+                    {academySlug}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
 
-          {role === "SUPER_ADMIN" && (
-            <Link
-              href="/superadmin"
-              onClick={() => setMobileMenuOpen(false)}
-              className={cn(
-                "flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors",
-                pathname.startsWith("/superadmin")
-                  ? "bg-purple-900 text-white"
-                  : "text-purple-700 bg-purple-50 hover:bg-purple-100"
-              )}
-            >
-              <ShieldAlert className="h-4 w-4" />
-              <span>Super Admin Platform</span>
-            </Link>
-          )}
-
-          {allNavItems.map((item) => {
+        {/* Navigation */}
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3 mb-2.5">
+            Academy Control
+          </div>
+          {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/admin" && pathname.startsWith(item.href));
+            const active = isActive(item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
                 className={cn(
-                  "flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                  isActive
-                    ? "bg-slate-900 text-white"
-                    : "text-slate-700 hover:bg-slate-100"
+                  "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B800] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F2040]",
+                  active
+                    ? "bg-[#F5B800] text-[#0F2040] font-bold shadow-md shadow-[#F5B800]/20"
+                    : "text-slate-200 hover:text-white hover:bg-white/[0.08]"
                 )}
               >
-                <Icon className="h-4 w-4 shrink-0" />
-                <span>{item.label}</span>
+                <div className="flex items-center space-x-3">
+                  <Icon
+                    className={cn(
+                      "h-4 w-4 shrink-0 transition-transform group-hover:scale-110",
+                      active ? "text-[#0F2040]" : "text-slate-300"
+                    )}
+                  />
+                  <span>{item.label}</span>
+                </div>
+                {active && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0F2040]" />
+                )}
               </Link>
             );
           })}
+        </nav>
 
-          <div className="pt-3 mt-3 border-t border-slate-100 space-y-1">
-            <Link
-              href="/admin/change-password"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100"
-            >
-              <KeyRound className="h-4 w-4" />
-              <span>Change Password</span>
-            </Link>
-            <button
-              type="button"
-              onClick={() => signOut({ callbackUrl: "/login" })}
-              className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 text-left"
-            >
-              <LogOut className="h-4 w-4" />
-              <span>Sign Out</span>
-            </button>
-          </div>
+        {/* Footer — user actions */}
+        <div className="p-3 border-t border-white/10 space-y-1.5 bg-[#0B1730]">
+          <Link
+            href="/admin/change-password"
+            className="flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-white/[0.08] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B800]"
+          >
+            <KeyRound className="h-4 w-4 shrink-0 text-slate-300" />
+            <span>Change Password</span>
+          </Link>
+          <button
+            type="button"
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium text-red-300 hover:text-red-200 hover:bg-red-500/10 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+          >
+            <LogOut className="h-4 w-4 shrink-0" />
+            <span>Sign Out</span>
+          </button>
         </div>
-      )}
-    </header>
+      </aside>
+    </>
   );
 }

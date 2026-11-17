@@ -8,6 +8,7 @@ import { formatPKR } from "@/lib/money";
 import { ParentChildSummary } from "@/lib/parent";
 import { DAYS_OF_WEEK } from "@/lib/constants";
 import { PayInvoiceButton } from "@/components/parent/PayInvoiceButton";
+import { CountUp } from "@/components/common/CountUp";
 import {
   Calendar,
   CheckCircle2,
@@ -59,21 +60,25 @@ export function ParentChildCard({ child }: Props) {
 
         {/* Quick KPI badges */}
         <div className="flex items-center space-x-3 text-xs">
-          <div className="bg-slate-50 border p-2 rounded-lg text-center min-w-[90px]">
-            <span className="text-[10px] uppercase text-slate-400 font-semibold block">Attendance</span>
-            <span className="font-bold font-mono text-emerald-600 text-sm">
-              {child.attendance.totalSessions === 0 ? "No sessions recorded" : `${child.attendance.percentage}%`}
+          <div className="bg-slate-50 border border-slate-200/80 p-2.5 rounded-xl text-center min-w-[100px] shadow-xs">
+            <span className="text-[10px] uppercase text-slate-500 font-bold block tracking-wider">Attendance</span>
+            <span className="font-extrabold font-mono text-emerald-600 text-sm mt-0.5 block">
+              {child.attendance.totalSessions === 0 ? (
+                "No sessions recorded"
+              ) : (
+                <CountUp value={child.attendance.percentage ?? 0} suffix="%" />
+              )}
             </span>
           </div>
 
-          <div className="bg-slate-50 border p-2 rounded-lg text-center min-w-[90px]">
-            <span className="text-[10px] uppercase text-slate-400 font-semibold block">Fee Dues</span>
+          <div className="bg-slate-50 border border-slate-200/80 p-2.5 rounded-xl text-center min-w-[100px] shadow-xs">
+            <span className="text-[10px] uppercase text-slate-500 font-bold block tracking-wider">Fee Dues</span>
             <span
-              className={`font-bold font-mono text-sm ${
+              className={`font-extrabold font-mono text-sm mt-0.5 block ${
                 child.fees.totalOutstandingMinor > 0 ? "text-rose-600" : "text-emerald-600"
               }`}
             >
-              {formatPKR(child.fees.totalOutstandingMinor)}
+              <CountUp value={child.fees.totalOutstandingMinor / 100} prefix="PKR " />
             </span>
           </div>
         </div>
