@@ -1,233 +1,128 @@
 import { requireSuperAdmin } from "@/lib/permissions";
 import { db } from "@/lib/db";
-import { SuperAdminManager } from "@/components/superadmin/SuperAdminManager";
-import { Role, AcademyPlan, AcademyStatus } from "@prisma/client";
+import { Role, type AcademyPlan, type AcademyStatus } from "@prisma/client";
+import { PlatformDashboard, type DashboardAcademy } from "@/components/superadmin/PlatformDashboard";
+
+export const dynamic = "force-dynamic";
+export const metadata = { title: "Platform console | EduFlow" };
+
+const PLAN_PRICE_MINOR: Record<AcademyPlan, number> = {
+  FREE: 0,
+  STARTER: 250000,
+  GROWTH: 500000,
+  PRO: 900000,
+};
 
 export default async function SuperAdminDashboardPage() {
   const superAdmin = await requireSuperAdmin();
-
   const now = new Date();
-  const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-  const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const DAY = 86400000;
 
-  const [academies, totalStudents, totalTeachers] = await Promise.all([
+  const [academies, totalStudents, totalTeachers, inboxCount, latestMessages] = await Promise.all([
     db.academy.findMany({
-      include: {
-        _count: {
-          select: {
-            students: true,
-            teachers: true,
-          },
-        },
-        users: {
-          where: { role: Role.ADMIN },
-          take: 1,
-          select: {
-            name: true,
-            email: true,
-            phone: true,
-          },
-        },
-      },
       orderBy: { createdAt: "desc" },
+      include: {
+        _count: { select: { students: true, teachers: true } },
+        users: { where: { role: Role.ADMIN }, take: 1, orderBy: { createdAt: "asc" }, select: { name: true, email: true } },
+      },
     }),
     db.student.count(),
     db.teacher.count(),
+    db.contactSubmission.count(),
+    db.contactSubmission.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 3,
+      select: { id: true, name: true, message: true, createdAt: true },
+    }),
   ]);
 
-  const totalAcademies = academies.length;
-  const activeAcademies = academies.filter((a) => a.status === "ACTIVE").length;
-  const suspendedAcademies = academies.filter((a) => a.status === "SUSPENDED").length;
+  const isTrial = (a: { trialEndsAt: Date | null }) => !!a.trialEndsAt && a.trialEndsAt > now;
+  const monthlyFee = (a: { plan: AcademyPlan; status: AcademyStatus; trialEndsAt: Date | null }) =>
+    a.status !== "ACTIVE" || isTrial(a) ? 0 : PLAN_PRICE_MINOR[a.plan];
 
-  // Active 14-day trials
-  const activeTrials = academies.filter(
-    (a) => a.trialEndsAt !== null && new Date(a.trialEndsAt) > now
-  );
-  const activeTrialsCount = activeTrials.length;
+  const rows: DashboardAcademy[] = academies.map((a) => ({
+    id: a.id,
+    name: a.name,
+    slug: a.slug,
+    plan: a.plan,
+    status: a.status,
+    onTrial: isTrial(a),
+    trialDaysLeft: isTrial(a) ? Math.ceil((a.trialEndsAt!.getTime() - now.getTime()) / DAY) : null,
+    students: a._count.students,
+    teachers: a._count.teachers,
+    adminName: a.users[0]?.name ?? null,
+    adminEmail: a.users[0]?.email ?? null,
+    createdAt: a.createdAt.toISOString(),
+    monthlyFeeMinor: monthlyFee(a),
+  }));
 
-  // Trials expiring within 3 days
-  const trialsExpiringSoonList = academies.filter(
-    (a) =>
-      a.trialEndsAt !== null &&
-      new Date(a.trialEndsAt) > now &&
-      new Date(a.trialEndsAt) <= threeDaysFromNow
-  );
-  const trialsExpiringSoonCount = trialsExpiringSoonList.length;
+  // KPIs
+  const mrrMinor = rows.reduce((s, r) => s + r.monthlyFeeMinor, 0);
+  const paying = rows.filter((r) => r.monthlyFeeMinor > 0).length;
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const newThisMonth = academies.filter((a) => a.createdAt >= startOfMonth).length;
+  const trials = rows.filter((r) => r.onTrial);
+  const trialsEndingSoon = trials.filter((r) => (r.trialDaysLeft ?? 99) <= 3);
 
-  // Academies joined this calendar month
-  const newThisMonthCount = academies.filter(
-    (a) => new Date(a.createdAt) >= startOfCurrentMonth
-  ).length;
-
-  // Plan Distribution (Trial / Starter / Growth / Pro) - 0 shows as 0, never hidden
-  let trialCount = 0;
-  let starterCount = 0;
-  let growthCount = 0;
-  let proCount = 0;
-
-  for (const a of academies) {
-    const onTrial = a.trialEndsAt !== null && new Date(a.trialEndsAt) > now;
-    if (onTrial) {
-      trialCount++;
-    } else if (a.plan === "STARTER") {
-      starterCount++;
-    } else if (a.plan === "GROWTH") {
-      growthCount++;
-    } else if (a.plan === "PRO") {
-      proCount++;
-    }
-  }
-
-  // MRR = sum of plan prices of ACTIVE PAYING academies only
-  // Starter 2,500 / Growth 5,000 / Pro 9,000 per month; trials = PKR 0; suspended = PKR 0
-  function getAcademyMonthlyFeeMinor(a: {
-    plan: AcademyPlan;
-    status: AcademyStatus;
-    trialEndsAt: Date | null;
-  }): number {
-    if (a.status !== "ACTIVE") return 0;
-    if (a.trialEndsAt !== null && new Date(a.trialEndsAt) > now) return 0;
-
-    switch (a.plan) {
-      case "STARTER":
-        return 250000; // PKR 2,500 in paisa
-      case "GROWTH":
-        return 500000; // PKR 5,000 in paisa
-      case "PRO":
-        return 900000; // PKR 9,000 in paisa
-      case "FREE":
-      default:
-        return 0;
-    }
-  }
-
-  const monthlyRevenueMinor = academies.reduce(
-    (sum, a) => sum + getAcademyMonthlyFeeMinor(a),
-    0
-  );
-
-  // Revenue trend — MRR per month for the last 6 months from subscription/payment records
-  // Show only months that exist, never invent past months
-  const monthsMap = new Map<string, { label: string; mrrMinor: number; count: number }>();
-  for (const a of academies) {
-    const createdDate = new Date(a.createdAt);
-    const key = `${createdDate.getFullYear()}-${String(createdDate.getMonth() + 1).padStart(2, "0")}`;
-    const label = createdDate.toLocaleString("en-US", { month: "short", year: "numeric" });
-
-    if (!monthsMap.has(key)) {
-      monthsMap.set(key, { label, mrrMinor: 0, count: 0 });
-    }
-    const entry = monthsMap.get(key)!;
-    entry.count++;
-    entry.mrrMinor += getAcademyMonthlyFeeMinor(a);
-  }
-
-  const revenueTrend = Array.from(monthsMap.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .slice(-6)
-    .map(([key, val]) => ({
-      key,
-      label: val.label,
-      mrrMinor: val.mrrMinor,
-      academyCount: val.count,
-    }));
-
-  // Format academies for the client table
-  const formattedAcademies = academies.map((a) => {
-    const onTrial = a.trialEndsAt !== null && new Date(a.trialEndsAt) > now;
-    const feeMinor = getAcademyMonthlyFeeMinor(a);
-
-    let mrrLabel = "PKR 0";
-    if (a.status === "SUSPENDED") {
-      mrrLabel = "PKR 0 (Suspended)";
-    } else if (onTrial) {
-      mrrLabel = "PKR 0 (Trial)";
-    } else if (feeMinor > 0) {
-      mrrLabel = `PKR ${(feeMinor / 100).toLocaleString()}`;
-    }
-
+  // Signups for the last 6 calendar months (zero months included — nothing invented)
+  const signups = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+    const next = new Date(d.getFullYear(), d.getMonth() + 1, 1);
     return {
-      id: a.id,
-      name: a.name,
-      slug: a.slug,
-      subdomain: a.subdomain,
-      plan: a.plan,
-      status: a.status,
-      isOnTrial: onTrial,
-      trialEndsAt: a.trialEndsAt ? a.trialEndsAt.toISOString() : null,
-      createdAt: a.createdAt.toISOString(),
-      studentsCount: a._count.students,
-      teachersCount: a._count.teachers,
-      adminEmail: a.users[0]?.email || null,
-      adminName: a.users[0]?.name || null,
-      adminPhone: a.users[0]?.phone || null,
-      mrrContributionMinor: feeMinor,
-      mrrLabel,
+      key: `${d.getFullYear()}-${d.getMonth() + 1}`,
+      label: d.toLocaleString("en-US", { month: "short" }),
+      count: academies.filter((a) => a.createdAt >= d && a.createdAt < next).length,
     };
   });
 
-  // Top academies by students (Top 5)
-  const topAcademiesByStudents = [...formattedAcademies]
-    .sort((a, b) => b.studentsCount - a.studentsCount)
-    .slice(0, 5);
+  // Plan mix (ordered tiers)
+  const planMix = [
+    { key: "trial", label: "Trial", count: trials.length },
+    { key: "free", label: "Free", count: rows.filter((r) => !r.onTrial && r.plan === "FREE").length },
+    { key: "starter", label: "Starter", count: rows.filter((r) => !r.onTrial && r.plan === "STARTER").length },
+    { key: "growth", label: "Growth", count: rows.filter((r) => !r.onTrial && r.plan === "GROWTH").length },
+    { key: "pro", label: "Pro", count: rows.filter((r) => !r.onTrial && r.plan === "PRO").length },
+  ];
 
-  // Trials expiring soon list
-  const trialsExpiringSoon = formattedAcademies.filter(
-    (a) =>
-      a.trialEndsAt &&
-      new Date(a.trialEndsAt) > now &&
-      new Date(a.trialEndsAt) <= threeDaysFromNow
-  );
-
-  const currentMonthName = now.toLocaleString("en-US", { month: "long", year: "numeric" });
+  // Things that need the owner's action
+  const attention = [
+    ...trialsEndingSoon.map((r) => ({
+      id: r.id,
+      name: r.name,
+      kind: "trial" as const,
+      detail: `Trial ends in ${r.trialDaysLeft} day${r.trialDaysLeft === 1 ? "" : "s"}`,
+    })),
+    ...rows
+      .filter((r) => r.status === "SUSPENDED")
+      .map((r) => ({ id: r.id, name: r.name, kind: "suspended" as const, detail: "Suspended — users can't sign in" })),
+    ...rows
+      .filter((r) => r.status === "ACTIVE" && r.students === 0 && now.getTime() - new Date(r.createdAt).getTime() > 3 * DAY)
+      .map((r) => ({ id: r.id, name: r.name, kind: "setup" as const, detail: "No students added yet — may need onboarding help" })),
+  ].slice(0, 6);
 
   return (
-    <div className="min-h-screen bg-canvas">
-      {/* Page Header */}
-      <div className="bg-white border-b border-slate-200/80 px-6 sm:px-8 py-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-xs">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="font-serif text-xl sm:text-2xl font-semibold text-ink">
-              Platform Administration
-            </h1>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          </div>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Multi-tenant SaaS root control • <strong className="text-slate-800">{totalAcademies}</strong> tenant academies registered
-          </p>
-        </div>
-        <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-tint border border-primary/40 text-xs font-semibold text-ink shadow-xs">
-          <span className="w-2 h-2 rounded-full bg-primary" />
-          <span>Super Admin</span>
-        </span>
-      </div>
-
-      <SuperAdminManager
-        stats={{
-          totalAcademies,
-          activeAcademies,
-          onTrialAcademies: activeTrialsCount,
-          suspendedAcademies,
-          totalStudents,
-          totalTeachers,
-          monthlyRevenueMinor,
-          activeTrialsCount,
-          trialsExpiringSoonCount,
-          newThisMonthCount,
-          currentMonthName,
-          planDistribution: {
-            trial: trialCount,
-            starter: starterCount,
-            growth: growthCount,
-            pro: proCount,
-          },
-        }}
-        revenueTrend={revenueTrend}
-        academies={formattedAcademies}
-        trialsExpiringSoon={trialsExpiringSoon}
-        topAcademiesByStudents={topAcademiesByStudents}
-        superAdminEmail={superAdmin.email || "superadmin@eduflow.test"}
-      />
-    </div>
+    <PlatformDashboard
+      ownerName={superAdmin.name?.split(" ")[0] || "there"}
+      today={now.toISOString()}
+      kpis={{
+        mrrMinor,
+        paying,
+        academies: rows.length,
+        active: rows.filter((r) => r.status === "ACTIVE").length,
+        newThisMonth,
+        trials: trials.length,
+        trialsEndingSoon: trialsEndingSoon.length,
+        students: totalStudents,
+        teachers: totalTeachers,
+      }}
+      signups={signups}
+      planMix={planMix}
+      attention={attention}
+      inbox={{
+        total: inboxCount,
+        latest: latestMessages.map((m) => ({ ...m, createdAt: m.createdAt.toISOString() })),
+      }}
+      academies={rows}
+    />
   );
 }

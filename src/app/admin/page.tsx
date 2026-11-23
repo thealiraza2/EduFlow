@@ -10,6 +10,7 @@ import { AdminAnnouncementsCard } from "@/components/admin/AdminAnnouncementsCar
 import { AtRiskStudentsCard } from "@/components/common/AtRiskStudentsCard";
 import { getAcademyStudentsRiskOverview } from "@/lib/risk";
 import { CountUp } from "@/components/common/CountUp";
+import { ButtonLink, EmptyState, PageHeader, Panel, StatCard, StatGrid, StatusPill } from "@/components/dashboard/kit";
 import Link from "next/link";
 import {
   Users,
@@ -192,348 +193,134 @@ export default async function AdminDashboardPage() {
   const isAiAvailable = !!process.env.LLM_API_KEY?.trim();
 
   return (
-    <div className="space-y-8">
-      {/* Top Welcome Banner */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5 bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 border-t-4 border-t-primary shadow-1 card-lift relative overflow-hidden">
-        <div>
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-ink">
-              Admin Control Center
-            </h1>
-            <Badge className="border-emerald-300 text-emerald-800 bg-emerald-50 text-xs font-semibold px-2.5 py-0.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1.5 animate-pulse" />
-              Live Operations
-            </Badge>
-          </div>
-          <p className="text-slate-600 text-sm mt-1.5">
-            Academy snapshot for <strong className="text-ink">{currentMonth}</strong> • Logged in as <span className="font-semibold text-slate-800">{admin.name}</span> ({admin.email})
-          </p>
-        </div>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow={`Academy snapshot · ${currentMonth}`}
+        title={tenant.academy.name}
+        description={<>Signed in as <strong className="font-semibold text-ink">{admin.name}</strong></>}
+        actions={
+          <>
+            <ButtonLink href="/admin/fees" variant="secondary" icon={Banknote}>Collect fees</ButtonLink>
+            <ButtonLink href="/admin/reports" variant="secondary" icon={FileSpreadsheet}>Reports</ButtonLink>
+            <ButtonLink href="/admin/students" icon={Users}>Admit student</ButtonLink>
+          </>
+        }
+      />
 
-        <div className="flex flex-wrap items-center gap-2.5">
-          <Link href="/admin/boards">
-            <Button size="sm" variant="outline" className="text-xs font-medium border-slate-200 hover:bg-slate-50 text-slate-700 shadow-1 focus-visible:ring-2 focus-visible:ring-primary">
-              <School className="h-4 w-4 mr-1.5 text-indigo-600" />
-              Boards &amp; Schemes
-            </Button>
-          </Link>
-          <Link href="/admin/fees">
-            <Button size="sm" variant="outline" className="text-xs font-medium border-slate-200 hover:bg-slate-50 text-slate-700 shadow-1 focus-visible:ring-2 focus-visible:ring-primary">
-              <Banknote className="h-4 w-4 mr-1.5 text-emerald-600" />
-              Collect Fees
-            </Button>
-          </Link>
-          <Link href="/admin/salaries">
-            <Button size="sm" variant="outline" className="text-xs font-medium border-slate-200 hover:bg-slate-50 text-slate-700 shadow-1 focus-visible:ring-2 focus-visible:ring-primary">
-              <Wallet className="h-4 w-4 mr-1.5 text-blue-600" />
-              Faculty Salaries
-            </Button>
-          </Link>
-          <Link href="/admin/reports">
-            <Button size="sm" className="bg-primary hover:bg-sidebar-active text-white text-xs font-semibold shadow-1 focus-visible:ring-2 focus-visible:ring-primary">
-              <FileSpreadsheet className="h-4 w-4 mr-1.5 text-accent" />
-              Export Reports
-            </Button>
-          </Link>
-        </div>
-      </div>
+      <StatGrid>
+        <StatCard
+          label="Fees collected this month"
+          value={<CountUp value={collectedMinor / 100} prefix="PKR " />}
+          sub={`${collectionPct}% of ${formatPKR(totalDueMinor)} billed`}
+          icon={Banknote}
+          tone="success"
+          href="/admin/fees"
+          footer={
+            <div className="h-1.5 overflow-hidden rounded-full bg-surface-sunken">
+              <div className="h-full rounded-full bg-status-success" style={{ width: `${Math.min(100, collectionPct)}%` }} />
+            </div>
+          }
+        />
+        <StatCard
+          label="Fee defaulters"
+          value={<CountUp value={defaultersCount} />}
+          sub="Past their due date"
+          icon={AlertTriangle}
+          tone={defaultersCount ? "danger" : "neutral"}
+          href="/admin/fees/defaulters"
+        />
+        <StatCard
+          label="Attendance today"
+          value={todayAttendancePct !== null ? <CountUp value={todayAttendancePct} suffix="%" /> : "—"}
+          sub={todayAttendances.length > 0 ? `${todayPresentCount} of ${todayAttendances.length} present` : "Not marked yet today"}
+          icon={CheckCircle2}
+          tone="info"
+          href="/admin/attendance"
+        />
+        <StatCard
+          label="Active students"
+          value={<CountUp value={activeStudentsCount} />}
+          sub={`${activeBatchesCount} batches · ${totalTeachersCount} teachers`}
+          icon={GraduationCap}
+          tone="plum"
+          href="/admin/students"
+        />
+      </StatGrid>
 
-      {/* Primary KPI Metrics Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {/* KPI 1: Fee Collection */}
-        <Card className="rounded-2xl border border-slate-200/80 shadow-1 border-l-4 border-l-emerald-500 bg-white card-lift p-1">
-          <CardHeader className="pb-2">
-            <div className="flex justify-between items-start">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Monthly Fee Collection
-              </span>
-              <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
-                <Banknote className="h-5 w-5" />
-              </div>
-            </div>
-            <CardTitle className="text-2xl sm:text-3xl font-semibold font-mono text-emerald-600 mt-1">
-              <CountUp value={collectedMinor / 100} prefix="PKR " />
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="text-xs text-slate-500 flex justify-between items-center">
-              <span>Billed Dues:</span>
-              <span className="font-mono font-medium text-slate-800">
-                <CountUp value={totalDueMinor / 100} prefix="PKR " />
-              </span>
-            </div>
-            <div className="w-full bg-slate-100 rounded-full h-2 mt-2.5 overflow-hidden">
-              <div
-                className="bg-emerald-500 h-2 rounded-full transition-all duration-700"
-                style={{ width: `${Math.min(100, collectionPct)}%` }}
-              />
-            </div>
-            <div className="flex justify-between items-center text-xs text-slate-500 mt-2">
-              <span className="font-medium">
-                <CountUp value={collectionPct} suffix="%" /> collected
-              </span>
-              <Link href="/admin/fees" className="text-emerald-700 font-semibold hover:underline inline-flex items-center">
-                Ledger &rarr;
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* KPI 2: Defaulters */}
-        <Card className="rounded-2xl border border-slate-200/80 shadow-1 border-l-4 border-l-rose-500 bg-white card-lift p-1">
-          <CardHeader className="pb-2">
-            <div className="flex justify-between items-start">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Fee Defaulters
-              </span>
-              <div className="p-2 rounded-xl bg-rose-50 text-rose-600">
-                <AlertTriangle className="h-5 w-5" />
-              </div>
-            </div>
-            <CardTitle className="text-2xl sm:text-3xl font-semibold font-mono text-rose-600 mt-1">
-              <CountUp value={defaultersCount} />
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <p className="text-xs text-slate-500">
-              Students past invoice payment due date
-            </p>
-            <div className="mt-4">
-              <Link
-                href="/admin/fees/defaulters"
-                className="text-xs font-semibold text-rose-700 hover:text-rose-900 inline-flex items-center gap-1 group"
-              >
-                <span>View Defaulters</span>
-                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* KPI 3: Today's Attendance */}
-        <Card className="rounded-2xl border border-slate-200/80 shadow-1 border-l-4 border-l-blue-500 bg-white card-lift p-1">
-          <CardHeader className="pb-2">
-            <div className="flex justify-between items-start">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Today's Attendance
-              </span>
-              <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
-                <CheckCircle2 className="h-5 w-5" />
-              </div>
-            </div>
-            <CardTitle className="text-2xl sm:text-3xl font-semibold font-mono text-blue-600 mt-1">
-              {todayAttendancePct !== null ? (
-                <CountUp value={todayAttendancePct} suffix="%" />
-              ) : (
-                <span className="text-lg text-slate-400 font-sans font-medium">No sessions</span>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <p className="text-xs text-slate-500">
-              {todayAttendances.length > 0
-                ? `${todayPresentCount} of ${todayAttendances.length} marked present`
-                : "No sessions marked yet today"}
-            </p>
-            <div className="mt-4">
-              <Link
-                href="/admin/attendance"
-                className="text-xs font-semibold text-blue-700 hover:text-blue-900 inline-flex items-center gap-1 group"
-              >
-                <span>Attendance Register</span>
-                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* KPI 4: Academy Enrollment */}
-        <Card className="rounded-2xl border border-slate-200/80 shadow-1 border-l-4 border-l-indigo-500 bg-white card-lift p-1">
-          <CardHeader className="pb-2">
-            <div className="flex justify-between items-start">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Academy Roster
-              </span>
-              <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
-                <Users className="h-5 w-5" />
-              </div>
-            </div>
-            <CardTitle className="text-2xl sm:text-3xl font-semibold font-mono text-ink mt-1">
-              <CountUp value={activeStudentsCount} />
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="text-xs text-slate-500">
-              {activeBatchesCount} Batches • {totalTeachersCount} Faculty Members
-            </div>
-            <div className="mt-4">
-              <Link
-                href="/admin/students"
-                className="text-xs font-semibold text-indigo-700 hover:text-indigo-900 inline-flex items-center gap-1 group"
-              >
-                <span>Student Admissions</span>
-                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* AI Dropout Risk & Academic Retention Analysis */}
       <AtRiskStudentsCard students={atRiskStudents} isAiAvailable={isAiAvailable} />
 
-      {/* Middle Row: Low Attendance (<75%) & Upcoming Tests */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Low-Attendance Students Alert Card */}
-        <Card className="rounded-2xl border border-slate-200/80 shadow-1 flex flex-col justify-between overflow-hidden card-lift bg-white">
-          <CardHeader className="pb-3 border-b border-slate-100 bg-amber-50/40">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <UserX className="h-5 w-5 text-amber-600" />
-                <CardTitle className="text-sm font-semibold text-slate-900">
-                  At-Risk Students (&lt;75% Attendance)
-                </CardTitle>
-              </div>
-              <Badge
-                variant="outline"
-                className="border-amber-300 bg-amber-100 text-amber-800 text-xs font-mono font-semibold"
-              >
-                {lowAttendanceStudents.length} Students
-              </Badge>
-            </div>
-            <CardDescription className="text-xs text-slate-500">
-              Students falling below the statutory 75% attendance threshold for {currentMonth}.
-            </CardDescription>
-          </CardHeader>
-
-          <CardContent className="p-0 flex-1">
-            {lowAttendanceStudents.length === 0 ? (
-              <div className="text-center py-10 text-xs text-slate-400 italic">
-                <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-emerald-400" />
-                Excellent! All enrolled students maintain &ge;75% attendance this month.
-              </div>
-            ) : (
-              <div className="divide-y divide-slate-100 max-h-72 overflow-y-auto">
-                {lowAttendanceStudents.map((st) => (
-                  <div
-                    key={st.studentId}
-                    className="p-3.5 flex items-center justify-between hover:bg-slate-50/75 transition-colors"
-                  >
-                    <div>
-                      <div className="font-semibold text-xs text-slate-900">
-                        {st.name}{" "}
-                        <span className="font-mono text-slate-400 font-normal">
-                          ({st.admissionNo})
-                        </span>
-                      </div>
-                      <div className="text-xs text-slate-500 mt-0.5">
-                        {st.batchName} • Guardian: {st.guardianPhone || "No phone"}
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <Badge className="bg-rose-100 text-rose-800 border-rose-200 text-xs font-mono font-semibold">
-                        {st.percentage}%
-                      </Badge>
-                      <div className="text-xs text-slate-400 font-mono mt-0.5">
-                        {st.presentSessions}/{st.totalSessions} sessions
-                      </div>
-                    </div>
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-2 [&>*]:min-w-0">
+        <Panel
+          title="Low attendance"
+          description={`Below 75% in ${currentMonth}`}
+          action={<StatusPill tone={lowAttendanceStudents.length ? "warning" : "success"}>{lowAttendanceStudents.length} students</StatusPill>}
+          flush
+        >
+          {lowAttendanceStudents.length === 0 ? (
+            <EmptyState icon={CheckCircle2} title="Everyone is above 75%" body="No student needs an attendance follow-up this month." />
+          ) : (
+            <ul className="max-h-80 divide-y divide-line overflow-y-auto">
+              {lowAttendanceStudents.map((st) => (
+                <li key={st.studentId} className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5">
+                  <div className="min-w-0">
+                    <p className="truncate text-[14.5px] font-semibold text-ink">
+                      {st.name} <span className="font-mono text-[12px] font-normal text-ink-3">{st.admissionNo}</span>
+                    </p>
+                    <p className="truncate text-[13px] text-ink-3">
+                      {st.batchName} · {st.guardianPhone || "No phone"}
+                    </p>
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-
-          <div className="p-3 bg-slate-50/80 border-t border-slate-100 text-right">
-            <Link
-              href="/admin/attendance"
-              className="text-xs text-slate-700 hover:text-ink font-semibold inline-flex items-center gap-1 group"
-            >
-              <span>Full Attendance Monitor</span>
-              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                  <div className="shrink-0 text-right">
+                    <StatusPill tone="danger">{st.percentage}%</StatusPill>
+                    <p className="mt-0.5 text-[12px] tabular-nums text-ink-3">{st.presentSessions}/{st.totalSessions}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="border-t border-line px-4 py-3 text-right sm:px-5">
+            <Link href="/admin/attendance" className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary hover:underline">
+              Attendance register <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
-        </Card>
+        </Panel>
 
-        {/* Tests & Academic Evaluations */}
-        <Card className="rounded-2xl border border-slate-200/80 shadow-1 flex flex-col justify-between overflow-hidden card-lift bg-white">
-          <CardHeader className="pb-3 border-b border-slate-100 bg-purple-50/40">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Award className="h-5 w-5 text-purple-600" />
-                <CardTitle className="text-sm font-semibold text-slate-900">
-                  Academic Evaluations &amp; Tests
-                </CardTitle>
-              </div>
-              <Badge variant="outline" className="text-xs font-mono font-semibold">
-                {recentTests.length} Tests
-              </Badge>
-            </div>
-            <CardDescription className="text-xs text-slate-500">
-              Scheduled tests, recent test drafts, and published examination result cards.
-            </CardDescription>
-          </CardHeader>
-
-          <CardContent className="p-0 flex-1">
-            {recentTests.length === 0 ? (
-              <div className="text-center py-10 text-xs text-slate-400 italic">
-                <Award className="h-8 w-8 mx-auto mb-2 text-slate-300" />
-                No tests scheduled or conducted yet.
-              </div>
-            ) : (
-              <div className="divide-y divide-slate-100 max-h-72 overflow-y-auto">
-                {recentTests.map((t) => (
-                  <div
-                    key={t.id}
-                    className="p-3.5 flex items-center justify-between hover:bg-slate-50/75 transition-colors"
-                  >
-                    <div>
-                      <div className="font-semibold text-xs text-slate-900 flex items-center">
-                        {t.title}
-                        <span className="ml-2 text-xs font-mono bg-slate-100 text-slate-700 px-1.5 py-0.2 rounded font-semibold">
-                          {t.subject}
-                        </span>
-                      </div>
-                      <div className="text-xs text-slate-500 mt-0.5">
-                        {t.batch.class.name} {t.batch.name} • Total: {t.totalMarks} marks
-                      </div>
-                    </div>
-
-                    <div className="text-right flex items-center space-x-2">
-                      <span className="text-xs font-mono text-slate-500">
-                        {t.date.toISOString().split("T")[0]}
-                      </span>
-                      <Badge
-                        variant={t.status === "PUBLISHED" ? "default" : "outline"}
-                        className={`text-xs font-semibold py-0.5 px-2 ${
-                          t.status === "PUBLISHED"
-                            ? "bg-purple-600 text-white"
-                            : "bg-amber-50 text-amber-700 border-amber-300"
-                        }`}
-                      >
-                        {t.status}
-                      </Badge>
-                    </div>
+        <Panel
+          title="Tests & results"
+          description="Latest tests across all batches"
+          action={<StatusPill tone="plum">{recentTests.length} tests</StatusPill>}
+          flush
+        >
+          {recentTests.length === 0 ? (
+            <EmptyState icon={Award} title="No tests yet" body="Tests created by teachers will appear here." />
+          ) : (
+            <ul className="max-h-80 divide-y divide-line overflow-y-auto">
+              {recentTests.map((t) => (
+                <li key={t.id} className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5">
+                  <div className="min-w-0">
+                    <p className="truncate text-[14.5px] font-semibold text-ink">{t.title}</p>
+                    <p className="truncate text-[13px] text-ink-3">
+                      {t.subject} · {t.batch.class.name} {t.batch.name} · {t.totalMarks} marks
+                    </p>
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-
-          <div className="p-3 bg-slate-50/80 border-t border-slate-100 text-right">
-            <Link
-              href="/admin/results"
-              className="text-xs text-slate-700 hover:text-ink font-semibold inline-flex items-center gap-1 group"
-            >
-              <span>Manage Results &amp; Publish Cards</span>
-              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                  <div className="shrink-0 text-right">
+                    <StatusPill tone={t.status === "PUBLISHED" ? "success" : "warning"}>
+                      {t.status === "PUBLISHED" ? "Published" : "Draft"}
+                    </StatusPill>
+                    <p className="mt-0.5 text-[12px] tabular-nums text-ink-3">{t.date.toISOString().split("T")[0]}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="border-t border-line px-4 py-3 text-right sm:px-5">
+            <Link href="/admin/results" className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary hover:underline">
+              Manage results <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
-        </Card>
+        </Panel>
       </div>
 
-      {/* Announcements Section */}
       <AdminAnnouncementsCard initialAnnouncements={serializedAnnouncements} />
     </div>
   );
