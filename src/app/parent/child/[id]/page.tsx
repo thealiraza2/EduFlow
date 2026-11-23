@@ -31,7 +31,7 @@ export default async function ParentChildDetailPage({
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              <h1 className="font-serif text-2xl font-semibold text-slate-900">
                 {childData.student.name} — Student Profile
               </h1>
               <p className="text-xs text-slate-500">
@@ -48,10 +48,10 @@ export default async function ParentChildDetailPage({
     if (error instanceof AuthorizationError || error.statusCode === 403) {
       return (
         <div className="min-h-screen bg-slate-50 p-6 md:p-12 flex items-center justify-center">
-          <div className="bg-white border border-rose-200 rounded-xl p-8 max-w-md text-center shadow-sm space-y-3" data-testid="forbidden-403">
+          <div className="bg-white border border-rose-200 rounded-xl p-8 max-w-md text-center shadow-1 space-y-3" data-testid="forbidden-403">
             <ShieldAlert className="h-12 w-12 text-rose-600 mx-auto" />
-            <h2 className="text-3xl font-extrabold text-slate-900 font-mono">403</h2>
-            <h3 className="text-lg font-bold text-rose-800">Access Denied</h3>
+            <h2 className="text-3xl font-semibold text-slate-900 font-mono">403</h2>
+            <h3 className="text-lg font-semibold text-rose-800">Access Denied</h3>
             <p className="text-xs text-slate-600">
               You are not authorized to view this student profile. Under academy privacy policy, parents may only access records for their own registered children.
             </p>

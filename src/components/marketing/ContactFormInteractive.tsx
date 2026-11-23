@@ -85,18 +85,18 @@ export function ContactFormInteractive() {
     <div className="space-y-16 py-12 sm:py-16">
       {/* Contact Header */}
       <div className="max-w-4xl mx-auto px-4 text-center space-y-4">
-        <div className="inline-flex items-center gap-2 rounded-full border border-[#F5B800]/40 bg-[#FFF9E6] px-4 py-1.5 text-xs font-bold text-[#0F2040] uppercase tracking-wider">
-          <span className="w-2 h-2 rounded-full bg-[#F5B800]" />
+        <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary-tint px-4 py-1.5 text-xs font-semibold text-ink uppercase tracking-wider">
+          <span className="w-2 h-2 rounded-full bg-primary" />
           <span>GET IN TOUCH</span>
         </div>
 
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#0F2040] tracking-tight">
-          Let&apos;s Talk About Your <span className="text-[#F5B800]">School</span>
+        <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-semibold text-ink ">
+          Let&apos;s Talk About Your <span className="text-accent">School</span>
         </h1>
 
-        <p className="text-base sm:text-lg text-[#4B5563] max-w-2xl mx-auto">
+        <p className="text-base sm:text-lg text-ink-2 max-w-2xl mx-auto">
           Have questions, need a live walkthrough, or want to discuss a custom setup? Email us directly at{" "}
-          <a href="mailto:support@eduflow.app" className="font-bold text-[#0F2040] underline hover:text-[#F5B800]">
+          <a href="mailto:support@eduflow.app" className="font-semibold text-ink underline hover:text-accent">
             support@eduflow.app
           </a>{" "}
           or send a message through the form below.
@@ -105,7 +105,7 @@ export function ContactFormInteractive() {
 
       {/* Main Grid: Form + Honest Info Box */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-3xl border border-gray-200 shadow-xl p-6 sm:p-10">
+        <div className="bg-white rounded-3xl border border-gray-200 shadow-3 p-6 sm:p-10">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Success Banner */}
             {success && (
@@ -125,7 +125,7 @@ export function ContactFormInteractive() {
 
             {/* Topic Pills */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-[#0F2040]">
+              <label className="text-xs font-semibold uppercase tracking-wider text-ink">
                 Select Topic
               </label>
               <div className="flex flex-wrap gap-2 pt-1">
@@ -136,10 +136,10 @@ export function ContactFormInteractive() {
                       key={t}
                       type="button"
                       onClick={() => setSelectedTopic(t)}
-                      className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
+                      className={`px-4 py-2 rounded-full text-xs font-semibold transition-all ${
                         active
-                          ? "bg-[#0F2040] text-white shadow-sm ring-2 ring-[#F5B800]"
-                          : "bg-gray-100 text-[#4B5563] hover:bg-gray-200 hover:text-[#0F2040]"
+                          ? "bg-primary text-white shadow-1 ring-2 ring-primary"
+                          : "bg-gray-100 text-ink-2 hover:bg-gray-200 hover:text-ink"
                       }`}
                     >
                       {t}
@@ -152,7 +152,7 @@ export function ContactFormInteractive() {
             {/* Fields Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label htmlFor="contact-name" className="text-xs font-bold uppercase tracking-wider text-gray-700">
+                <label htmlFor="contact-name" className="text-xs font-semibold uppercase tracking-wider text-gray-700">
                   Full Name <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -162,12 +162,12 @@ export function ContactFormInteractive() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your full name"
-                  className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm text-[#0F2040] focus:outline-none focus:ring-2 focus:ring-[#F5B800]"
+                  className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label htmlFor="contact-email" className="text-xs font-bold uppercase tracking-wider text-gray-700">
+                <label htmlFor="contact-email" className="text-xs font-semibold uppercase tracking-wider text-gray-700">
                   Email Address <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -177,12 +177,12 @@ export function ContactFormInteractive() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm text-[#0F2040] focus:outline-none focus:ring-2 focus:ring-[#F5B800]"
+                  className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label htmlFor="contact-phone" className="text-xs font-bold uppercase tracking-wider text-gray-700">
+                <label htmlFor="contact-phone" className="text-xs font-semibold uppercase tracking-wider text-gray-700">
                   Phone Number (WhatsApp)
                 </label>
                 <input
@@ -191,12 +191,12 @@ export function ContactFormInteractive() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Your phone number"
-                  className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm text-[#0F2040] focus:outline-none focus:ring-2 focus:ring-[#F5B800]"
+                  className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label htmlFor="contact-school" className="text-xs font-bold uppercase tracking-wider text-gray-700">
+                <label htmlFor="contact-school" className="text-xs font-semibold uppercase tracking-wider text-gray-700">
                   School / Academy Name
                 </label>
                 <input
@@ -205,14 +205,14 @@ export function ContactFormInteractive() {
                   value={schoolName}
                   onChange={(e) => setSchoolName(e.target.value)}
                   placeholder="Your school or academy name"
-                  className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm text-[#0F2040] focus:outline-none focus:ring-2 focus:ring-[#F5B800]"
+                  className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
             </div>
 
             {/* Message Field */}
             <div className="space-y-1.5">
-              <label htmlFor="contact-message" className="text-xs font-bold uppercase tracking-wider text-gray-700">
+              <label htmlFor="contact-message" className="text-xs font-semibold uppercase tracking-wider text-gray-700">
                 Message <span className="text-rose-500">*</span>
               </label>
               <textarea
@@ -222,7 +222,7 @@ export function ContactFormInteractive() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Tell us about your institution, student count, or specific questions..."
-                className="w-full p-3.5 rounded-xl border border-gray-200 text-sm text-[#0F2040] focus:outline-none focus:ring-2 focus:ring-[#F5B800]"
+                className="w-full p-3.5 rounded-xl border border-gray-200 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -230,7 +230,7 @@ export function ContactFormInteractive() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#F5B800] px-7 py-3.5 text-base font-bold text-[#0F2040] hover:bg-[#DF9E00] shadow-md transition-all active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer min-h-[48px]"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-white hover:bg-primary-hover shadow-2 transition-all active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer min-h-[48px]"
             >
               {submitting ? (
                 <>
@@ -251,11 +251,11 @@ export function ContactFormInteractive() {
       {/* 3-Question FAQ Accordion */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center space-y-2 mb-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#F5B800]/40 bg-[#FFF9E6] px-3.5 py-1 text-xs font-bold text-[#0F2040] uppercase tracking-wider">
-            <HelpCircle className="w-3.5 h-3.5 text-[#F5B800]" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary-tint px-3.5 py-1 text-xs font-semibold text-ink uppercase tracking-wider">
+            <HelpCircle className="w-3.5 h-3.5 text-accent" />
             <span>COMMUNICATION FAQS</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0F2040] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-semibold text-ink tracking-tight">
             Frequently Asked Questions
           </h2>
         </div>
@@ -266,23 +266,23 @@ export function ContactFormInteractive() {
             return (
               <div
                 key={faq.question}
-                className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm transition-all"
+                className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-1 transition-all"
               >
                 <button
                   type="button"
                   onClick={() => setOpenFaq(isOpen ? null : index)}
-                  className="w-full py-4 px-6 text-left flex items-center justify-between gap-4 font-bold text-base text-[#0F2040] hover:bg-gray-50/80 transition-colors focus:outline-none"
+                  className="w-full py-4 px-6 text-left flex items-center justify-between gap-4 font-semibold text-base text-ink hover:bg-gray-50/80 transition-colors focus:outline-none"
                   aria-expanded={isOpen}
                 >
                   <span>{faq.question}</span>
                   <ChevronDown
-                    className={`w-5 h-5 text-[#F5B800] shrink-0 transition-transform duration-200 ${
+                    className={`w-5 h-5 text-accent shrink-0 transition-transform duration-200 ${
                       isOpen ? "rotate-180" : ""
                     }`}
                   />
                 </button>
                 {isOpen && (
-                  <div className="px-6 pb-5 pt-1 text-sm text-[#4B5563] leading-relaxed border-t border-gray-100 bg-[#FAFAFA]">
+                  <div className="px-6 pb-5 pt-1 text-sm text-ink-2 leading-relaxed border-t border-gray-100 bg-canvas">
                     {faq.answer}
                   </div>
                 )}

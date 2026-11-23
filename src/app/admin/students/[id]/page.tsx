@@ -96,10 +96,10 @@ export default async function StudentProfilePage({
         </Button>
       </div>
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-xl border shadow-sm">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-xl border shadow-1">
         <div>
           <div className="flex items-center space-x-3">
-            <h1 className="text-3xl font-bold text-slate-900">{student.name}</h1>
+            <h1 className="font-serif text-3xl font-semibold text-slate-900">{student.name}</h1>
             <Badge
               variant={
                 student.status === "ACTIVE"
@@ -176,18 +176,18 @@ export default async function StudentProfilePage({
             <div className="grid grid-cols-3 gap-2 text-center pt-2">
               <div className="p-3 bg-slate-50 rounded-lg border">
                 <div className="text-xs text-slate-500 font-medium">Total Invoiced</div>
-                <div className="text-lg font-bold text-slate-900 mt-1">{formatPKR(totalInvoiced)}</div>
+                <div className="text-lg font-semibold text-slate-900 mt-1">{formatPKR(totalInvoiced)}</div>
               </div>
               <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-100">
                 <div className="text-xs text-emerald-700 font-medium">Total Paid</div>
-                <div className="text-lg font-bold text-emerald-800 mt-1">{formatPKR(totalPaid)}</div>
+                <div className="text-lg font-semibold text-emerald-800 mt-1">{formatPKR(totalPaid)}</div>
               </div>
               <div className="p-3 bg-red-50 rounded-lg border border-red-100">
                 <div className="text-xs text-red-700 font-medium">Outstanding</div>
-                <div className="text-lg font-bold text-red-800 mt-1">{formatPKR(totalBalance)}</div>
+                <div className="text-lg font-semibold text-red-800 mt-1">{formatPKR(totalBalance)}</div>
               </div>
             </div>
-            <div className="rounded-lg bg-amber-50/70 border border-amber-200/80 p-3 text-[11px] text-amber-900 space-y-1">
+            <div className="rounded-lg bg-amber-50/70 border border-amber-200/80 p-3 text-xs text-amber-900 space-y-1">
               <p className="font-semibold flex items-center">
                 Fee Structure Breakdown
               </p>
@@ -287,7 +287,7 @@ export default async function StudentProfilePage({
                 <TableHead>Class & Batch</TableHead>
                 <TableHead className="text-right">Base Tuition</TableHead>
                 <TableHead className="text-right">Late Fine</TableHead>
-                <TableHead className="text-right font-bold">Total Billable</TableHead>
+                <TableHead className="text-right font-semibold">Total Billable</TableHead>
                 <TableHead className="text-right text-emerald-700">Paid</TableHead>
                 <TableHead className="text-center">Status</TableHead>
                 <TableHead className="text-right">Challan</TableHead>
@@ -323,7 +323,7 @@ export default async function StudentProfilePage({
                           <span className="text-slate-400">PKR 0</span>
                         )}
                       </TableCell>
-                      <TableCell className="text-right font-mono font-bold text-slate-900">
+                      <TableCell className="text-right font-mono font-semibold text-slate-900">
                         {formatPKR(inv.totalMinor)}
                       </TableCell>
                       <TableCell className="text-right font-mono font-semibold text-emerald-700">
@@ -338,7 +338,7 @@ export default async function StudentProfilePage({
                               ? "secondary"
                               : "destructive"
                           }
-                          className="text-[10px] uppercase font-bold"
+                          className="text-xs uppercase font-semibold"
                         >
                           {inv.status}
                         </Badge>

@@ -125,7 +125,7 @@ export function AdmitStudentModal({ batches = [] }: AdmitStudentModalProps) {
                   </option>
                 ))}
               </select>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-xs text-slate-500">
                 Enrolling during admission links the student to class curriculum, tests, and monthly fee generation.
               </p>
             </div>

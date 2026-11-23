@@ -153,12 +153,12 @@ export function TeacherMarksEntry({ test, students, userRole }: Props) {
   return (
     <div className="space-y-6">
       {/* Test Header */}
-      <Card className="shadow-sm">
+      <Card className="shadow-1">
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-xl font-bold text-slate-900">{test.title}</h2>
+                <h2 className="text-xl font-semibold text-slate-900">{test.title}</h2>
                 <Badge
                   variant={test.status === "PUBLISHED" ? "default" : "secondary"}
                   className={test.status === "PUBLISHED" ? "bg-emerald-600 text-white" : ""}
@@ -213,7 +213,7 @@ export function TeacherMarksEntry({ test, students, userRole }: Props) {
       )}
 
       {/* Marks Table */}
-      <Card className="shadow-sm overflow-hidden">
+      <Card className="shadow-1 overflow-hidden">
         <CardHeader className="py-4 border-b bg-slate-50 flex flex-row items-center justify-between">
           <div>
             <CardTitle className="text-base font-semibold text-slate-900">
@@ -266,7 +266,7 @@ export function TeacherMarksEntry({ test, students, userRole }: Props) {
 
                         <td className="py-3 px-4">
                           <div className="font-semibold text-slate-900">{st.name}</div>
-                          <div className="text-[11px] font-mono text-slate-500">
+                          <div className="text-xs font-mono text-slate-500">
                             {st.admissionNo}
                           </div>
                         </td>
@@ -282,7 +282,7 @@ export function TeacherMarksEntry({ test, students, userRole }: Props) {
                               onChange={(e) => handleMarkChange(st.id, e.target.value)}
                               disabled={isLocked || isSaving}
                               placeholder={`0 - ${test.totalMarks}`}
-                              className="h-8 w-24 text-xs font-mono font-bold"
+                              className="h-8 w-24 text-xs font-mono font-semibold"
                             />
                             <span className="text-slate-400 font-mono text-xs">/ {test.totalMarks}</span>
                           </div>
@@ -296,7 +296,7 @@ export function TeacherMarksEntry({ test, students, userRole }: Props) {
                           {grade !== null ? (
                             <Badge
                               variant="outline"
-                              className={`text-[10px] font-mono font-bold py-0.5 px-2 ${
+                              className={`text-xs font-mono font-semibold py-0.5 px-2 ${
                                 grade === "A+" || grade === "A"
                                   ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                                   : grade === "F"

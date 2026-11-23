@@ -30,7 +30,7 @@ export default async function AdminReportsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center">
+        <h1 className="font-serif text-3xl font-semibold text-slate-900 flex items-center">
           <FileSpreadsheet className="h-8 w-8 mr-3 text-slate-900" />
           Analytics & CSV Export Reports
         </h1>

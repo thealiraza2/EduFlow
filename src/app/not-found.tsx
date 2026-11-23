@@ -48,7 +48,7 @@ export default async function NotFoundPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center space-x-3">
-              <Link href={dashboardUrl} className="text-xl font-bold tracking-tight text-slate-900">
+              <Link href={dashboardUrl} className="text-xl font-semibold tracking-tight text-slate-900">
                 EduFlow
               </Link>
               {roleLabel && (
@@ -84,7 +84,7 @@ export default async function NotFoundPage() {
 
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4">
-        <Card className="max-w-lg w-full shadow-lg border-slate-200">
+        <Card className="max-w-lg w-full shadow-2 border-slate-200">
           <CardHeader className="text-center space-y-2">
             <div className="flex justify-center mb-1">
               <div className="p-3 bg-slate-100 rounded-full text-slate-700">
@@ -96,7 +96,7 @@ export default async function NotFoundPage() {
                 404 Not Found
               </Badge>
             </div>
-            <CardTitle className="text-2xl font-bold text-slate-900">
+            <CardTitle className="text-2xl font-semibold text-slate-900">
               Page Not Found
             </CardTitle>
             <CardDescription className="text-sm text-slate-600">

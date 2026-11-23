@@ -57,7 +57,7 @@ export default async function AdminTimetablePage({
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Weekly Timetable</h1>
+          <h1 className="font-serif text-3xl font-semibold text-slate-900">Weekly Timetable</h1>
           <p className="text-slate-500">
             Define daily subject lectures and avoid teacher double-booking conflicts.
           </p>
@@ -96,7 +96,7 @@ export default async function AdminTimetablePage({
                   href={`/admin/timetable?batchId=${b.id}`}
                   className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors border ${
                     b.id === selectedBatchId
-                      ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+                      ? "bg-slate-900 text-white border-slate-900 shadow-1"
                       : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
                   }`}
                 >
@@ -107,10 +107,10 @@ export default async function AdminTimetablePage({
           </div>
 
           {selectedBatch && (
-            <div className="p-4 bg-white rounded-lg border shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+            <div className="p-4 bg-white rounded-lg border shadow-1 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
               <div>
                 <div className="flex items-center space-x-2">
-                  <h3 className="text-lg font-bold text-slate-900">
+                  <h3 className="text-lg font-semibold text-slate-900">
                     Class {selectedBatch.class.name}-{selectedBatch.class.section} ({selectedBatch.name})
                   </h3>
                   <Badge variant="outline">{slots.length} Lectures/Week</Badge>

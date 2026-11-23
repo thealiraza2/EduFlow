@@ -207,10 +207,10 @@ export default async function StudentPortalPage() {
   return (
     <div className="space-y-7 max-w-6xl mx-auto w-full">
       {/* Welcome Header */}
-      <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 border-t-4 border-t-[#F5B800] shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 card-lift relative overflow-hidden">
+      <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 border-t-4 border-t-primary shadow-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 card-lift relative overflow-hidden">
         <div>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F2040]">
+            <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-ink">
               Student Portal
             </h1>
             <Badge className="text-emerald-800 bg-emerald-50 border-emerald-300 text-xs font-semibold px-2.5 py-0.5">
@@ -220,13 +220,13 @@ export default async function StudentPortalPage() {
           </div>
           <p className="text-sm text-slate-600 mt-1.5">
             Welcome, <strong className="text-slate-900">{student?.name || user.name}</strong> • Roll No:{" "}
-            <strong className="font-mono text-[#0F2040]">{student?.admissionNo || "—"}</strong>
+            <strong className="font-mono text-ink">{student?.admissionNo || "—"}</strong>
             {student?.academy && ` • ${student.academy.name}`}
           </p>
         </div>
 
         <div className="flex items-center space-x-2">
-          <Button size="sm" asChild className="bg-[#F5B800] hover:bg-[#DF9E00] text-[#0F2040] font-bold text-xs shadow-sm focus-visible:ring-2 focus-visible:ring-[#F5B800]">
+          <Button size="sm" asChild className="bg-primary hover:bg-primary-hover text-white font-semibold text-xs shadow-1 focus-visible:ring-2 focus-visible:ring-primary">
             <Link href="/student/attendance/scan">
               <QrCode className="h-4 w-4 mr-1.5" />
               Scan QR Attendance
@@ -237,86 +237,86 @@ export default async function StudentPortalPage() {
 
       {/* 5 Summary Stat Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
-        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift p-1">
+        <Card className="rounded-2xl border border-slate-200/80 shadow-1 bg-white card-lift p-1">
           <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Attendance</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Attendance</span>
             <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
               <CheckCircle2 className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent className="py-0 px-4 pb-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 font-mono">
+            <div className="text-2xl sm:text-3xl font-semibold text-emerald-600 font-mono">
               {totalSessions > 0 ? <CountUp value={attendancePct} suffix="%" /> : "—"}
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+            <p className="text-xs text-slate-500 mt-0.5 font-medium">
               {presentCount} Present / {totalSessions} Sessions
             </p>
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift p-1">
+        <Card className="rounded-2xl border border-slate-200/80 shadow-1 bg-white card-lift p-1">
           <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Fee Balance</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Fee Balance</span>
             <div className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
               <Banknote className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent className="py-0 px-4 pb-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-[#0F2040] font-mono">
+            <div className="text-2xl sm:text-3xl font-semibold text-ink font-mono">
               <CountUp value={balanceDueMinor / 100} prefix="PKR " />
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+            <p className="text-xs text-slate-500 mt-0.5 font-medium">
               {invoices.length} {invoices.length === 1 ? "Invoice" : "Invoices"} Recorded
             </p>
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift p-1">
+        <Card className="rounded-2xl border border-slate-200/80 shadow-1 bg-white card-lift p-1">
           <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Active Batches</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Active Batches</span>
             <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
               <School className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent className="py-0 px-4 pb-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-[#0F2040] font-mono">
+            <div className="text-2xl sm:text-3xl font-semibold text-ink font-mono">
               <CountUp value={student?.enrollments.length || 0} />
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5 truncate font-medium">
+            <p className="text-xs text-slate-500 mt-0.5 truncate font-medium">
               {student?.enrollments.map((e) => e.batch.class.name).join(", ") || "Enrolled"}
             </p>
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift p-1">
+        <Card className="rounded-2xl border border-slate-200/80 shadow-1 bg-white card-lift p-1">
           <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Tests Taken</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Tests Taken</span>
             <div className="p-1.5 rounded-lg bg-purple-50 text-purple-600">
               <Trophy className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent className="py-0 px-4 pb-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-purple-600 font-mono">
+            <div className="text-2xl sm:text-3xl font-semibold text-purple-600 font-mono">
               <CountUp value={completedTests.length} />
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+            <p className="text-xs text-slate-500 mt-0.5 font-medium">
               {completedTests.length} completed
             </p>
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift p-1 col-span-2 sm:col-span-1">
+        <Card className="rounded-2xl border border-slate-200/80 shadow-1 bg-white card-lift p-1 col-span-2 sm:col-span-1">
           <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Pending Tests</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Pending Tests</span>
             <div className="p-1.5 rounded-lg bg-amber-50 text-amber-600">
               <FileSpreadsheet className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent className="py-0 px-4 pb-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-amber-600 font-mono">
+            <div className="text-2xl sm:text-3xl font-semibold text-amber-600 font-mono">
               <CountUp value={pendingTests.length} />
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+            <p className="text-xs text-slate-500 mt-0.5 font-medium">
               {pendingTests.length > 0 ? "Action required" : "All completed"}
             </p>
           </CardContent>
@@ -325,14 +325,14 @@ export default async function StudentPortalPage() {
 
         {/* Pending Assessment Alert Card (NO Trapping: displayed as an interactive card ON dashboard) */}
         {pendingTests.length > 0 && (
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-6 shadow-sm space-y-4">
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-6 shadow-1 space-y-4">
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center space-x-2">
                 <span className="p-2 bg-amber-200/60 rounded-xl text-amber-800">
                   <Sparkles className="h-5 w-5" />
                 </span>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">
+                  <h3 className="text-base font-semibold text-slate-900">
                     Pending Online Assessments ({pendingTests.length})
                   </h3>
                   <p className="text-xs text-slate-600">
@@ -349,18 +349,18 @@ export default async function StudentPortalPage() {
               {pendingTests.map((t) => (
                 <div
                   key={t.id}
-                  className="bg-white p-4 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between space-y-3"
+                  className="bg-white p-4 rounded-xl border border-amber-200 shadow-1 flex flex-col justify-between space-y-3"
                 >
                   <div>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full">
+                      <span className="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full">
                         {t.subject}
                       </span>
                       <span className="text-xs text-slate-400 font-mono">
                         {t.batchName}
                       </span>
                     </div>
-                    <h4 className="font-bold text-slate-900 mt-2 text-sm">{t.title}</h4>
+                    <h4 className="font-semibold text-slate-900 mt-2 text-sm">{t.title}</h4>
                     <div className="flex items-center gap-3 text-xs text-slate-500 mt-1 font-mono">
                       <span>⏱️ {t.durationMinutes} mins</span>
                       <span>•</span>
@@ -387,9 +387,9 @@ export default async function StudentPortalPage() {
         )}
 
         {/* Timetable Schedule */}
-        <Card className="shadow-sm">
+        <Card className="shadow-1">
           <CardHeader className="py-4 px-6 border-b bg-slate-50/50">
-            <CardTitle className="text-base font-bold text-slate-900 flex items-center">
+            <CardTitle className="text-base font-semibold text-slate-900 flex items-center">
               <Calendar className="h-5 w-5 mr-2 text-indigo-600" />
               Weekly Class Schedule & Timetable
             </CardTitle>
@@ -404,10 +404,10 @@ export default async function StudentPortalPage() {
                 return (
                   <div key={day.id} className="border rounded-xl p-3.5 bg-slate-50/30 space-y-2">
                     <div className="flex items-center justify-between border-b pb-1.5">
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-slate-700">
                         {day.name}
                       </span>
-                      <Badge variant="outline" className="text-[10px] font-mono">
+                      <Badge variant="outline" className="text-xs font-mono">
                         {daySlots.length} {daySlots.length === 1 ? "lecture" : "lectures"}
                       </Badge>
                     </div>
@@ -425,11 +425,11 @@ export default async function StudentPortalPage() {
                           >
                             <div className="flex justify-between items-start text-xs font-semibold text-slate-900">
                               <span>{slot.subject}</span>
-                              <span className="font-mono text-[11px] text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">
+                              <span className="font-mono text-xs text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">
                                 {slot.startTime} – {slot.endTime}
                               </span>
                             </div>
-                            <div className="flex justify-between items-center text-[11px] text-slate-500">
+                            <div className="flex justify-between items-center text-xs text-slate-500">
                               <span>{slot.teacher?.user?.name || "Faculty Member"}</span>
                               {slot.room && (
                                 <span className="flex items-center text-slate-400">
@@ -452,9 +452,9 @@ export default async function StudentPortalPage() {
         {/* Tests & Assessment Results */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Online Timed Tests Completed / Past */}
-          <Card className="shadow-sm">
+          <Card className="shadow-1">
             <CardHeader className="py-4 px-6 border-b bg-slate-50/50">
-              <CardTitle className="text-base font-bold text-slate-900 flex items-center">
+              <CardTitle className="text-base font-semibold text-slate-900 flex items-center">
                 <Trophy className="h-5 w-5 mr-2 text-amber-600" />
                 Online Assessment Tests & Scores
               </CardTitle>
@@ -476,22 +476,22 @@ export default async function StudentPortalPage() {
                     >
                       <div className="space-y-1">
                         <div className="font-semibold text-slate-900">{t.title}</div>
-                        <div className="text-[11px] text-slate-500">
+                        <div className="text-xs text-slate-500">
                           {t.subject} • {t.batchName} • {t.totalMarks} Marks
                         </div>
                       </div>
                       <div className="flex items-center space-x-3">
                         {t.myAttempt ? (
                           <div className="text-right">
-                            <span className="text-sm font-bold font-mono text-emerald-700">
+                            <span className="text-sm font-semibold font-mono text-emerald-700">
                               {t.myAttempt.score} / {t.totalMarks}
                             </span>
-                            <Badge variant="outline" className="ml-2 text-[10px]">
+                            <Badge variant="outline" className="ml-2 text-xs">
                               {t.myAttempt.status}
                             </Badge>
                           </div>
                         ) : (
-                          <Badge variant="secondary" className="text-[10px]">
+                          <Badge variant="secondary" className="text-xs">
                             Not Taken
                           </Badge>
                         )}
@@ -509,9 +509,9 @@ export default async function StudentPortalPage() {
           </Card>
 
           {/* Paper Exam Results */}
-          <Card className="shadow-sm">
+          <Card className="shadow-1">
             <CardHeader className="py-4 px-6 border-b bg-slate-50/50">
-              <CardTitle className="text-base font-bold text-slate-900 flex items-center">
+              <CardTitle className="text-base font-semibold text-slate-900 flex items-center">
                 <Award className="h-5 w-5 mr-2 text-indigo-600" />
                 Official Exam & Term Results
               </CardTitle>
@@ -533,14 +533,14 @@ export default async function StudentPortalPage() {
                     >
                       <div className="space-y-1">
                         <div className="font-semibold text-slate-900">{r.test.title}</div>
-                        <div className="text-[11px] text-slate-500">
+                        <div className="text-xs text-slate-500">
                           {r.test.subject} • Total: {r.test.totalMarks} Marks
                         </div>
                       </div>
-                      <div className="text-right font-mono font-bold text-indigo-700">
+                      <div className="text-right font-mono font-semibold text-indigo-700">
                         {r.obtainedMarks} / {r.test.totalMarks}
                         {r.remarks && (
-                          <div className="text-[10px] text-slate-400 font-normal">
+                          <div className="text-xs text-slate-400 font-normal">
                             {r.remarks}
                           </div>
                         )}
@@ -554,9 +554,9 @@ export default async function StudentPortalPage() {
         </div>
 
         {/* Fee Invoices & Payment History */}
-        <Card className="shadow-sm">
+        <Card className="shadow-1">
           <CardHeader className="py-4 px-6 border-b bg-slate-50/50">
-            <CardTitle className="text-base font-bold text-slate-900 flex items-center">
+            <CardTitle className="text-base font-semibold text-slate-900 flex items-center">
               <Banknote className="h-5 w-5 mr-2 text-emerald-600" />
               Fee Invoices & Challan Slips
             </CardTitle>
@@ -572,7 +572,7 @@ export default async function StudentPortalPage() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider text-[11px] border-b">
+                  <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider text-xs border-b">
                     <tr>
                       <th className="py-3 px-4 font-semibold">Month</th>
                       <th className="py-3 px-4 font-semibold">Batch</th>
@@ -590,7 +590,7 @@ export default async function StudentPortalPage() {
                         <td className="py-3 px-4 text-slate-600">
                           {inv.batch ? `${inv.batch.class.name} ${inv.batch.name}` : "General"}
                         </td>
-                        <td className="py-3 px-4 text-right font-mono font-bold text-slate-900">
+                        <td className="py-3 px-4 text-right font-mono font-semibold text-slate-900">
                           {formatPKR(inv.totalMinor)}
                         </td>
                         <td className="py-3 px-4 text-center">
@@ -630,9 +630,9 @@ export default async function StudentPortalPage() {
         {/* Attendance Breakdown & Notices */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Attendance Log */}
-          <Card className="shadow-sm">
+          <Card className="shadow-1">
             <CardHeader className="py-4 px-6 border-b bg-slate-50/50">
-              <CardTitle className="text-base font-bold text-slate-900 flex items-center">
+              <CardTitle className="text-base font-semibold text-slate-900 flex items-center">
                 <CheckCircle2 className="h-5 w-5 mr-2 text-emerald-600" />
                 Recent Daily Attendance Log
               </CardTitle>
@@ -677,9 +677,9 @@ export default async function StudentPortalPage() {
           </Card>
 
           {/* Notices & Announcements */}
-          <Card className="shadow-sm">
+          <Card className="shadow-1">
             <CardHeader className="py-4 px-6 border-b bg-slate-50/50">
-              <CardTitle className="text-base font-bold text-slate-900 flex items-center">
+              <CardTitle className="text-base font-semibold text-slate-900 flex items-center">
                 <Megaphone className="h-5 w-5 mr-2 text-blue-600" />
                 Academy Notice Board
               </CardTitle>
@@ -697,8 +697,8 @@ export default async function StudentPortalPage() {
                   {announcements.map((anc) => (
                     <div key={anc.id} className="p-4 space-y-1 hover:bg-slate-50/50 text-xs">
                       <div className="flex items-center justify-between">
-                        <h4 className="font-bold text-slate-900">{anc.title}</h4>
-                        <span className="text-[10px] text-slate-400 font-mono">
+                        <h4 className="font-semibold text-slate-900">{anc.title}</h4>
+                        <span className="text-xs text-slate-400 font-mono">
                           {anc.createdAt.toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",

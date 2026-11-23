@@ -315,15 +315,15 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
   return (
     <div className="space-y-8">
       {/* Generator Configuration Card */}
-      <Card className="shadow-sm border-slate-200">
+      <Card className="shadow-1 border-slate-200">
         <CardHeader className="bg-gradient-to-r from-indigo-50/80 via-white to-blue-50/50 border-b pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center space-x-2">
-              <div className="p-2 bg-indigo-600 rounded-lg text-white shadow-sm">
+              <div className="p-2 bg-indigo-600 rounded-lg text-white shadow-1">
                 <Sparkles className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-lg font-bold text-slate-900">
+                <CardTitle className="text-lg font-semibold text-slate-900">
                   Board-Aware AI Test Paper Generator
                 </CardTitle>
                 <CardDescription className="text-xs text-slate-500">
@@ -452,14 +452,14 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div className="flex items-center space-x-2">
-                      <span className="font-bold">Loaded Pairing Scheme:</span>
+                      <span className="font-semibold">Loaded Pairing Scheme:</span>
                       {activeScheme.verified ? (
-                        <Badge className="bg-emerald-600 text-white text-[10px] font-bold py-0.5">
+                        <Badge className="bg-emerald-600 text-white text-xs font-semibold py-0.5">
                           <ShieldCheck className="h-3 w-3 mr-1" />
                           VERIFIED BOARD SCHEME
                         </Badge>
                       ) : (
-                        <Badge className="bg-rose-100 text-rose-800 border-rose-300 text-[10px] font-bold py-0.5">
+                        <Badge className="bg-rose-100 text-rose-800 border-rose-300 text-xs font-semibold py-0.5">
                           <ShieldAlert className="h-3 w-3 mr-1" />
                           UNVERIFIED — confirm before use
                         </Badge>
@@ -467,7 +467,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
 
                       {/* PARTIAL Badge */}
                       {isPartialScheme && (
-                        <Badge className="bg-amber-100 text-amber-900 border-amber-300 text-[10px] font-bold py-0.5">
+                        <Badge className="bg-amber-100 text-amber-900 border-amber-300 text-xs font-semibold py-0.5">
                           PARTIAL SCHEME
                         </Badge>
                       )}
@@ -477,35 +477,35 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
                           href={activeScheme.sourceUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-indigo-600 hover:underline inline-flex items-center text-[11px]"
+                          className="text-indigo-600 hover:underline inline-flex items-center text-xs"
                         >
                           Source Document <ExternalLink className="h-3 w-3 ml-0.5" />
                         </a>
                       )}
                     </div>
 
-                    <span className="font-mono text-xs font-bold text-slate-700">
+                    <span className="font-mono text-xs font-semibold text-slate-700">
                       Total: {activeScheme.totalMarks} Marks • Duration: {activeScheme.timeMinutes ? `${activeScheme.timeMinutes} mins` : "Time unconfirmed"}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 font-mono text-[11px]">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 font-mono text-xs">
                     <div className="p-2 bg-white rounded border">
-                      <span className="text-slate-400 block text-[10px]">Section A (MCQs):</span>
+                      <span className="text-slate-400 block text-xs">Section A (MCQs):</span>
                       <span className="font-semibold text-slate-800">
                         {(activeScheme.structure as any)?.mcq?.count ?? 0} &times; {(activeScheme.structure as any)?.mcq?.marksEach ?? 1} mark
                       </span>
                     </div>
 
                     <div className="p-2 bg-white rounded border">
-                      <span className="text-slate-400 block text-[10px]">Section B (Short Questions):</span>
+                      <span className="text-slate-400 block text-xs">Section B (Short Questions):</span>
                       <span className="font-semibold text-slate-800">
                         Attempt {(activeScheme.structure as any)?.short?.attempt ?? (activeScheme.structure as any)?.short?.count ?? 0} of {(activeScheme.structure as any)?.short?.count ?? 0} (&times;{(activeScheme.structure as any)?.short?.marksEach ?? 2}m)
                       </span>
                     </div>
 
                     <div className="p-2 bg-white rounded border">
-                      <span className="text-slate-400 block text-[10px]">Section C (Long Questions):</span>
+                      <span className="text-slate-400 block text-xs">Section C (Long Questions):</span>
                       <span className="font-semibold text-slate-800">
                         Attempt {(activeScheme.structure as any)?.long?.attempt ?? (activeScheme.structure as any)?.long?.count ?? 0} of {(activeScheme.structure as any)?.long?.count ?? 0} (&times;{(activeScheme.structure as any)?.long?.marksEach ?? 5}m)
                       </span>
@@ -518,14 +518,14 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
                   <div className="p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs flex items-start space-x-3">
                     <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
                     <div className="space-y-1">
-                      <p className="font-bold">
+                      <p className="font-semibold">
                         Is scheme ka mukammal structure save nahi hai — admin se /admin/boards mein complete karwao.
                       </p>
-                      <p className="text-[11px] text-amber-700">
+                      <p className="text-xs text-amber-700">
                         Paper generation is disabled for partial schemes to prevent creating non-compliant exam papers. Short or long section breakdown is unconfirmed.
                       </p>
                       {activeScheme.notes && (
-                        <p className="text-[11px] text-slate-600 italic bg-white/80 p-2 rounded border border-amber-200 mt-1">
+                        <p className="text-xs text-slate-600 italic bg-white/80 p-2 rounded border border-amber-200 mt-1">
                           Notes: {activeScheme.notes}
                         </p>
                       )}
@@ -537,10 +537,10 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
               <div className="p-4 bg-rose-50 border border-rose-200 text-rose-900 rounded-xl text-xs flex items-start space-x-3">
                 <AlertTriangle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <p className="font-bold">
+                  <p className="font-semibold">
                     Is board/subject ki scheme save nahi hai — pehle /admin/boards mein scheme add karo.
                   </p>
-                  <p className="text-[11px] text-rose-700">
+                  <p className="text-xs text-rose-700">
                     AI generation is disabled to prevent fabricating non-compliant exam papers.
                   </p>
                   <Link href="/admin/boards" className="text-indigo-600 underline font-medium inline-block mt-1">
@@ -560,7 +560,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
                   <button
                     type="button"
                     onClick={handleSelectAllChapters}
-                    className="text-[11px] text-indigo-600 hover:underline font-medium"
+                    className="text-xs text-indigo-600 hover:underline font-medium"
                   >
                     Select All
                   </button>
@@ -568,7 +568,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
                   <button
                     type="button"
                     onClick={handleClearChapters}
-                    className="text-[11px] text-slate-500 hover:underline"
+                    className="text-xs text-slate-500 hover:underline"
                   >
                     Clear All
                   </button>
@@ -599,7 +599,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
                           onChange={() => {}} // handled by parent div
                           className="mt-0.5 text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5 rounded"
                         />
-                        <span className="text-[11px] leading-tight">
+                        <span className="text-xs leading-tight">
                           <strong>Ch {ch.number}:</strong> {ch.title}
                         </span>
                       </div>
@@ -622,7 +622,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
                     onClick={() => setDifficulty(diff)}
                     className={`h-9 text-xs font-semibold rounded-md border transition-all ${
                       difficulty === diff
-                        ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
+                        ? "bg-indigo-600 text-white border-indigo-600 shadow-1"
                         : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
                     }`}
                   >
@@ -649,7 +649,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
               <Button
                 type="submit"
                 disabled={isGenerating || !activeScheme || isPartialScheme}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-6 h-10 shadow-sm shrink-0 disabled:opacity-50"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-6 h-10 shadow-1 shrink-0 disabled:opacity-50"
               >
                 {isGenerating ? (
                   <>
@@ -702,12 +702,12 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
 
       {/* Questions Review & Editing Screen */}
       {questions.length > 0 && (
-        <Card className="shadow-md border-indigo-100">
+        <Card className="shadow-2 border-indigo-100">
           <CardHeader className="bg-slate-50 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4">
             <div>
               <div className="flex items-center space-x-2">
                 <FileCheck className="h-5 w-5 text-indigo-600" />
-                <CardTitle className="text-base font-bold text-slate-900">
+                <CardTitle className="text-base font-semibold text-slate-900">
                   Review & Customize Draft Test
                 </CardTitle>
               </div>
@@ -717,7 +717,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
             </div>
 
             <div className="flex items-center space-x-3">
-              <Badge variant="outline" className="text-xs font-mono font-bold px-3 py-1 bg-emerald-50 text-emerald-800 border-emerald-300">
+              <Badge variant="outline" className="text-xs font-mono font-semibold px-3 py-1 bg-emerald-50 text-emerald-800 border-emerald-300">
                 Target Marks: {activeScheme?.totalMarks || currentQuestionsMarks}
               </Badge>
               <Badge variant="secondary" className="font-mono text-xs">
@@ -744,7 +744,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">
                     Wrong MCQ Penalty (Negative Marking)
                   </label>
                   <Input
@@ -758,7 +758,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">
                     Exam Duration (Minutes)
                   </label>
                   <Input
@@ -778,15 +778,15 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
               {questions.map((q, idx) => (
                 <div
                   key={idx}
-                  className="p-5 rounded-lg border bg-white shadow-sm space-y-3 transition-all hover:border-slate-300"
+                  className="p-5 rounded-lg border bg-white shadow-1 space-y-3 transition-all hover:border-slate-300"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center space-x-2">
-                      <span className="h-6 w-6 rounded-full bg-slate-900 text-white text-xs font-bold flex items-center justify-center shrink-0">
+                      <span className="h-6 w-6 rounded-full bg-slate-900 text-white text-xs font-semibold flex items-center justify-center shrink-0">
                         {idx + 1}
                       </span>
                       <Badge
-                        className={`text-[10px] font-bold ${
+                        className={`text-xs font-semibold ${
                           q.type === "MCQ"
                             ? "bg-blue-100 text-blue-800 border-blue-200"
                             : q.type === "SHORT"
@@ -830,7 +830,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
 
                   {/* Question Text */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-500 mb-1">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
                       Question Text
                     </label>
                     <textarea
@@ -844,7 +844,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
                   {/* MCQ Options */}
                   {q.type === "MCQ" && q.options && (
                     <div className="space-y-2 pt-1">
-                      <label className="block text-[11px] font-semibold text-slate-500">
+                      <label className="block text-xs font-semibold text-slate-500">
                         Options & Correct Answer (Select radio for correct answer)
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -864,7 +864,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
                               onChange={() => handleUpdateQuestion(idx, { correctAnswer: opt })}
                               className="text-emerald-600 focus:ring-emerald-500 h-4 w-4"
                             />
-                            <span className="font-bold text-slate-500 w-4">
+                            <span className="font-semibold text-slate-500 w-4">
                               {String.fromCharCode(65 + optIdx)}.
                             </span>
                             <input
@@ -882,7 +882,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
                   {/* Short / Long Answer Key */}
                   {(q.type === "SHORT" || q.type === "LONG") && (
                     <div className="pt-1">
-                      <label className="block text-[11px] font-semibold text-slate-500 mb-1">
+                      <label className="block text-xs font-semibold text-slate-500 mb-1">
                         Expected Key Points / Answer Key
                       </label>
                       <Input
@@ -935,7 +935,7 @@ export function AITestPaperGenerator({ batches, boards = [] }: Props) {
                 type="button"
                 onClick={handleSaveDraft}
                 disabled={isSaving}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-6 h-10 shadow-sm"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-6 h-10 shadow-1"
               >
                 {isSaving ? (
                   <>

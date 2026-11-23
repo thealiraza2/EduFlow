@@ -1,9 +1,6 @@
 import { Header } from "@/components/marketing/Header";
 import { HeroSection } from "@/components/marketing/HeroSection";
-import { FeaturesSection } from "@/components/marketing/FeaturesSection";
-import { ClassroomSection } from "@/components/marketing/ClassroomSection";
-import { BenefitsSection } from "@/components/marketing/BenefitsSection";
-import { TestimonialsSection } from "@/components/marketing/TestimonialsSection";
+import { SchoolDaySection, PortalsSection } from "@/components/marketing/SchoolDaySection";
 import { CtaSection } from "@/components/marketing/CtaSection";
 import { Footer } from "@/components/marketing/Footer";
 
@@ -66,31 +63,14 @@ export default function MarketingHomePage() {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen bg-white text-[#0F2040] selection:bg-[#F5B800] selection:text-[#0F2040] font-sans antialiased">
-        {/* Section 1: Sticky White Header */}
+      <div className="flex min-h-screen flex-col bg-canvas text-ink">
         <Header />
-
         <main className="flex-1">
-          {/* Section 2: Hero Section */}
           <HeroSection />
-
-          {/* Section 3: Six Feature Cards (3-column grid, yellow icon tiles) */}
-          <FeaturesSection />
-
-          {/* Section 4: Classroom (photo + text) */}
-          <ClassroomSection />
-
-          {/* Section 5: Built for Modern Schools (6 benefit cards) */}
-          <BenefitsSection />
-
-          {/* Section 6: Testimonials (Honest Success Story Card) */}
-          <TestimonialsSection />
-
-          {/* Section 7: Final CTA Section */}
+          <SchoolDaySection />
+          <PortalsSection />
           <CtaSection />
         </main>
-
-        {/* Section 7: Footer */}
         <Footer />
       </div>
 

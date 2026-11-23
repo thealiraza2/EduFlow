@@ -20,12 +20,12 @@ interface Props {
 
 export function ParentMessagesList({ messages }: Props) {
   return (
-    <Card className="shadow-sm overflow-hidden border">
+    <Card className="shadow-1 overflow-hidden border">
       <CardHeader className="py-3 px-5 border-b bg-slate-50 flex flex-row items-center justify-between">
         <div className="flex items-center space-x-2">
           <MessageSquare className="h-4 w-4 text-blue-600" />
           <div>
-            <CardTitle className="text-sm font-bold text-slate-900">
+            <CardTitle className="text-sm font-semibold text-slate-900">
               Official Messages & Notifications
             </CardTitle>
             <CardDescription className="text-xs">
@@ -52,7 +52,7 @@ export function ParentMessagesList({ messages }: Props) {
                   <div className="flex items-center space-x-2">
                     <Badge
                       variant="outline"
-                      className={`text-[10px] font-bold py-0.5 px-2 ${
+                      className={`text-xs font-semibold py-0.5 px-2 ${
                         msg.trigger === "ABSENCE"
                           ? "bg-rose-50 text-rose-700 border-rose-200"
                           : msg.trigger === "FEE_REMINDER"
@@ -73,12 +73,12 @@ export function ParentMessagesList({ messages }: Props) {
                       </span>
                     )}
 
-                    <span className="text-[10px] font-mono text-slate-400">
+                    <span className="text-xs font-mono text-slate-400">
                       via {msg.channel}
                     </span>
                   </div>
 
-                  <span className="text-[11px] font-mono text-slate-400">
+                  <span className="text-xs font-mono text-slate-400">
                     {msg.createdAt.replace("T", " ").substring(0, 16)}
                   </span>
                 </div>

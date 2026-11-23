@@ -113,29 +113,29 @@ export function TeacherSalariesManager({ teachers, initialMonth }: Props) {
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="shadow-sm">
+        <Card className="shadow-1">
           <CardContent className="p-5">
             <span className="text-xs font-semibold uppercase text-slate-500">
               Total Monthly Payroll ({selectedMonth})
             </span>
-            <div className="text-2xl font-bold font-mono text-slate-900 mt-1">
+            <div className="text-2xl font-semibold font-mono text-slate-900 mt-1">
               {formatPKR(totalPayrollMinor)}
             </div>
-            <span className="text-[11px] text-slate-400 mt-0.5 block">
+            <span className="text-xs text-slate-400 mt-0.5 block">
               {teachers.length} Faculty Members
             </span>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="shadow-1">
           <CardContent className="p-5">
             <span className="text-xs font-semibold uppercase text-emerald-600">
               Disbursed Payroll
             </span>
-            <div className="text-2xl font-bold font-mono text-emerald-600 mt-1">
+            <div className="text-2xl font-semibold font-mono text-emerald-600 mt-1">
               {formatPKR(totalPaidMinor)}
             </div>
-            <span className="text-[11px] text-slate-500 mt-0.5 block font-medium">
+            <span className="text-xs text-slate-500 mt-0.5 block font-medium">
               {totalPaidMinor === 0
                 ? `0 disbursed (0 of ${teachers.length} teachers paid)`
                 : `${paidTeachers.length} of ${teachers.length} Teachers Paid`}
@@ -143,15 +143,15 @@ export function TeacherSalariesManager({ teachers, initialMonth }: Props) {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="shadow-1">
           <CardContent className="p-5">
             <span className="text-xs font-semibold uppercase text-amber-600">
               Pending Disbursement
             </span>
-            <div className="text-2xl font-bold font-mono text-amber-600 mt-1">
+            <div className="text-2xl font-semibold font-mono text-amber-600 mt-1">
               {formatPKR(totalPendingMinor)}
             </div>
-            <span className="text-[11px] text-slate-500 mt-0.5 block font-medium">
+            <span className="text-xs text-slate-500 mt-0.5 block font-medium">
               {totalPendingMinor > 0
                 ? `${teachers.length - paidTeachers.length} Teachers Pending (${formatPKR(totalPendingMinor)} pending)`
                 : "All Salaries Disbursed"}
@@ -161,7 +161,7 @@ export function TeacherSalariesManager({ teachers, initialMonth }: Props) {
       </div>
 
       {/* Control Bar: Month Picker */}
-      <Card className="shadow-sm">
+      <Card className="shadow-1">
         <CardContent className="p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center space-x-3">
             <Calendar className="h-5 w-5 text-slate-500" />
@@ -203,7 +203,7 @@ export function TeacherSalariesManager({ teachers, initialMonth }: Props) {
       )}
 
       {/* Faculty Salary Table */}
-      <Card className="shadow-sm overflow-hidden">
+      <Card className="shadow-1 overflow-hidden">
         <CardHeader className="py-4 border-b bg-slate-50 flex flex-row items-center justify-between">
           <div>
             <CardTitle className="text-base font-semibold text-slate-900">
@@ -243,14 +243,14 @@ export function TeacherSalariesManager({ teachers, initialMonth }: Props) {
                     <tr key={t.id} className="hover:bg-slate-50/60 transition-colors">
                       <td className="py-3 px-4">
                         <div className="font-semibold text-slate-900 text-sm">{t.user.name}</div>
-                        <div className="text-[11px] font-mono text-slate-500">
+                        <div className="text-xs font-mono text-slate-500">
                           {t.user.email} {t.user.phone ? `• ${t.user.phone}` : ""}
                         </div>
                       </td>
 
                       <td className="py-3 px-4">
                         <div className="text-slate-800">{t.subjects.join(", ")}</div>
-                        <div className="text-[11px] text-slate-500 mt-0.5">
+                        <div className="text-xs text-slate-500 mt-0.5">
                           {t.batches.length > 0
                             ? t.batches.map((b) => `${b.class.name} ${b.name}`).join("; ")
                             : "No active batches"}
@@ -258,20 +258,20 @@ export function TeacherSalariesManager({ teachers, initialMonth }: Props) {
                       </td>
 
                       <td className="py-3 px-3 text-center">
-                        <Badge variant="outline" className="font-mono text-[10px]">
+                        <Badge variant="outline" className="font-mono text-xs">
                           <Clock className="h-3 w-3 mr-1 text-slate-400" />
                           {t.weeklyHours}h / week
                         </Badge>
                       </td>
 
-                      <td className="py-3 px-4 text-right font-mono font-bold text-sm text-slate-900">
+                      <td className="py-3 px-4 text-right font-mono font-semibold text-sm text-slate-900">
                         {formatPKR(t.salaryMinor)}
                       </td>
 
                       <td className="py-3 px-4 text-center">
                         <Badge
                           variant={isPaid ? "default" : "outline"}
-                          className={`text-[10px] font-bold py-0.5 px-2 ${
+                          className={`text-xs font-semibold py-0.5 px-2 ${
                             isPaid
                               ? "bg-emerald-600 text-white"
                               : "bg-amber-50 text-amber-700 border-amber-300"
@@ -280,7 +280,7 @@ export function TeacherSalariesManager({ teachers, initialMonth }: Props) {
                           {isPaid ? "PAID" : "UNPAID"}
                         </Badge>
                         {paidAtStr && (
-                          <span className="text-[10px] font-mono text-slate-400 block mt-0.5">
+                          <span className="text-xs font-mono text-slate-400 block mt-0.5">
                             {paidAtStr}
                           </span>
                         )}

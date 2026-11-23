@@ -51,7 +51,7 @@ export function TimetableGrid({
         return (
           <div
             key={day.id}
-            className="flex flex-col rounded-lg border bg-white shadow-sm overflow-hidden min-h-[300px]"
+            className="flex flex-col rounded-lg border bg-white shadow-1 overflow-hidden min-h-[300px]"
           >
             <div className="bg-slate-900 text-white font-semibold text-center py-2 px-3 text-sm">
               {day.name}
@@ -66,7 +66,7 @@ export function TimetableGrid({
                 daySlots.map((slot) => (
                   <div
                     key={slot.id}
-                    className="p-3 rounded-md bg-white border border-slate-200 shadow-sm relative group hover:border-slate-400 transition-colors"
+                    className="p-3 rounded-md bg-white border border-slate-200 shadow-1 relative group hover:border-slate-400 transition-colors"
                   >
                     <div className="flex justify-between items-start">
                       <Badge variant="secondary" className="font-semibold text-xs">

@@ -238,17 +238,17 @@ export function AdminResultsManager({ initialTests, adminName }: Props) {
     <div className="space-y-6">
       {/* Top Weakest Topic Alert & Overview */}
       {weakestSubject && (
-        <Card className="border-amber-200 bg-amber-50/60 shadow-sm">
+        <Card className="border-amber-200 bg-amber-50/60 shadow-1">
           <CardContent className="p-4 flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <TrendingDown className="h-5 w-5 text-amber-600 shrink-0" />
               <div>
-                <span className="text-xs font-bold uppercase text-amber-800">
+                <span className="text-xs font-semibold uppercase text-amber-800">
                   Curriculum Analytics: Subject Needing Attention
                 </span>
                 <p className="text-xs text-amber-900 mt-0.5">
                   <strong>{weakestSubject.subject}</strong> currently has the lowest overall academy average at{" "}
-                  <span className="font-mono font-bold text-amber-800">{weakestSubject.avgPct}%</span>.
+                  <span className="font-mono font-semibold text-amber-800">{weakestSubject.avgPct}%</span>.
                   Consider scheduling remedial tutorial lectures.
                 </p>
               </div>
@@ -261,7 +261,7 @@ export function AdminResultsManager({ initialTests, adminName }: Props) {
       )}
 
       {/* Control bar: Test selector & Status filter */}
-      <Card className="shadow-sm">
+      <Card className="shadow-1">
         <CardContent className="p-5">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
             <div>
@@ -350,43 +350,43 @@ export function AdminResultsManager({ initialTests, adminName }: Props) {
           {/* Batch Analytics Cards */}
           {analytics && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="shadow-sm">
+              <Card className="shadow-1">
                 <CardContent className="p-5">
                   <span className="text-xs font-semibold text-slate-500 uppercase">Class Average</span>
-                  <div className="text-2xl font-bold font-mono text-slate-900 mt-1">
+                  <div className="text-2xl font-semibold font-mono text-slate-900 mt-1">
                     {analytics.classAveragePercentage}%
                   </div>
-                  <span className="text-[11px] text-slate-400 mt-0.5 block">
+                  <span className="text-xs text-slate-400 mt-0.5 block">
                     {analytics.classAverageMarks} / {selectedTest.totalMarks} avg marks
                   </span>
                 </CardContent>
               </Card>
 
-              <Card className="shadow-sm">
+              <Card className="shadow-1">
                 <CardContent className="p-5">
                   <span className="text-xs font-semibold text-emerald-600 uppercase">Highest Score</span>
-                  <div className="text-2xl font-bold font-mono text-emerald-600 mt-1">
+                  <div className="text-2xl font-semibold font-mono text-emerald-600 mt-1">
                     {analytics.highestMarks} / {selectedTest.totalMarks}
                   </div>
-                  <span className="text-[11px] text-slate-400 mt-0.5 block">
+                  <span className="text-xs text-slate-400 mt-0.5 block">
                     Top position score
                   </span>
                 </CardContent>
               </Card>
 
-              <Card className="shadow-sm">
+              <Card className="shadow-1">
                 <CardContent className="p-5">
                   <span className="text-xs font-semibold text-rose-600 uppercase">Lowest Score</span>
-                  <div className="text-2xl font-bold font-mono text-rose-600 mt-1">
+                  <div className="text-2xl font-semibold font-mono text-rose-600 mt-1">
                     {analytics.lowestMarks} / {selectedTest.totalMarks}
                   </div>
-                  <span className="text-[11px] text-slate-400 mt-0.5 block">
+                  <span className="text-xs text-slate-400 mt-0.5 block">
                     Needs remediation
                   </span>
                 </CardContent>
               </Card>
 
-              <Card className="shadow-sm bg-slate-900 text-white">
+              <Card className="shadow-1 bg-slate-900 text-white">
                 <CardContent className="p-5">
                   <span className="text-xs font-semibold text-slate-300 uppercase">Batch Toppers</span>
                   <div className="text-sm font-semibold mt-1">
@@ -394,7 +394,7 @@ export function AdminResultsManager({ initialTests, adminName }: Props) {
                       analytics.toppers.map((tp, i) => (
                         <div key={i} className="flex justify-between items-center text-xs mt-1">
                           <span className="truncate max-w-[130px]">{tp.name}</span>
-                          <span className="font-mono text-amber-300 font-bold">
+                          <span className="font-mono text-amber-300 font-semibold">
                             {tp.obtainedMarks} ({tp.positionFormatted})
                           </span>
                         </div>
@@ -409,7 +409,7 @@ export function AdminResultsManager({ initialTests, adminName }: Props) {
           )}
 
           {/* Student Results Roster & Admin Correction Table */}
-          <Card className="shadow-sm overflow-hidden">
+          <Card className="shadow-1 overflow-hidden">
             <CardHeader className="py-4 border-b bg-slate-50 flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="text-base font-semibold text-slate-900">
@@ -454,18 +454,18 @@ export function AdminResultsManager({ initialTests, adminName }: Props) {
                         const original = r.item as any;
                         return (
                           <tr key={r.item.id} className="hover:bg-slate-50/60 transition-colors">
-                            <td className="py-3 px-4 text-center font-mono font-bold text-slate-800">
+                            <td className="py-3 px-4 text-center font-mono font-semibold text-slate-800">
                               {r.positionFormatted}
                             </td>
 
                             <td className="py-3 px-4">
                               <div className="font-semibold text-slate-900">{original.student.name}</div>
-                              <div className="text-[11px] font-mono text-slate-500">
+                              <div className="text-xs font-mono text-slate-500">
                                 {original.student.admissionNo} • {original.student.guardianPhone}
                               </div>
                             </td>
 
-                            <td className="py-3 px-3 text-right font-mono font-bold text-sm">
+                            <td className="py-3 px-3 text-right font-mono font-semibold text-sm">
                               {r.item.obtainedMarks} <span className="text-slate-400 font-normal text-xs">/ {selectedTest.totalMarks}</span>
                             </td>
 
@@ -476,7 +476,7 @@ export function AdminResultsManager({ initialTests, adminName }: Props) {
                             <td className="py-3 px-3 text-center">
                               <Badge
                                 variant="outline"
-                                className={`text-[10px] font-mono font-bold py-0.5 px-2 ${
+                                className={`text-xs font-mono font-semibold py-0.5 px-2 ${
                                   r.grade === "A+" || r.grade === "A"
                                     ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                                     : r.grade === "F"
@@ -491,7 +491,7 @@ export function AdminResultsManager({ initialTests, adminName }: Props) {
                             <td className="py-3 px-4 text-slate-600 max-w-xs">
                               <div>{original.remarks || "—"}</div>
                               {original.correctionLog && (
-                                <div className="text-[10px] text-amber-800 bg-amber-50 p-1 rounded mt-1 font-mono">
+                                <div className="text-xs text-amber-800 bg-amber-50 p-1 rounded mt-1 font-mono">
                                   {original.correctionLog}
                                 </div>
                               )}
@@ -563,7 +563,7 @@ export function AdminResultsManager({ initialTests, adminName }: Props) {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Current Marks:</span>
-                  <span className="font-mono font-bold text-slate-800">
+                  <span className="font-mono font-semibold text-slate-800">
                     {correctionTarget.currentMarks} / {correctionTarget.totalMarks}
                   </span>
                 </div>
@@ -580,7 +580,7 @@ export function AdminResultsManager({ initialTests, adminName }: Props) {
                   step="0.5"
                   value={newMarks}
                   onChange={(e) => setNewMarks(e.target.value)}
-                  className="font-mono font-bold text-base"
+                  className="font-mono font-semibold text-base"
                   required
                 />
               </div>

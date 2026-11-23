@@ -105,27 +105,27 @@ export function DefaultersManager({ initialDefaulters, totalInvoicesCount = 0, a
     <div className="space-y-6">
       {/* Top Banner & Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="border-rose-200 bg-rose-50/60 shadow-sm">
+        <Card className="border-rose-200 bg-rose-50/60 shadow-1">
           <CardContent className="p-5">
             <span className="text-xs font-semibold text-rose-700 uppercase">Defaulter Invoices</span>
-            <div className="text-2xl font-bold font-mono text-rose-900 mt-1">
+            <div className="text-2xl font-semibold font-mono text-rose-900 mt-1">
               {filtered.length} Overdue
             </div>
-            <span className="text-[11px] text-rose-600 mt-0.5 block">Unpaid / partial past due date</span>
+            <span className="text-xs text-rose-600 mt-0.5 block">Unpaid / partial past due date</span>
           </CardContent>
         </Card>
 
-        <Card className="border-rose-200 bg-rose-50/60 shadow-sm">
+        <Card className="border-rose-200 bg-rose-50/60 shadow-1">
           <CardContent className="p-5">
             <span className="text-xs font-semibold text-rose-700 uppercase">Total Overdue Receivables</span>
-            <div className="text-2xl font-bold font-mono text-rose-700 mt-1">
+            <div className="text-2xl font-semibold font-mono text-rose-700 mt-1">
               {formatPKR(totalOutstandingMinor)}
             </div>
-            <span className="text-[11px] text-rose-600 mt-0.5 block">Pending recovery</span>
+            <span className="text-xs text-rose-600 mt-0.5 block">Pending recovery</span>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="shadow-1">
           <CardContent className="p-5 flex flex-col justify-center">
             <span className="text-xs font-semibold text-slate-500 uppercase">Action Guideline</span>
             <p className="text-xs text-slate-600 mt-1">
@@ -136,7 +136,7 @@ export function DefaultersManager({ initialDefaulters, totalInvoicesCount = 0, a
       </div>
 
       {/* Search and Feedback */}
-      <Card className="shadow-sm">
+      <Card className="shadow-1">
         <CardContent className="p-4 sm:p-5">
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -168,12 +168,12 @@ export function DefaultersManager({ initialDefaulters, totalInvoicesCount = 0, a
       )}
 
       {/* Defaulters Table */}
-      <Card className="border-rose-200 shadow-sm overflow-hidden">
+      <Card className="border-rose-200 shadow-1 overflow-hidden">
         <CardHeader className="py-4 border-b border-rose-200 bg-rose-50/50 flex flex-row items-center justify-between">
           <div className="flex items-center space-x-2">
             <AlertTriangle className="h-5 w-5 text-rose-600" />
             <div>
-              <CardTitle className="text-base font-bold text-rose-900">
+              <CardTitle className="text-base font-semibold text-rose-900">
                 Fee Defaulters List
               </CardTitle>
               <CardDescription className="text-xs text-rose-700">
@@ -214,7 +214,7 @@ export function DefaultersManager({ initialDefaulters, totalInvoicesCount = 0, a
                     <th className="py-3 px-3 text-center">Overdue</th>
                     <th className="py-3 px-3 text-right">Fee</th>
                     <th className="py-3 px-3 text-right text-emerald-700">Paid</th>
-                    <th className="py-3 px-3 text-right text-rose-700 font-bold">Balance Due</th>
+                    <th className="py-3 px-3 text-right text-rose-700 font-semibold">Balance Due</th>
                     <th className="py-3 px-4 text-right">One-Tap Action</th>
                   </tr>
                 </thead>
@@ -223,10 +223,10 @@ export function DefaultersManager({ initialDefaulters, totalInvoicesCount = 0, a
                     <tr key={item.id} className="hover:bg-rose-50/20 transition-colors">
                       <td className="py-3 px-4">
                         <div className="font-semibold text-slate-900">{item.student.name}</div>
-                        <div className="text-[11px] text-slate-500 font-mono">
+                        <div className="text-xs text-slate-500 font-mono">
                           {item.student.admissionNo}
                         </div>
-                        <div className="text-[11px] text-slate-500 flex items-center mt-0.5">
+                        <div className="text-xs text-slate-500 flex items-center mt-0.5">
                           <span>Guardian: {item.student.guardianName} • </span>
                           <a
                             href={`tel:${item.student.guardianPhone}`}
@@ -242,7 +242,7 @@ export function DefaultersManager({ initialDefaulters, totalInvoicesCount = 0, a
                         <div className="font-medium text-slate-800">
                           {item.batch.class.name} {item.batch.name}
                         </div>
-                        <div className="text-[11px] font-mono text-slate-500">{item.month}</div>
+                        <div className="text-xs font-mono text-slate-500">{item.month}</div>
                       </td>
 
                       <td className="py-3 px-3 text-center font-mono text-slate-600">
@@ -250,7 +250,7 @@ export function DefaultersManager({ initialDefaulters, totalInvoicesCount = 0, a
                       </td>
 
                       <td className="py-3 px-3 text-center font-mono">
-                        <Badge variant="destructive" className="text-[10px] py-0 px-1.5 font-bold">
+                        <Badge variant="destructive" className="text-xs py-0 px-1.5 font-semibold">
                           {item.daysOverdue}d ago
                         </Badge>
                       </td>
@@ -258,7 +258,7 @@ export function DefaultersManager({ initialDefaulters, totalInvoicesCount = 0, a
                       <td className="py-3 px-3 text-right font-mono font-medium">
                         <div>{formatPKR(item.totalMinor)}</div>
                         {item.fineMinor !== undefined && item.fineMinor > 0 && (
-                          <div className="text-[10px] text-amber-700 font-sans mt-0.5">
+                          <div className="text-xs text-amber-700 font-sans mt-0.5">
                             Base: {formatPKR(item.amountMinor ?? item.totalMinor - item.fineMinor)} + Fine: {formatPKR(item.fineMinor)}
                           </div>
                         )}
@@ -268,7 +268,7 @@ export function DefaultersManager({ initialDefaulters, totalInvoicesCount = 0, a
                         {formatPKR(item.paidMinor)}
                       </td>
 
-                      <td className="py-3 px-3 text-right font-mono font-bold text-rose-700 text-sm">
+                      <td className="py-3 px-3 text-right font-mono font-semibold text-rose-700 text-sm">
                         {formatPKR(item.remainingMinor)}
                       </td>
 

@@ -1,90 +1,72 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Check, ArrowRight, Sparkles } from "lucide-react";
-import { DashboardPreview } from "./DashboardPreview";
 
+const facts = [
+  "Fee challans in PKR",
+  "JazzCash & Easypaisa",
+  "Parent updates in Urdu & English",
+  "Punjab board paper schemes",
+];
+
+/**
+ * Full-bleed photo hero (DESIGN.md §6). Desktop: the serif headline sits on the
+ * calm left side of the photo behind an ink scrim. Phones: photo band on top,
+ * text below on the greenboard so it never covers the student's face.
+ */
 export function HeroSection() {
-  const checkmarks = ["Easy to Use", "Secure & Reliable", "24/7 Support"];
-
   return (
-    <section className="relative overflow-visible pt-6 pb-20 sm:pt-8 sm:pb-24 lg:pt-10 lg:pb-28 bg-white">
-      {/* Background Decorative Accents */}
-      <div className="absolute top-0 right-0 -z-10 w-96 h-96 bg-[#FFF9E6] rounded-full blur-3xl opacity-70" />
-      <div className="absolute bottom-10 left-10 -z-10 w-80 h-80 bg-amber-50/50 rounded-full blur-2xl opacity-60" />
+    <section className="relative isolate bg-sidebar text-white md:flex md:min-h-[min(860px,100svh)] md:flex-col md:justify-end md:overflow-hidden">
+      <div className="relative h-[min(72vw,420px)] md:absolute md:inset-0 md:-z-10 md:h-auto">
+        <Image
+          src="/images/student-writing.jpg"
+          alt="A student in a white shirt and maroon tie smiling at his desk, classmates behind him"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[64%_30%] md:object-[60%_35%]"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(15,23,20,.55)_0%,rgba(15,23,20,0)_32%,rgba(15,23,20,0)_62%,rgb(15,42,37)_100%)] md:bg-[linear-gradient(to_top_right,rgba(15,23,20,.85)_0%,rgba(15,23,20,.5)_42%,rgba(15,23,20,0)_72%),linear-gradient(to_bottom,rgba(15,23,20,.45)_0%,rgba(15,23,20,0)_20%)]"
+        />
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          {/* Left Column: Eyebrow, H1, Copy, Checkmarks, Buttons */}
-          <div className="lg:col-span-6 space-y-5 sm:space-y-6">
-            {/* Eyebrow */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#F5B800]/40 bg-[#FFF9E6] px-4 py-1.5 text-xs font-bold text-[#0F2040] uppercase tracking-wider">
-              <span className="w-2 h-2 rounded-full bg-[#F5B800]" />
-              <span>SMARTER SCHOOLS • BETTER TOMORROW</span>
-            </div>
-
-            {/* H1 with one word highlighted in yellow */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F2040] tracking-tight leading-[1.15]">
-              Complete School Management{" "}
-              <span className="text-[#F5B800]">System</span>
-            </h1>
-
-            {/* Subhead / Copy */}
-            <p className="text-base sm:text-lg text-[#4B5563] leading-relaxed max-w-xl">
-              Streamline your school operations with an all-in-one platform. Manage students, teachers, classes, attendance, fees, exams and more — all in one place.
-            </p>
-
-            {/* 3 Checkmarks */}
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-1">
-              {checkmarks.map((item) => (
-                <div key={item} className="flex items-center gap-2 text-sm font-semibold text-[#0F2040]">
-                  <div className="w-5 h-5 rounded-full bg-[#FFF9E6] border border-[#F5B800]/50 flex items-center justify-center text-[#F5B800] shrink-0">
-                    <Check className="w-3.5 h-3.5 stroke-[3]" />
-                  </div>
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* CTAs: Get Started Free + Learn More (Visible without scrolling) */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
-              <Link
-                href="/signup"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#F5B800] px-7 py-3.5 text-base font-bold text-[#0F2040] hover:bg-[#DF9E00] shadow-md transition-all active:scale-[0.99] min-h-[48px] whitespace-nowrap"
-              >
-                <span className="whitespace-nowrap">Get Started Free</span>
-                <ArrowRight className="w-4 h-4 shrink-0" />
-              </Link>
-
-              <a
-                href="#features"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-7 py-3.5 text-base font-semibold text-[#0F2040] hover:bg-gray-50 hover:border-[#0F2040] shadow-sm transition-all min-h-[48px] whitespace-nowrap"
-              >
-                <span className="whitespace-nowrap">Learn More</span>
-              </a>
-            </div>
-          </div>
-
-          {/* Right Column: Pure vertical stack: hero image on top, portal card below (NO overlap) */}
-          <div className="lg:col-span-6 flex flex-col space-y-6 sm:space-y-7">
-            {/* Fully Visible Student Photo Card (NO dark overlays) */}
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl border border-gray-200/80 bg-[#FFF9E6]/30 aspect-[4/3] sm:aspect-[16/11] lg:aspect-[4/3] w-full">
-              <Image
-                src="/images/hero-student.jpg"
-                alt="Smiling schoolgirl in uniform holding books in bright classroom"
-                fill
-                priority
-                quality={95}
-                sizes="(max-width: 1024px) 100vw, 600px"
-                className="object-cover object-[center_12%] select-none"
-              />
-            </div>
-
-            {/* Real JSX Dashboard Mockup: Clean vertical stack below image */}
-            <div className="w-full">
-              <DashboardPreview />
-            </div>
+      <div className="mx-auto w-full max-w-[1200px] px-4 pb-12 pt-2 sm:px-6 md:pb-20 md:pt-28">
+        <div className="max-w-[640px] animate-rise-in">
+          <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-white/75">
+            School management for Pakistan
+          </p>
+          <h1 className="mt-4 text-balance font-serif text-[38px] leading-[1.08] tracking-[-0.015em] sm:text-[52px] md:text-display-xl">
+            Every register, fee and result, kept in order.
+          </h1>
+          <p className="mt-5 max-w-[54ch] text-pretty text-[17px] leading-relaxed text-white/85 md:text-body-l">
+            EduFlow brings attendance, fee collection, exams and parent updates into one calm system — so your
+            office spends the afternoon on students, not paperwork.
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Link
+              href="/signup"
+              className="press inline-flex h-12 items-center justify-center rounded-md bg-white px-6 text-[16px] font-medium text-primary hover:bg-canvas focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
+            >
+              Start free 14-day trial
+            </Link>
+            <Link
+              href="/pricing"
+              className="inline-flex h-12 items-center justify-center rounded-md px-4 text-[16px] font-medium text-white underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              See pricing in PKR
+            </Link>
           </div>
         </div>
+
+        <ul className="mt-12 flex flex-wrap gap-x-6 gap-y-2 border-t border-white/15 pt-5 text-[14px] text-white/75">
+          {facts.map((f) => (
+            <li key={f} className="flex items-center gap-2">
+              <span aria-hidden className="h-1 w-1 rounded-full bg-white/60" />
+              {f}
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     siteName: "EduFlow",
     images: [
       {
-        url: "/images/hero-student.jpg",
+        url: "/images/hero-classroom.jpg",
         width: 1200,
         height: 675,
         alt: "EduFlow School Management System",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     title: "EduFlow — Complete School Management System",
     description:
       "Streamline your school operations with an all-in-one platform. Manage students, teachers, classes, attendance, fees, exams and more.",
-    images: ["/images/hero-student.jpg"],
+    images: ["/images/hero-classroom.jpg"],
   },
 };
 
@@ -40,7 +40,7 @@ export default function MarketingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-white text-[#0F2040] selection:bg-[#F5B800] selection:text-[#0F2040] font-sans">
+    <div className="flex min-h-screen flex-col bg-canvas text-ink">
       {/* Main content slot */}
       <div className="flex-1 flex flex-col">
         {children}

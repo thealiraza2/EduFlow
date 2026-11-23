@@ -116,7 +116,7 @@ export function StudentList({ students }: { students: StudentListItem[] }) {
         </div>
       </div>
 
-      <div className="rounded-md border bg-white overflow-hidden shadow-sm">
+      <div className="rounded-md border bg-white overflow-hidden shadow-1">
         <Table>
           <TableHeader>
             <TableRow className="bg-slate-50">
@@ -157,7 +157,7 @@ export function StudentList({ students }: { students: StudentListItem[] }) {
                       ) : (
                         <div className="flex flex-wrap gap-1">
                           {activeBatches.map((e) => (
-                            <Badge key={e.id} variant="secondary" className="text-[11px] px-1.5 py-0">
+                            <Badge key={e.id} variant="secondary" className="text-xs px-1.5 py-0">
                               {e.batch.class.name}-{e.batch.class.section} {e.batch.name}
                             </Badge>
                           ))}
@@ -241,13 +241,13 @@ export function StudentList({ students }: { students: StudentListItem[] }) {
             <DialogDescription className="text-xs text-slate-600">
               Are you sure you want to permanently delete student{" "}
               <strong className="text-slate-900">{deletingStudent?.name}</strong> (
-              <span className="font-mono font-bold text-slate-800">{deletingStudent?.admissionNo}</span>)?
+              <span className="font-mono font-semibold text-slate-800">{deletingStudent?.admissionNo}</span>)?
             </DialogDescription>
           </DialogHeader>
 
           <div className="bg-rose-50 border border-rose-200 rounded-lg p-3 text-xs text-rose-800 space-y-1">
-            <p className="font-bold">This action cannot be undone:</p>
-            <ul className="list-disc list-inside space-y-0.5 text-[11px] text-rose-700">
+            <p className="font-semibold">This action cannot be undone:</p>
+            <ul className="list-disc list-inside space-y-0.5 text-xs text-rose-700">
               <li>Batch enrollments and attendance logs will be wiped.</li>
               <li>Fee invoices, challans, and payment receipts will be deleted.</li>
               <li>Test attempts, answer logs, and assessment scores will be removed.</li>

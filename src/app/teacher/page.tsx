@@ -101,10 +101,10 @@ export default async function TeacherDashboardPage() {
   return (
     <div className="space-y-7 max-w-7xl mx-auto w-full">
       {/* Top Welcome Banner */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5 bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 border-t-4 border-t-[#F5B800] shadow-sm card-lift relative overflow-hidden">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5 bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 border-t-4 border-t-primary shadow-1 card-lift relative overflow-hidden">
         <div>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F2040]">
+            <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-ink">
               {greeting}, {teacher?.user?.name || user.name}
             </h1>
             <Badge className="border-amber-300 text-amber-900 bg-amber-50 text-xs font-semibold px-2.5 py-0.5">
@@ -113,33 +113,33 @@ export default async function TeacherDashboardPage() {
           </div>
           <p className="text-sm text-slate-600 mt-1.5">
             You have{" "}
-            <span className="font-extrabold text-[#0F2040]">{totalBatches}</span>{" "}
+            <span className="font-semibold text-ink">{totalBatches}</span>{" "}
             assigned {totalBatches === 1 ? "batch" : "batches"} this academic term
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
           <Link href="/teacher/tests/generate">
-            <Button size="sm" className="bg-[#F5B800] hover:bg-[#DF9E00] text-[#0F2040] font-bold flex items-center text-xs shadow-sm whitespace-nowrap focus-visible:ring-2 focus-visible:ring-[#F5B800]">
+            <Button size="sm" className="bg-primary hover:bg-primary-hover text-white font-semibold flex items-center text-xs shadow-1 whitespace-nowrap focus-visible:ring-2 focus-visible:ring-primary">
               <Sparkles className="h-4 w-4 mr-1.5" />
               AI Test Generator
             </Button>
           </Link>
           <Link href="/teacher/marking">
-            <Button size="sm" variant="outline" className="flex items-center text-xs font-semibold text-[#0F2040] border-slate-200 hover:bg-[#FFF9E6] whitespace-nowrap shadow-sm focus-visible:ring-2 focus-visible:ring-[#F5B800]">
-              <FileCheck2 className="h-4 w-4 mr-1.5 text-[#F5B800]" />
+            <Button size="sm" variant="outline" className="flex items-center text-xs font-semibold text-ink border-slate-200 hover:bg-primary-tint whitespace-nowrap shadow-1 focus-visible:ring-2 focus-visible:ring-primary">
+              <FileCheck2 className="h-4 w-4 mr-1.5 text-accent" />
               Marking Queue
             </Button>
           </Link>
           <Link href="/teacher/tests">
-            <Button size="sm" variant="outline" className="flex items-center text-xs font-semibold text-slate-700 border-slate-200 hover:bg-slate-50 whitespace-nowrap shadow-sm focus-visible:ring-2 focus-visible:ring-[#F5B800]">
-              <FileSpreadsheet className="h-4 w-4 mr-1.5 text-[#0F2040]" />
+            <Button size="sm" variant="outline" className="flex items-center text-xs font-semibold text-slate-700 border-slate-200 hover:bg-slate-50 whitespace-nowrap shadow-1 focus-visible:ring-2 focus-visible:ring-primary">
+              <FileSpreadsheet className="h-4 w-4 mr-1.5 text-ink" />
               Tests &amp; Marks
             </Button>
           </Link>
           <Link href="/teacher/attendance">
-            <Button size="sm" className="bg-[#0F2040] hover:bg-[#1B3466] text-white flex items-center whitespace-nowrap text-xs font-semibold shadow-sm focus-visible:ring-2 focus-visible:ring-[#F5B800]">
-              <CheckCircle2 className="h-4 w-4 mr-1.5 text-[#F5B800]" />
+            <Button size="sm" className="bg-primary hover:bg-sidebar-active text-white flex items-center whitespace-nowrap text-xs font-semibold shadow-1 focus-visible:ring-2 focus-visible:ring-primary">
+              <CheckCircle2 className="h-4 w-4 mr-1.5 text-accent" />
               Mark Attendance
             </Button>
           </Link>
@@ -149,41 +149,41 @@ export default async function TeacherDashboardPage() {
       {/* Stat Cards Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {/* Assigned Batches */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 flex items-start gap-4 card-lift">
-          <div className="bg-[#FFF9E6] border border-[#F5B800]/30 w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-xs">
-            <BookOpen className="h-6 w-6 text-[#F5B800]" />
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 p-6 flex items-start gap-4 card-lift">
+          <div className="bg-primary-tint border border-primary/30 w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-xs">
+            <BookOpen className="h-6 w-6 text-accent" />
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Assigned Batches</p>
-            <p className="text-3xl font-extrabold text-[#0F2040] mt-1">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Assigned Batches</p>
+            <p className="text-3xl font-semibold text-ink mt-1">
               <CountUp value={totalBatches} />
             </p>
-            <p className="text-[11px] text-slate-400 mt-0.5">Active teaching cohorts</p>
+            <p className="text-xs text-slate-400 mt-0.5">Active teaching cohorts</p>
           </div>
         </div>
 
         {/* At-Risk Students */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 flex items-start gap-4 card-lift">
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 p-6 flex items-start gap-4 card-lift">
           <div className="bg-amber-50 border border-amber-200/50 w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-xs">
             <Users className="h-6 w-6 text-amber-600" />
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-500">At-Risk Students</p>
-            <p className="text-3xl font-extrabold text-[#0F2040] mt-1">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">At-Risk Students</p>
+            <p className="text-3xl font-semibold text-ink mt-1">
               <CountUp value={atRiskStudents.length} />
             </p>
-            <p className="text-[11px] text-slate-400 mt-0.5">Low attendance or test alerts</p>
+            <p className="text-xs text-slate-400 mt-0.5">Low attendance or test alerts</p>
           </div>
         </div>
 
         {/* Today's Schedule */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 flex items-start gap-4 card-lift">
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 p-6 flex items-start gap-4 card-lift">
           <div className="bg-blue-50 border border-blue-200/50 w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-xs">
             <Calendar className="h-6 w-6 text-blue-600" />
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Today&apos;s Lectures</p>
-            <p className="text-3xl font-extrabold text-[#0F2040] mt-1">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Today&apos;s Lectures</p>
+            <p className="text-3xl font-semibold text-ink mt-1">
               <CountUp value={todaySlots.length} />
             </p>
             <p className="text-xs text-slate-500 mt-0.5 font-medium">
@@ -194,16 +194,16 @@ export default async function TeacherDashboardPage() {
       </div>
 
       {/* Weekly Timetable */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden card-lift">
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 overflow-hidden card-lift">
         <div className="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-slate-50/50">
           <div>
-            <h2 className="text-base font-bold text-[#0F2040] flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-[#F5B800]" />
+            <h2 className="text-base font-semibold text-ink flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-accent" />
               My Timetable This Week
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">Weekly scheduled lectures and classroom assignments</p>
           </div>
-          <span className="text-xs font-bold text-[#0F2040] bg-[#FFF9E6] px-3.5 py-1.5 rounded-full border border-[#F5B800]/40 shadow-xs">
+          <span className="text-xs font-semibold text-ink bg-primary-tint px-3.5 py-1.5 rounded-full border border-primary/40 shadow-xs">
             <CountUp value={slots.length} /> Total Lectures
           </span>
         </div>
@@ -227,45 +227,45 @@ export default async function TeacherDashboardPage() {
                     <div
                       key={day.id}
                       className={`border rounded-lg bg-white overflow-hidden flex flex-col min-h-[220px] ${
-                        isToday ? "border-[#F5B800] shadow-md" : "border-gray-200"
+                        isToday ? "border-primary shadow-2" : "border-gray-200"
                       }`}
                     >
                       <div
                         className={`font-semibold text-center text-xs py-2 border-b ${
                           isToday
-                            ? "bg-[#FFF9E6] text-[#0F2040]"
+                            ? "bg-primary-tint text-ink"
                             : "bg-gray-50 text-gray-700"
                         }`}
                       >
                         {day.name}
                         {isToday && (
-                          <span className="ml-1 text-[#F5B800] font-bold">●</span>
+                          <span className="ml-1 text-accent font-semibold">●</span>
                         )}
                       </div>
 
                       <div className="p-2.5 flex-1 space-y-2">
                         {daySlots.length === 0 ? (
-                          <div className="text-[11px] text-gray-400 text-center py-6 italic">
+                          <div className="text-xs text-gray-400 text-center py-6 italic">
                             Off
                           </div>
                         ) : (
                           daySlots.map((slot) => (
                             <div
                               key={slot.id}
-                              className="p-2.5 rounded border border-gray-200 bg-white shadow-sm space-y-1.5"
+                              className="p-2.5 rounded border border-gray-200 bg-white shadow-1 space-y-1.5"
                             >
                               <div className="flex justify-between items-start">
-                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#FFF9E6] text-[#0F2040] font-semibold border border-[#F5B800]/30">
+                                <span className="text-xs px-1.5 py-0.5 rounded bg-primary-tint text-ink font-semibold border border-primary/30">
                                   {slot.subject}
                                 </span>
                               </div>
 
-                              <div className="text-xs font-mono font-semibold text-[#0F2040] flex items-center">
+                              <div className="text-xs font-mono font-semibold text-ink flex items-center">
                                 <Clock className="h-3 w-3 mr-1 text-gray-400" />
                                 {slot.startTime} – {slot.endTime}
                               </div>
 
-                              <div className="text-[11px] text-gray-600 flex items-center">
+                              <div className="text-xs text-gray-600 flex items-center">
                                 <School className="h-3 w-3 mr-1 text-gray-400" />
                                 <span>
                                   {slot.batch.class.name}-{slot.batch.class.section}
@@ -273,7 +273,7 @@ export default async function TeacherDashboardPage() {
                               </div>
 
                               {slot.room && (
-                                <div className="text-[10px] text-gray-500 flex items-center">
+                                <div className="text-xs text-gray-500 flex items-center">
                                   <MapPin className="h-3 w-3 mr-1 text-gray-400" />
                                   <span>{slot.room}</span>
                                 </div>

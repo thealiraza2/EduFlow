@@ -121,7 +121,7 @@ export function TeacherList({ teachers }: TeacherListProps) {
         </div>
       </div>
 
-      <div className="rounded-md border bg-white overflow-hidden shadow-sm">
+      <div className="rounded-md border bg-white overflow-hidden shadow-1">
         <Table>
           <TableHeader>
             <TableRow className="bg-slate-50">
@@ -243,8 +243,8 @@ export function TeacherList({ teachers }: TeacherListProps) {
           </DialogHeader>
 
           <div className="bg-rose-50 border border-rose-200 rounded-lg p-3 text-xs text-rose-800 space-y-1">
-            <p className="font-bold">This action cannot be undone:</p>
-            <ul className="list-disc list-inside space-y-0.5 text-[11px] text-rose-700">
+            <p className="font-semibold">This action cannot be undone:</p>
+            <ul className="list-disc list-inside space-y-0.5 text-xs text-rose-700">
               <li>Batches assigned to this teacher will be unlinked.</li>
               <li>Timetable slots and schedule assignments will be cleared.</li>
               <li>Teacher login account will be permanently removed.</li>

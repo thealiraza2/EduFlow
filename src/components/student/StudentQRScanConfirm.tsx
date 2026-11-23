@@ -69,12 +69,12 @@ export function StudentQRScanConfirm({
     const isExpired = verification.error === "EXPIRED";
 
     return (
-      <Card className="max-w-md mx-auto shadow-md border-rose-200">
+      <Card className="max-w-md mx-auto shadow-2 border-rose-200">
         <CardHeader className="bg-rose-50 border-b text-center pb-4">
           <div className="mx-auto w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 mb-2">
             {isExpired ? <Clock className="h-6 w-6" /> : <AlertTriangle className="h-6 w-6" />}
           </div>
-          <CardTitle className="text-xl font-bold text-rose-900">
+          <CardTitle className="text-xl font-semibold text-rose-900">
             {isExpired ? "QR Code Expired" : "Invalid QR Code"}
           </CardTitle>
           <CardDescription className="text-xs text-rose-700">
@@ -106,7 +106,7 @@ export function StudentQRScanConfirm({
 
     return (
       <Card
-        className={`max-w-md mx-auto shadow-md ${
+        className={`max-w-md mx-auto shadow-2 ${
           isSuccess
             ? "border-emerald-200"
             : isAlready
@@ -140,7 +140,7 @@ export function StudentQRScanConfirm({
           </div>
 
           <CardTitle
-            className={`text-xl font-bold ${
+            className={`text-xl font-semibold ${
               isSuccess
                 ? "text-emerald-900"
                 : isAlready
@@ -186,7 +186,7 @@ export function StudentQRScanConfirm({
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-400">Status:</span>
-                <Badge className="bg-emerald-600 text-white text-[10px]">
+                <Badge className="bg-emerald-600 text-white text-xs">
                   PRESENT
                 </Badge>
               </div>
@@ -205,12 +205,12 @@ export function StudentQRScanConfirm({
 
   // Valid token ready for student confirmation
   return (
-    <Card className="max-w-md mx-auto shadow-md border-indigo-200">
+    <Card className="max-w-md mx-auto shadow-2 border-indigo-200">
       <CardHeader className="bg-gradient-to-r from-indigo-50/70 to-blue-50/70 border-b text-center pb-4">
         <div className="mx-auto w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 mb-2">
           <ShieldCheck className="h-6 w-6" />
         </div>
-        <CardTitle className="text-xl font-bold text-slate-900">
+        <CardTitle className="text-xl font-semibold text-slate-900">
           Confirm Batch Attendance
         </CardTitle>
         <CardDescription className="text-xs text-slate-500">
@@ -223,7 +223,7 @@ export function StudentQRScanConfirm({
           {studentName && (
             <div className="flex justify-between pb-2 border-b border-slate-200">
               <span className="text-slate-500">Student:</span>
-              <span className="font-bold text-slate-900">{studentName}</span>
+              <span className="font-semibold text-slate-900">{studentName}</span>
             </div>
           )}
 
@@ -254,7 +254,7 @@ export function StudentQRScanConfirm({
           </div>
         </div>
 
-        <div className="text-[11px] text-slate-500 text-center">
+        <div className="text-xs text-slate-500 text-center">
           Click below to record your attendance as <strong>PRESENT</strong> for today.
           Duplicate scans for the same day are automatically ignored.
         </div>
@@ -262,7 +262,7 @@ export function StudentQRScanConfirm({
         <Button
           onClick={handleConfirm}
           disabled={isPending}
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-11 shadow-sm"
+          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-11 shadow-1"
         >
           {isPending ? (
             <>

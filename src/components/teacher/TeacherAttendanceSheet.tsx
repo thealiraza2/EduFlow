@@ -173,7 +173,7 @@ export function TeacherAttendanceSheet({ batches, userRole }: Props) {
   return (
     <div className="space-y-6">
       {/* Control bar: Batch and Date pickers */}
-      <Card className="shadow-sm">
+      <Card className="shadow-1">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-end">
             <div>
@@ -320,7 +320,7 @@ export function TeacherAttendanceSheet({ batches, userRole }: Props) {
       </div>
 
       {/* Roster Table */}
-      <Card className="shadow-sm overflow-hidden">
+      <Card className="shadow-1 overflow-hidden">
         <CardHeader className="py-4 border-b bg-slate-50">
           <div className="flex justify-between items-center">
             <div>
@@ -385,7 +385,7 @@ export function TeacherAttendanceSheet({ batches, userRole }: Props) {
                     {/* Status Buttons */}
                     <div className="flex items-center space-x-1 sm:space-x-2 shrink-0">
                       {!student.status && (
-                        <Badge variant="outline" className="text-[10px] bg-slate-100 text-slate-500 border-slate-300 mr-1 shrink-0">
+                        <Badge variant="outline" className="text-xs bg-slate-100 text-slate-500 border-slate-300 mr-1 shrink-0">
                           Unmarked
                         </Badge>
                       )}
@@ -395,7 +395,7 @@ export function TeacherAttendanceSheet({ batches, userRole }: Props) {
                         onClick={() => handleStatusChange(student.enrollmentId, "PRESENT")}
                         className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                           student.status === "PRESENT"
-                            ? "bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-600 ring-offset-1"
+                            ? "bg-emerald-600 text-white shadow-1 ring-2 ring-emerald-600 ring-offset-1"
                             : "bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700"
                         }`}
                       >
@@ -408,7 +408,7 @@ export function TeacherAttendanceSheet({ batches, userRole }: Props) {
                         onClick={() => handleStatusChange(student.enrollmentId, "ABSENT")}
                         className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                           student.status === "ABSENT"
-                            ? "bg-rose-600 text-white shadow-sm ring-2 ring-rose-600 ring-offset-1"
+                            ? "bg-rose-600 text-white shadow-1 ring-2 ring-rose-600 ring-offset-1"
                             : "bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-700"
                         }`}
                       >
@@ -421,7 +421,7 @@ export function TeacherAttendanceSheet({ batches, userRole }: Props) {
                         onClick={() => handleStatusChange(student.enrollmentId, "LEAVE")}
                         className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                           student.status === "LEAVE"
-                            ? "bg-amber-500 text-white shadow-sm ring-2 ring-amber-500 ring-offset-1"
+                            ? "bg-amber-500 text-white shadow-1 ring-2 ring-amber-500 ring-offset-1"
                             : "bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-700"
                         }`}
                       >
@@ -434,7 +434,7 @@ export function TeacherAttendanceSheet({ batches, userRole }: Props) {
                         onClick={() => handleStatusChange(student.enrollmentId, "LATE")}
                         className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                           student.status === "LATE"
-                            ? "bg-sky-600 text-white shadow-sm ring-2 ring-sky-600 ring-offset-1"
+                            ? "bg-sky-600 text-white shadow-1 ring-2 ring-sky-600 ring-offset-1"
                             : "bg-slate-100 text-slate-700 hover:bg-sky-50 hover:text-sky-700"
                         }`}
                       >

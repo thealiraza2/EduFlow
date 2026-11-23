@@ -73,7 +73,7 @@ export default async function AdminSettingsPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center">
+            <h1 className="font-serif text-2xl font-semibold text-slate-900 flex items-center">
               <Settings className="h-6 w-6 mr-2 text-slate-700" />
               Academy Settings
             </h1>
@@ -86,49 +86,49 @@ export default async function AdminSettingsPage() {
 
       {/* Live System Capacity Summary (100% Real DB Queries) */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="shadow-sm">
+        <Card className="shadow-1">
           <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
             <span className="text-xs font-medium">Students Enrolled</span>
             <Users className="h-4 w-4 text-emerald-600" />
           </CardHeader>
           <CardContent className="py-0 px-4 pb-3">
-            <div className="text-2xl font-bold text-slate-900 font-mono">
+            <div className="text-2xl font-semibold text-slate-900 font-mono">
               {academy._count.students}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="shadow-1">
           <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
             <span className="text-xs font-medium">Faculty Members</span>
             <GraduationCap className="h-4 w-4 text-indigo-600" />
           </CardHeader>
           <CardContent className="py-0 px-4 pb-3">
-            <div className="text-2xl font-bold text-slate-900 font-mono">
+            <div className="text-2xl font-semibold text-slate-900 font-mono">
               {academy._count.teachers}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="shadow-1">
           <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
             <span className="text-xs font-medium">Academic Classes</span>
             <School className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent className="py-0 px-4 pb-3">
-            <div className="text-2xl font-bold text-slate-900 font-mono">
+            <div className="text-2xl font-semibold text-slate-900 font-mono">
               {academy._count.classes}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="shadow-1">
           <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
             <span className="text-xs font-medium">Active Batches</span>
             <BookOpen className="h-4 w-4 text-amber-600" />
           </CardHeader>
           <CardContent className="py-0 px-4 pb-3">
-            <div className="text-2xl font-bold text-slate-900 font-mono">
+            <div className="text-2xl font-semibold text-slate-900 font-mono">
               {academy._count.batches}
             </div>
           </CardContent>

@@ -47,7 +47,7 @@ export function PayInvoiceButton({ invoiceId, remainingMinor }: PayInvoiceButton
           type="button"
           onClick={() => handlePay("JAZZCASH")}
           disabled={loadingGateway !== null}
-          className="inline-flex items-center px-2.5 py-1.5 rounded-l-md text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white shadow-sm transition-colors disabled:opacity-50"
+          className="inline-flex items-center px-2.5 py-1.5 rounded-l-md text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white shadow-1 transition-colors disabled:opacity-50"
         >
           {loadingGateway === "JAZZCASH" ? (
             <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
@@ -61,7 +61,7 @@ export function PayInvoiceButton({ invoiceId, remainingMinor }: PayInvoiceButton
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           disabled={loadingGateway !== null}
-          className="inline-flex items-center px-1.5 py-1.5 rounded-r-md text-xs font-semibold bg-rose-700 hover:bg-rose-800 text-white shadow-sm border-l border-rose-800/40"
+          className="inline-flex items-center px-1.5 py-1.5 rounded-r-md text-xs font-semibold bg-rose-700 hover:bg-rose-800 text-white shadow-1 border-l border-rose-800/40"
           title="Choose wallet: JazzCash or Easypaisa"
         >
           <ChevronDown className="h-3.5 w-3.5" />
@@ -74,8 +74,8 @@ export function PayInvoiceButton({ invoiceId, remainingMinor }: PayInvoiceButton
             className="fixed inset-0 z-20"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-1 w-52 rounded-lg bg-white shadow-xl border border-slate-200 py-1.5 z-30 text-xs animate-in fade-in zoom-in-95">
-            <div className="px-3 py-1 text-[11px] font-semibold text-slate-400 border-b border-slate-100 uppercase tracking-wider">
+          <div className="absolute right-0 mt-1 w-52 rounded-lg bg-white shadow-3 border border-slate-200 py-1.5 z-30 text-xs animate-in fade-in zoom-in-95">
+            <div className="px-3 py-1 text-xs font-semibold text-slate-400 border-b border-slate-100 uppercase tracking-wider">
               Select Mobile Wallet
             </div>
 
@@ -93,7 +93,7 @@ export function PayInvoiceButton({ invoiceId, remainingMinor }: PayInvoiceButton
                   JazzCash Wallet
                 </span>
               </div>
-              <span className="text-[10px] text-slate-400">Sandbox</span>
+              <span className="text-xs text-slate-400">Sandbox</span>
             </button>
 
             <button
@@ -110,10 +110,10 @@ export function PayInvoiceButton({ invoiceId, remainingMinor }: PayInvoiceButton
                   Easypaisa Wallet
                 </span>
               </div>
-              <span className="text-[10px] text-slate-400">Sandbox</span>
+              <span className="text-xs text-slate-400">Sandbox</span>
             </button>
 
-            <div className="px-3 pt-1 text-[10px] text-slate-400 border-t border-slate-100 mt-1 italic">
+            <div className="px-3 pt-1 text-xs text-slate-400 border-t border-slate-100 mt-1 italic">
               Amount: {formatPKR(remainingMinor)}
             </div>
           </div>
@@ -121,7 +121,7 @@ export function PayInvoiceButton({ invoiceId, remainingMinor }: PayInvoiceButton
       )}
 
       {error && (
-        <span className="block text-[10px] text-rose-600 mt-1 font-medium">
+        <span className="block text-xs text-rose-600 mt-1 font-medium">
           {error}
         </span>
       )}

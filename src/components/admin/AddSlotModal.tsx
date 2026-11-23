@@ -96,7 +96,7 @@ export function AddSlotModal({
             <select
               name="dayOfWeek"
               defaultValue={defaultDay ?? 1}
-              className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-1 focus:outline-none focus:ring-1 focus:ring-ring"
               required
             >
               {DAYS_OF_WEEK.map((d) => (
@@ -136,7 +136,7 @@ export function AddSlotModal({
             <select
               name="teacherId"
               required
-              className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-1 focus:outline-none focus:ring-1 focus:ring-ring"
             >
               <option value="">-- Choose Instructor --</option>
               {teachers.map((t) => (

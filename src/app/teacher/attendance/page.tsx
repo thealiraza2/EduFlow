@@ -47,7 +47,7 @@ export default async function TeacherAttendancePage() {
               </Link>
             </Button>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 flex items-center">
+              <h1 className="font-serif text-xl sm:text-2xl font-semibold text-slate-900 flex items-center">
                 <CheckCircle2 className="h-6 w-6 mr-2 text-emerald-600 shrink-0" />
                 Batch Attendance
               </h1>
