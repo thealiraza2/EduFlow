@@ -5,6 +5,10 @@
  */
 import { forwardRef, type SVGProps } from "react";
 import {
+  IconUpload,
+  IconPrinter,
+  IconArrowsShuffle,
+  IconBooks,
   IconAlertCircle,
   IconAlertTriangle,
   IconArrowLeft,
@@ -168,6 +172,10 @@ export const DollarSign = wrap(IconCurrencyDollar, "DollarSign");
 export const Donut = wrap(IconChartDonut3, "Donut");
 export const Dots = wrap(IconDots, "Dots");
 export const Download = wrap(IconDownload, "Download");
+export const Upload = wrap(IconUpload, "Upload");
+export const Printer = wrap(IconPrinter, "Printer");
+export const Shuffle = wrap(IconArrowsShuffle, "Shuffle");
+export const Library = wrap(IconBooks, "Library");
 export const Edit3 = wrap(IconEdit, "Edit3");
 export const ExternalLink = wrap(IconExternalLink, "ExternalLink");
 export const Eye = wrap(IconEye, "Eye");

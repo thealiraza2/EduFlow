@@ -26,7 +26,7 @@ const navItems: SidebarNavItem[] = [
   { href: "/admin/attendance", label: "Attendance", icon: ClipboardCheck },
   { href: "/admin/fees", label: "Fees", icon: Banknote },
   { href: "/admin/results", label: "Exams & results", icon: Award },
-  { href: "/admin/boards", label: "Board schemes", icon: BookOpenCheck },
+  { href: "/teacher/papers", label: "Paper generator", icon: BookOpenCheck },
   { href: "/admin/salaries", label: "Payroll", icon: Wallet },
   { href: "/admin/reports", label: "Reports", icon: FileSpreadsheet },
   { href: "/admin/settings", label: "Settings", icon: Settings },

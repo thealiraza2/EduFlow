@@ -143,27 +143,28 @@ model Academy {
   timetableSlots  TimetableSlot[]
   teacherSalaries TeacherSalary[]
   announcements   Announcement[]
+  savedPapers     SavedPaper[]
 
   @@index([slug])
   @@index([status])
 }
 
 model User {
-  id           String    @id @default(cuid())
-  academyId    String?
-  academy      Academy?  @relation(fields: [academyId], references: [id], onDelete: Cascade)
-  email        String    @unique
-  passwordHash String
-  role         Role
+  id                 String   @id @default(cuid())
+  academyId          String?
+  academy            Academy? @relation(fields: [academyId], references: [id], onDelete: Cascade)
+  email              String   @unique
+  passwordHash       String
+  role               Role
   name               String
   phone              String?
-  mustChangePassword Boolean   @default(false)
-  createdAt          DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  mustChangePassword Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
-  teacher      Teacher?
-  children     Student[] @relation("ParentGuardianUser")
-  student      Student?  @relation("StudentUser")
+  teacher  Teacher?
+  children Student[] @relation("ParentGuardianUser")
+  student  Student?  @relation("StudentUser")
 
   @@index([academyId])
 }
@@ -174,8 +175,8 @@ model Teacher {
   academy     Academy       @relation(fields: [academyId], references: [id], onDelete: Cascade)
   userId      String        @unique
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subjects    String[]      // e.g. ["Maths", "Physics"]
-  salaryMinor Int           // Salary in minor units (paisa)
+  subjects    String[] // e.g. ["Maths", "Physics"]
+  salaryMinor Int // Salary in minor units (paisa)
   joiningDate DateTime      @default(now())
   status      TeacherStatus @default(ACTIVE)
   createdAt   DateTime      @default(now())
@@ -206,11 +207,11 @@ model Student {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  enrollments    Enrollment[]
-  invoices       FeeInvoice[]
-  testResults    TestResult[]
-  attempts       TestAttempt[]
-  notifications  NotificationLog[]
+  enrollments   Enrollment[]
+  invoices      FeeInvoice[]
+  testResults   TestResult[]
+  attempts      TestAttempt[]
+  notifications NotificationLog[]
 
   @@unique([academyId, admissionNo])
   @@index([academyId])
@@ -222,13 +223,13 @@ model Class {
   id        String   @id @default(cuid())
   academyId String
   academy   Academy  @relation(fields: [academyId], references: [id], onDelete: Cascade)
-  name      String   // e.g. "9th", "10th"
-  section   String   // e.g. "A", "B"
+  name      String // e.g. "9th", "10th"
+  section   String // e.g. "A", "B"
   capacity  Int      @default(40)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  batches   Batch[]
+  batches Batch[]
 
   @@unique([academyId, name, section])
   @@index([academyId])
@@ -240,11 +241,11 @@ model Batch {
   academy   Academy  @relation(fields: [academyId], references: [id], onDelete: Cascade)
   classId   String
   class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
-  name      String   // e.g. "Evening Batch"
-  timing    String   // e.g. "4-6 PM"
+  name      String // e.g. "Evening Batch"
+  timing    String // e.g. "4-6 PM"
   teacherId String?
   teacher   Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
-  feeMinor  Int      // Base fee in paisa
+  feeMinor  Int // Base fee in paisa
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -265,13 +266,13 @@ model TimetableSlot {
   academy   Academy  @relation(fields: [academyId], references: [id], onDelete: Cascade)
   batchId   String
   batch     Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  dayOfWeek Int      // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  startTime String   // e.g. "16:00"
-  endTime   String   // e.g. "17:00"
-  subject   String   // e.g. "Maths"
+  dayOfWeek Int // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  startTime String // e.g. "16:00"
+  endTime   String // e.g. "17:00"
+  subject   String // e.g. "Maths"
   teacherId String
   teacher   Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-  room      String?  // e.g. "Room 101"
+  room      String? // e.g. "Room 101"
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -327,7 +328,7 @@ model FeePlan {
   academy           Academy  @relation(fields: [academyId], references: [id], onDelete: Cascade)
   batchId           String   @unique
   batch             Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  monthlyFeeMinor   Int      // in paisa
+  monthlyFeeMinor   Int // in paisa
   admissionFeeMinor Int      @default(0) // in paisa
   lateFineMinor     Int      @default(0) // in paisa
   dueDayOfMonth     Int      @default(10)
@@ -345,17 +346,17 @@ model FeeInvoice {
   student       Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
   batchId       String
   batch         Batch         @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  month         String        // "YYYY-MM"
-  amountMinor   Int           // Monthly fee in paisa
+  month         String // "YYYY-MM"
+  amountMinor   Int // Monthly fee in paisa
   discountMinor Int           @default(0) // Discount in paisa
   fineMinor     Int           @default(0) // Late fine in paisa
-  totalMinor    Int           // (amount + fine) - discount in paisa
+  totalMinor    Int // (amount + fine) - discount in paisa
   status        InvoiceStatus @default(UNPAID)
   paidAt        DateTime?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
-  payments      FeePayment[]
+  payments FeePayment[]
 
   @@unique([academyId, studentId, batchId, month])
   @@unique([studentId, batchId, month])
@@ -371,11 +372,11 @@ model FeePayment {
   academy              Academy       @relation(fields: [academyId], references: [id], onDelete: Cascade)
   invoiceId            String
   invoice              FeeInvoice    @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-  amountMinor          Int           // in paisa (append-only)
+  amountMinor          Int // in paisa (append-only)
   method               PaymentMethod @default(CASH)
-  receivedBy           String        // User ID or name of staff / Gateway
+  receivedBy           String // User ID or name of staff / Gateway
   gatewayTransactionId String?       @unique
-  rawGatewayPayload    String?       // JSON serialized callback data for audit
+  rawGatewayPayload    String? // JSON serialized callback data for audit
   paidAt               DateTime      @default(now())
   createdAt            DateTime      @default(now())
 
@@ -390,13 +391,13 @@ model Test {
   academy          Academy      @relation(fields: [academyId], references: [id], onDelete: Cascade)
   batchId          String
   batch            Batch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  subject          String       // e.g. "Maths"
-  title            String       // e.g. "Chapter 1 Test"
+  subject          String // e.g. "Maths"
+  title            String // e.g. "Chapter 1 Test"
   totalMarks       Int
   date             DateTime     @db.Date
   status           TestStatus   @default(DRAFT)
   publishedAt      DateTime?
-  durationMinutes  Int?         // Duration in minutes for online test
+  durationMinutes  Int? // Duration in minutes for online test
   negativeMarking  Float        @default(0) // Marks deducted per wrong MCQ (e.g. 0.25)
   shuffleQuestions Boolean      @default(false)
   isClosed         Boolean      @default(false) // Leaderboard published only after close
@@ -406,9 +407,9 @@ model Test {
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
 
-  results          TestResult[]
-  questions        Question[]
-  attempts         TestAttempt[]
+  results   TestResult[]
+  questions Question[]
+  attempts  TestAttempt[]
 
   @@index([academyId])
   @@index([batchId])
@@ -424,7 +425,7 @@ model Question {
   test          Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
   type          QuestionType @default(MCQ)
   text          String
-  options       Json?        // Array of options, e.g. ["A", "B", "C", "D"]
+  options       Json? // Array of options, e.g. ["A", "B", "C", "D"]
   correctAnswer String
   marks         Float        @default(1.0)
   order         Int          @default(0)
@@ -454,7 +455,7 @@ model TestAttempt {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  answers        StudentAnswer[]
+  answers StudentAnswer[]
 
   @@unique([testId, studentId])
   @@index([academyId])
@@ -471,7 +472,7 @@ model StudentAnswer {
   questionId   String
   question     Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
   answer       String
-  isCorrect    Boolean?    // null for SHORT questions until marked by teacher
+  isCorrect    Boolean? // null for SHORT questions until marked by teacher
   marksAwarded Float       @default(0)
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
@@ -492,7 +493,7 @@ model TestResult {
   student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   obtainedMarks Float
   remarks       String?
-  correctionLog String?  // Stores reason & history if corrected after publishing
+  correctionLog String? // Stores reason & history if corrected after publishing
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -534,8 +535,8 @@ model TeacherSalary {
   academy     Academy      @relation(fields: [academyId], references: [id], onDelete: Cascade)
   teacherId   String
   teacher     Teacher      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-  month       String       // "YYYY-MM"
-  amountMinor Int          // in paisa
+  month       String // "YYYY-MM"
+  amountMinor Int // in paisa
   status      SalaryStatus @default(UNPAID)
   paidAt      DateTime?
   notes       String?
@@ -567,7 +568,7 @@ model Announcement {
 model Board {
   id        String        @id @default(cuid())
   name      String        @unique // e.g. "BISE Lahore"
-  province  String        // e.g. "Punjab"
+  province  String // e.g. "Punjab"
   subjects  Subject[]
   schemes   PaperScheme[]
   createdAt DateTime      @default(now())
@@ -577,8 +578,8 @@ model Subject {
   id        String        @id @default(cuid())
   boardId   String
   board     Board         @relation(fields: [boardId], references: [id], onDelete: Cascade)
-  className String        // e.g. "9th", "10th"
-  name      String        // e.g. "Physics"
+  className String // e.g. "9th", "10th"
+  name      String // e.g. "Physics"
   chapters  Chapter[]
   schemes   PaperScheme[]
   createdAt DateTime      @default(now())
@@ -608,14 +609,14 @@ model PaperScheme {
   structure   Json
   totalMarks  Int
   timeMinutes Int?
-  sourceUrl   String?   // link to the board's official pairing-scheme document
+  sourceUrl   String? // link to the board's official pairing-scheme document
   verified    Boolean   @default(false)
   verifiedAt  DateTime?
-  notes       String?   // e.g. "PARTIAL: short/long breakdown unconfirmed — see SOURCES.md"
+  notes       String? // e.g. "PARTIAL: short/long breakdown unconfirmed — see SOURCES.md"
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  tests       Test[]
+  tests Test[]
 
   @@unique([boardId, className, subjectId])
 }
@@ -623,10 +624,186 @@ model PaperScheme {
 model ContactSubmission {
   id        String   @id @default(cuid())
   name      String
-  contact   String   // phone or email
+  contact   String // phone or email
   message   String
   ipAddress String?
   createdAt DateTime @default(now())
 
   @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Question bank + paper builder (v2). Platform-wide content entered by the
+// EduFlow team; every academy reads it. Organised by textbook EDITION so a new
+// book never breaks old papers: Authority -> Book (edition) -> Unit -> Topic.
+// ---------------------------------------------------------------------------
+
+enum BankQuestionType {
+  MCQ
+  SHORT
+  LONG
+}
+
+enum BankQuestionSource {
+  EXERCISE
+  PAST_PAPER
+  ADDITIONAL
+  CONCEPTUAL
+}
+
+enum ContentStatus {
+  DRAFT
+  REVIEWED
+}
+
+/// Body that publishes the textbooks, e.g. PECTA (Punjab), Sindh Textbook Board.
+model TextbookAuthority {
+  id        String      @id @default(cuid())
+  code      String      @unique // "PECTA"
+  name      String
+  province  String
+  createdAt DateTime    @default(now())
+  books     Book[]
+  boards    ExamBoard[]
+}
+
+/// Examining board, e.g. BISE Lahore. Uses the books of its authority.
+model ExamBoard {
+  id          String            @id @default(cuid())
+  code        String            @unique // "BISE-LHR"
+  name        String
+  province    String
+  authorityId String
+  authority   TextbookAuthority @relation(fields: [authorityId], references: [id], onDelete: Cascade)
+  createdAt   DateTime          @default(now())
+  schemes     BoardScheme[]
+
+  @@index([authorityId])
+}
+
+/// One edition of one textbook, e.g. PECTA 9th Physics, National Curriculum 2023.
+model Book {
+  id          String            @id @default(cuid())
+  authorityId String
+  authority   TextbookAuthority @relation(fields: [authorityId], references: [id], onDelete: Cascade)
+  className   String // "9", "10", "11", "12"
+  subject     String // "Physics"
+  subjectUr   String? // "طبیعیات"
+  edition     String // "National Curriculum 2023"
+  sessionFrom Int // first session the edition is taught, e.g. 2025
+  isCurrent   Boolean           @default(true)
+  sourceUrl   String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  units     BookUnit[]
+  questions BankQuestion[]
+  schemes   BoardScheme[]
+  papers    SavedPaper[]
+
+  @@unique([authorityId, className, subject, edition])
+  @@index([className, subject, isCurrent])
+}
+
+model BookUnit {
+  id        String         @id @default(cuid())
+  bookId    String
+  book      Book           @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  number    Int
+  title     String
+  titleUr   String?
+  topics    BookTopic[]
+  questions BankQuestion[]
+
+  @@unique([bookId, number])
+}
+
+model BookTopic {
+  id        String         @id @default(cuid())
+  unitId    String
+  unit      BookUnit       @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  code      String // "1.2"
+  title     String
+  titleUr   String?
+  order     Int            @default(0)
+  questions BankQuestion[]
+
+  @@unique([unitId, code])
+}
+
+model BankQuestion {
+  id           String             @id @default(cuid())
+  bookId       String
+  book         Book               @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  unitId       String
+  unit         BookUnit           @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  topicId      String?
+  topic        BookTopic?         @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  type         BankQuestionType
+  source       BankQuestionSource @default(EXERCISE)
+  textEn       String?
+  textUr       String?
+  /// MCQ options: [{ "en": "...", "ur": "..." }, ...]
+  options      Json?
+  /// MCQ: index of the correct option (0-3). Other types: model answer text.
+  answer       String?
+  marks        Float              @default(1)
+  /// LONG question parts: [{ "label": "a", "en": "...", "ur": "...", "marks": 4 }]
+  parts        Json?
+  imageUrl     String?
+  pastPaperRef String? // "BISE Lahore 2024, Group I"
+  status       ContentStatus      @default(DRAFT)
+  createdById  String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  @@index([bookId, type, status])
+  @@index([unitId])
+  @@index([topicId])
+}
+
+/// Pairing scheme for one board (or all boards of an authority when examBoardId
+/// is null) for one book in one session.
+model BoardScheme {
+  id          String     @id @default(cuid())
+  bookId      String
+  book        Book       @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  examBoardId String?
+  examBoard   ExamBoard? @relation(fields: [examBoardId], references: [id], onDelete: Cascade)
+  session     Int // 2026
+  title       String
+  totalMarks  Int
+  timeMinutes Int?
+  /// [{ "type": "MCQ", "label": "Q.1", "required": 12, "choice": 12, "marksEach": 1,
+  ///    "quota": [{ "unit": 1, "count": 2 }, ...] }, ...]
+  structure   Json
+  sourceUrl   String?
+  verified    Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([bookId, session])
+}
+
+/// A paper a teacher built. `sections` holds question ids plus per-paper edits.
+model SavedPaper {
+  id          String   @id @default(cuid())
+  academyId   String
+  academy     Academy  @relation(fields: [academyId], references: [id], onDelete: Cascade)
+  createdById String
+  bookId      String?
+  book        Book?    @relation(fields: [bookId], references: [id], onDelete: SetNull)
+  title       String
+  className   String
+  subject     String
+  totalMarks  Int
+  timeMinutes Int?
+  language    String   @default("dual") // "en" | "ur" | "dual"
+  sections    Json
+  settings    Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([academyId])
+  @@index([createdById])
 }

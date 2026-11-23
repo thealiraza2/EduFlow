@@ -113,7 +113,7 @@ export default async function TeacherTestsPage({
               </ButtonLink>
             ) : (
               <>
-                <ButtonLink href="/teacher/tests/generate" variant="secondary" icon={Sparkles}>
+                <ButtonLink href="/teacher/papers/new" variant="secondary" icon={Sparkles}>
                   Paper generator
                 </ButtonLink>
                 <CreateTestModal batches={batches} />

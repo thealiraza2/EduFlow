@@ -108,7 +108,7 @@ export default async function TeacherDashboardPage() {
         description={`You teach ${totalBatches} ${totalBatches === 1 ? "batch" : "batches"} this term.`}
         actions={
           <>
-            <ButtonLink href="/teacher/tests/generate" variant="secondary" icon={Sparkles}>Paper generator</ButtonLink>
+            <ButtonLink href="/teacher/papers/new" variant="secondary" icon={Sparkles}>Paper generator</ButtonLink>
             <ButtonLink href="/teacher/attendance" icon={CheckCircle2}>Mark attendance</ButtonLink>
           </>
         }
@@ -130,7 +130,7 @@ export default async function TeacherDashboardPage() {
         <ActionTile title="Mark attendance" body="Take today's register in seconds" icon={CheckCircle2} tone="success" href="/teacher/attendance" />
         <ActionTile title="Marking queue" body="Grade short answers waiting for you" icon={FileCheck2} tone="warning" href="/teacher/marking" />
         <ActionTile title="Tests & marks" body="Create tests and enter marks" icon={FileSpreadsheet} tone="info" href="/teacher/tests" />
-        <ActionTile title="Paper generator" body="Draft a board-style paper" icon={Sparkles} tone="plum" href="/teacher/tests/generate" />
+        <ActionTile title="Paper generator" body="Draft a board-style paper" icon={Sparkles} tone="plum" href="/teacher/papers/new" />
       </div>
       {/* Weekly Timetable */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 overflow-hidden card-lift">

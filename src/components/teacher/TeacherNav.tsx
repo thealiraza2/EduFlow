@@ -8,7 +8,7 @@ const navItems: SidebarNavItem[] = [
   { href: "/teacher/attendance", label: "Attendance", icon: ClipboardCheck },
   { href: "/teacher/marking", label: "Marking queue", icon: FileCheck2 },
   { href: "/teacher/tests", label: "Tests & marks", icon: FileSpreadsheet },
-  { href: "/teacher/tests/generate", label: "Paper generator", icon: Sparkles },
+  { href: "/teacher/papers", label: "Paper generator", icon: Sparkles },
 ];
 
 interface TeacherNavProps {
