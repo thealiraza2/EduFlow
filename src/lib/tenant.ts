@@ -9,6 +9,19 @@ import { auth } from "./auth";
 import { db } from "./db";
 import { Academy, AcademyStatus, Role, User } from "@prisma/client";
 import { AuthorizationError } from "./permissions";
+import { cookies } from "next/headers";
+
+/** Cookie holding the academy a SUPER_ADMIN is currently managing. */
+export const SUPER_ADMIN_ACADEMY_COOKIE = "ef_sa_academy";
+
+function getSuperAdminAcademyCookie(): string | null {
+  try {
+    return cookies().get(SUPER_ADMIN_ACADEMY_COOKIE)?.value || null;
+  } catch {
+    // Outside a request (e.g. unit tests)
+    return null;
+  }
+}
 
 export interface TenantContext {
   academyId: string;
@@ -38,8 +51,9 @@ export async function requireTenant(): Promise<TenantContext> {
 
   // SUPER_ADMIN platform owner access
   if (user.role === Role.SUPER_ADMIN) {
-    // If super admin has a specific academy target or default seed
-    let targetAcademyId = user.academyId;
+    // The academy the super admin chose in the platform console ("Open as admin")
+    // wins; otherwise their own academy; otherwise the first active one.
+    let targetAcademyId = getSuperAdminAcademyCookie() || user.academyId;
     let academy: Academy | null = null;
 
     if (targetAcademyId) {

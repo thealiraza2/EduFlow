@@ -1,12 +1,13 @@
 "use client";
 
-import { LayoutDashboard, Building2, CreditCard, ArrowUpRight } from "lucide-react";
+import { Inbox, LayoutDashboard, Megaphone, PlusCircle, ArrowUpRight } from "lucide-react";
 import { SidebarNav, type SidebarNavItem } from "@/components/common/SidebarNav";
 
 const navItems: SidebarNavItem[] = [
-  { href: "/superadmin", label: "Platform overview", icon: LayoutDashboard, exact: true },
-  { href: "/superadmin#academies", label: "Academies", icon: Building2, neverActive: true },
-  { href: "/superadmin#plans", label: "Plans & billing", icon: CreditCard, neverActive: true },
+  { href: "/superadmin", label: "Academies & stats", icon: LayoutDashboard },
+  { href: "/superadmin/academies/new", label: "New academy", icon: PlusCircle },
+  { href: "/superadmin/inbox", label: "Inbox", icon: Inbox },
+  { href: "/superadmin/announcements", label: "Announcements", icon: Megaphone },
   { href: "/admin", label: "Open admin view", icon: ArrowUpRight, neverActive: true },
 ];
 
@@ -23,7 +24,7 @@ export function SuperAdminSidebar({ user }: SuperAdminSidebarProps) {
     <SidebarNav
       items={navItems}
       roleLabel="Platform"
-      sectionLabel="Platform"
+      sectionLabel="Platform console"
       identity={{ primary: user?.name, secondary: user?.email }}
     />
   );

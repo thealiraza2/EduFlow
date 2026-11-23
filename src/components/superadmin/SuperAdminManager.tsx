@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
+import { Plus, Settings2 } from "lucide-react";
 import { formatPKR } from "@/lib/money";
 import { toggleAcademyStatusAction, updateAcademyPlanAction } from "@/lib/actions/superadmin";
 import { AcademyPlan, AcademyStatus } from "@prisma/client";
@@ -175,7 +177,7 @@ export function SuperAdminManager({
     return matchesSearch && matchesStatus && matchesPlan;
   });
 
-  const newestTen = filteredAcademies.slice(0, 10);
+  const newestTen = filteredAcademies;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-8 max-w-7xl mx-auto w-full">
@@ -422,15 +424,22 @@ export function SuperAdminManager({
               <div>
                 <CardTitle className="text-lg font-semibold text-slate-900 flex items-center">
                   <Building2 className="h-5 w-5 mr-2 text-slate-700" />
-                  Recent Academies
+                  Academies
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Showing newest 10 tenant academies with live stats, MRR contribution, and management actions.
+                  Every academy on the platform. Open one to manage its trial, admins, passwords or to work inside it.
                 </CardDescription>
               </div>
 
               {/* Search & Filter Toolbar */}
               <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                <Link
+                  href="/superadmin/academies/new"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-semibold text-white hover:bg-primary-hover"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  New academy
+                </Link>
                 <div className="relative w-full sm:w-56">
                   <Search className="h-3.5 w-3.5 absolute left-3 top-3 text-slate-400" />
                   <Input
@@ -553,17 +562,15 @@ export function SuperAdminManager({
                           </td>
 
                           <td className="py-3 px-4 text-right space-x-1.5 whitespace-nowrap">
-                            {/* View Detail Action */}
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => setSelectedAcademy(academy)}
-                              className="h-7 text-xs px-2 text-slate-600 hover:text-slate-900"
-                              title="View Academy Details"
+                            {/* Manage: trial, admins, passwords, open as admin, delete */}
+                            <Link
+                              href={`/superadmin/academies/${academy.id}`}
+                              className="inline-flex h-7 items-center rounded-md bg-primary px-2.5 text-xs font-semibold text-white hover:bg-primary-hover"
+                              title="Manage academy"
                             >
-                              <Eye className="h-3 w-3 mr-1" />
-                              View
-                            </Button>
+                              <Settings2 className="h-3 w-3 mr-1" />
+                              Manage
+                            </Link>
 
                             {/* Plan Switch Action */}
                             <Button
