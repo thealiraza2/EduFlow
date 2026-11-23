@@ -130,8 +130,6 @@ export default auth((req) => {
       pathname.startsWith("/api/auth") ||
       pathname.startsWith("/api/health") ||
       pathname.startsWith("/api/webhooks") ||
-      pathname.startsWith("/api/seed") ||
-      pathname.startsWith("/api/admin-fix") ||
       pathname.startsWith("/api/contact");
 
     if (!isPublicApi && !user) {

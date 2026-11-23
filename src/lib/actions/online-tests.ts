@@ -7,6 +7,52 @@ import { Role, AttemptStatus } from "@prisma/client";
 import { calculateTestGrading, rankLeaderboardAttempts } from "@/lib/online-tests";
 import { revalidatePath } from "next/cache";
 
+type SessionUser = { id: string; role: Role; academyId?: string | null };
+
+/**
+ * Faculty authorization for a test: super admins pass, admins must be in the test's
+ * academy, and teachers must be the assigned instructor of the test's batch.
+ */
+async function assertFacultyCanManageTest(
+  user: SessionUser,
+  test: { academyId: string; batchId: string }
+) {
+  if (user.role === Role.SUPER_ADMIN) return;
+  if (user.role !== Role.ADMIN && user.role !== Role.TEACHER) {
+    throw new Error("Unauthorized: Faculty role required.");
+  }
+  if (user.academyId !== test.academyId) {
+    throw new Error("Test not found.");
+  }
+  if (user.role === Role.TEACHER) {
+    const batch = await db.batch.findUnique({
+      where: { id: test.batchId },
+      select: { teacher: { select: { userId: true } } },
+    });
+    if (batch?.teacher?.userId !== user.id) {
+      throw new Error("Forbidden: This test belongs to a batch you do not teach.");
+    }
+  }
+}
+
+/**
+ * Ensures the session user is the student who owns the attempt
+ * (or the parent of that student).
+ */
+async function assertOwnsAttempt(user: SessionUser, attemptStudentId: string) {
+  const student = await db.student.findUnique({
+    where: { id: attemptStudentId },
+    select: { userId: true, guardianUserId: true },
+  });
+  const isOwner =
+    !!student &&
+    ((user.role === Role.STUDENT && student.userId === user.id) ||
+      (user.role === Role.PARENT && student.guardianUserId === user.id));
+  if (!isOwner) {
+    throw new Error("Test attempt not found.");
+  }
+}
+
 const startAttemptSchema = z.object({
   testId: z.string().min(1, "Test ID is required"),
   studentId: z.string().optional(),
@@ -32,40 +78,12 @@ export async function startOnlineTestAttemptAction(input: z.infer<typeof startAt
   let studentId = requestedStudentId;
 
   if (session.user.role === Role.STUDENT) {
-    let student = await db.student.findFirst({
+    // A student may only ever act as the student record explicitly linked to their account.
+    const student = await db.student.findFirst({
       where: { userId: session.user.id },
     });
-    // Fallback: match by academyId or first student if unlinked
-    if (!student && session.user.email) {
-      student = await db.student.findFirst({
-        where: {
-          OR: [
-            { admissionNo: session.user.name || "" },
-            { guardianPhone: session.user.phone || "" },
-          ],
-        },
-      });
-      if (student) {
-        await db.student.update({
-          where: { id: student.id },
-          data: { userId: session.user.id },
-        });
-      }
-    }
     if (!student) {
-      // Direct fallback to first student in tenant
-      student = await db.student.findFirst({
-        where: session.user.academyId ? { academyId: session.user.academyId } : {},
-      });
-      if (student) {
-        await db.student.update({
-          where: { id: student.id },
-          data: { userId: session.user.id },
-        });
-      }
-    }
-    if (!student) {
-      throw new Error("Student record not linked to your user account.");
+      throw new Error("Student record not linked to your user account. Please contact your academy admin.");
     }
     studentId = student.id;
   } else if (session.user.role === Role.PARENT) {
@@ -87,11 +105,11 @@ export async function startOnlineTestAttemptAction(input: z.infer<typeof startAt
         throw new Error("Access Denied: You cannot take tests on behalf of other parents' children.");
       }
     }
-  } else if (!studentId) {
-    // Admin or Teacher testing flow
-    const firstStudent = await db.student.findFirst();
-    if (!firstStudent) throw new Error("No students exist in database.");
-    studentId = firstStudent.id;
+  } else {
+    // Faculty (admin / teacher) must name a student explicitly; no implicit fallback.
+    if (!studentId) {
+      throw new Error("A student must be selected to start this test.");
+    }
   }
 
   // 2. Fetch test with questions
@@ -107,6 +125,33 @@ export async function startOnlineTestAttemptAction(input: z.infer<typeof startAt
 
   if (!test) {
     throw new Error("Test not found.");
+  }
+
+  // Tenant isolation: the test and the student must belong to the same academy,
+  // and a non-super-admin user may only act inside their own academy.
+  const targetStudent = await db.student.findUnique({
+    where: { id: studentId! },
+    select: { academyId: true },
+  });
+  if (!targetStudent || targetStudent.academyId !== test.academyId) {
+    throw new Error("Test not found.");
+  }
+  if (session.user.role !== Role.SUPER_ADMIN && session.user.academyId !== test.academyId) {
+    throw new Error("Test not found.");
+  }
+  if (session.user.role === Role.TEACHER || session.user.role === Role.ADMIN) {
+    await assertFacultyCanManageTest(session.user, test);
+  }
+
+  // Students may only take tests for batches they are actively enrolled in.
+  if (session.user.role === Role.STUDENT || session.user.role === Role.PARENT) {
+    const enrollment = await db.enrollment.findFirst({
+      where: { studentId: studentId!, batchId: test.batchId, status: "ACTIVE" },
+      select: { id: true },
+    });
+    if (!enrollment) {
+      throw new Error("Test not found.");
+    }
   }
 
   if (test.status !== "PUBLISHED") {
@@ -284,6 +329,9 @@ export async function submitOnlineTestAttemptAction(input: z.infer<typeof submit
     throw new Error("Test attempt not found.");
   }
 
+  // Only the student who started the attempt (or their parent) may submit it.
+  await assertOwnsAttempt(session.user, attempt.studentId);
+
   if (attempt.status === AttemptStatus.SUBMITTED || attempt.status === AttemptStatus.GRADED) {
     return {
       success: true,
@@ -384,6 +432,19 @@ export async function submitOnlineTestAttemptAction(input: z.infer<typeof submit
  */
 export async function recordTabSwitchAction(attemptId: string) {
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return { success: false };
+    }
+    const existing = await db.testAttempt.findUnique({
+      where: { id: attemptId },
+      select: { studentId: true, status: true },
+    });
+    if (!existing || existing.status !== AttemptStatus.IN_PROGRESS) {
+      return { success: false };
+    }
+    await assertOwnsAttempt(session.user, existing.studentId);
+
     const updated = await db.testAttempt.update({
       where: { id: attemptId },
       data: {
@@ -413,6 +474,15 @@ export async function closeTestAndPublishLeaderboardAction(testId: string) {
   if (!session?.user || (session.user.role !== Role.TEACHER && session.user.role !== Role.ADMIN && session.user.role !== Role.SUPER_ADMIN)) {
     throw new Error("Unauthorized: Only teachers or administrators can close tests.");
   }
+
+  const target = await db.test.findUnique({
+    where: { id: testId },
+    select: { academyId: true, batchId: true },
+  });
+  if (!target) {
+    throw new Error("Test not found.");
+  }
+  await assertFacultyCanManageTest(session.user, target);
 
   const updated = await db.test.update({
     where: { id: testId },
@@ -460,6 +530,8 @@ export async function gradeShortQuestionAction(input: {
   if (!answer) {
     throw new Error("Answer not found.");
   }
+
+  await assertFacultyCanManageTest(session.user, answer.attempt.test);
 
   const maxMarks = answer.question.marks;
   const marks = Math.max(0, Math.min(input.marksAwarded, maxMarks));

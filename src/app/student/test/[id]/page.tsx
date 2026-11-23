@@ -37,46 +37,43 @@ export default async function StudentTestPage({ params }: PageProps) {
     notFound();
   }
 
-  // Resolve current student ID
+  // Tenant isolation: never reveal another academy's test or leaderboard.
+  if (session.user.role !== Role.SUPER_ADMIN && session.user.academyId !== test.academyId) {
+    notFound();
+  }
+
+  // Resolve current student ID (only an explicitly linked record; never auto-link).
   let currentStudentId: string | null = null;
 
   if (session.user.role === Role.STUDENT) {
-    let student = await db.student.findFirst({
-      where: { userId: session.user.id },
+    const student = await db.student.findFirst({
+      where: { userId: session.user.id, academyId: test.academyId },
     });
-    if (!student && session.user.email) {
-      student = await db.student.findFirst({
-        where: {
-          OR: [
-            { admissionNo: session.user.name || "" },
-            { guardianPhone: session.user.phone || "" },
-          ],
-        },
-      });
-      if (student) {
-        await db.student.update({
-          where: { id: student.id },
-          data: { userId: session.user.id },
-        });
-      }
-    }
-    if (!student) {
-      student = await db.student.findFirst({
-        where: session.user.academyId ? { academyId: session.user.academyId } : {},
-      });
-    }
     if (student) currentStudentId = student.id;
   } else if (session.user.role === Role.PARENT) {
     const child = await db.student.findFirst({
-      where: { guardianUserId: session.user.id },
+      where: { guardianUserId: session.user.id, academyId: test.academyId },
     });
     if (child) currentStudentId = child.id;
-  } else {
-    // Teacher or Admin testing mode
-    const firstStudent = await db.student.findFirst({
-      where: { academyId: test.academyId },
-    });
-    if (firstStudent) currentStudentId = firstStudent.id;
+  } else if (session.user.role === Role.TEACHER) {
+    // Teachers may only view tests for batches they teach.
+    const teacher = await db.teacher.findUnique({ where: { userId: session.user.id } });
+    if (!teacher || test.batch.teacherId !== teacher.id) {
+      notFound();
+    }
+  }
+
+  // Students and parents may only open tests for batches the student is enrolled in.
+  if (session.user.role === Role.STUDENT || session.user.role === Role.PARENT) {
+    const enrollment = currentStudentId
+      ? await db.enrollment.findFirst({
+          where: { studentId: currentStudentId, batchId: test.batchId, status: "ACTIVE" },
+          select: { id: true },
+        })
+      : null;
+    if (!enrollment) {
+      notFound();
+    }
   }
 
   // Check if current student has an existing attempt
