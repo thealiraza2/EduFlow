@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     siteName: "EduFlow",
     images: [
       {
-        url: "/images/hero-classroom.jpg",
+        url: "/images/students-laptop.jpg",
         width: 1200,
         height: 675,
         alt: "EduFlow School Management System",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     title: "EduFlow — Complete School Management System",
     description:
       "Streamline your school operations with an all-in-one platform. Manage students, teachers, classes, attendance, fees, exams and more.",
-    images: ["/images/hero-classroom.jpg"],
+    images: ["/images/students-laptop.jpg"],
   },
 };
 

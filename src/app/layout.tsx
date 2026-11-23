@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Mono, Source_Serif_4 } from "next/font/google";
+import { DM_Sans, IBM_Plex_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
-const sans = IBM_Plex_Sans({
+const sans = DM_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
   display: "swap",
 });
 
-const serif = Source_Serif_4({
+const serif = Instrument_Serif({
   subsets: ["latin"],
-  weight: ["600"],
+  weight: ["400"],
+  style: ["normal", "italic"],
   variable: "--font-serif",
   display: "swap",
 });
@@ -26,7 +27,7 @@ const mono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "EduFlow — School Management System",
   description:
-    "Attendance, fees, results and parent updates for Pakistani schools and academies — in one calm, reliable system.",
+    "Attendance, fees, results and parent updates for schools and academies in Pakistan — in one beautiful, reliable system.",
 };
 
 export default function RootLayout({

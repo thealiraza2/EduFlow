@@ -1,18 +1,14 @@
 import { cn } from "@/lib/utils";
 
-/**
- * EduFlow mark: a greenboard tile with three chalk register lines and a tick.
- * DESIGN.md — the "well-kept school register".
- */
+/** EduFlow mark: a plum seal with a single tick — "marked present". */
 export function LogoMark({ className, title = "EduFlow" }: { className?: string; title?: string }) {
   return (
     <svg viewBox="0 0 32 32" className={cn("h-8 w-8 shrink-0", className)} role="img" aria-label={title}>
-      <rect width="32" height="32" rx="8" fill="#0F4F45" />
-      <path d="M8 10.5h10M8 16h6.5M8 21.5h8" stroke="#E8EFEC" strokeOpacity=".6" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="16" cy="16" r="16" fill="#6D1F3A" />
       <path
-        d="M17.5 17.5l3 3 5.5-7.5"
+        d="M9.5 16.5l4.2 4.2 8.8-9.4"
         stroke="#FFFFFF"
-        strokeWidth="2.4"
+        strokeWidth="2.6"
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
@@ -27,7 +23,7 @@ export function Logo({
   showTagline = false,
 }: {
   className?: string;
-  /** dark = ink text for light backgrounds; light = chalk text for the greenboard sidebar */
+  /** dark = ink text for light backgrounds; light = pale text for dark backgrounds */
   tone?: "dark" | "light";
   showTagline?: boolean;
 }) {
@@ -37,7 +33,7 @@ export function Logo({
       <span className="flex flex-col leading-none">
         <span
           className={cn(
-            "font-serif text-[21px] font-semibold tracking-[-0.01em]",
+            "text-[20px] font-bold tracking-[-0.02em]",
             tone === "dark" ? "text-ink" : "text-sidebar-ink"
           )}
         >

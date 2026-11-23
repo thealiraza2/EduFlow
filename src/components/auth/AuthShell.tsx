@@ -41,15 +41,15 @@ export function AuthShell({
 
       <div className="relative hidden overflow-hidden bg-sidebar min-[900px]:block">
         <Image
-          src="/images/campus-student.jpg"
-          alt="A student holding her books on a school campus in Karachi"
+          src="/images/students-laptop.jpg"
+          alt="Two students working together on a laptop in a bright classroom"
           fill
           priority
           sizes="55vw"
-          className="object-cover object-[46%_30%]"
+          className="object-cover object-[58%_40%]"
         />
         <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[rgba(15,23,20,.78)] via-[rgba(15,23,20,.1)] to-transparent" />
-        <p className="absolute bottom-10 left-10 right-10 max-w-[30ch] font-serif text-[28px] leading-[1.2] text-white">
+        <p className="absolute bottom-10 left-10 right-10 max-w-[30ch] font-serif text-[34px] leading-[1.1] text-white">
           {photoCaption}
         </p>
       </div>
