@@ -69,10 +69,10 @@ export function AdminAnnouncementsCard({ initialAnnouncements }: Props) {
   };
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-1">
       <CardHeader className="py-4 border-b bg-slate-50 flex flex-row items-center justify-between">
         <div>
-          <CardTitle className="text-base font-bold text-slate-900 flex items-center">
+          <CardTitle className="text-base font-semibold text-slate-900 flex items-center">
             <Megaphone className="h-5 w-5 mr-2 text-indigo-600" />
             Academy Announcements & Broadcasts
           </CardTitle>
@@ -174,10 +174,10 @@ export function AdminAnnouncementsCard({ initialAnnouncements }: Props) {
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-xs text-slate-900">{item.title}</span>
                     <div className="flex items-center space-x-2">
-                      <Badge variant="outline" className="text-[10px] py-0 px-1.5">
+                      <Badge variant="outline" className="text-xs py-0 px-1.5">
                         {item.audience}
                       </Badge>
-                      <span className="text-[10px] text-slate-400 font-mono">
+                      <span className="text-xs text-slate-400 font-mono">
                         {item.createdAt.split("T")[0]}
                       </span>
                     </div>

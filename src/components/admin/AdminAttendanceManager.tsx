@@ -251,7 +251,7 @@ export function AdminAttendanceManager({ batches, initialMonthlyData }: Props) {
       {activeTab === "monthly" ? (
         <div className="space-y-6">
           {/* Filters Bar */}
-          <Card className="shadow-sm">
+          <Card className="shadow-1">
             <CardContent className="p-4 sm:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end">
                 <div>
@@ -304,11 +304,11 @@ export function AdminAttendanceManager({ batches, initialMonthlyData }: Props) {
 
           {/* At-Risk Students Alert Banner (< 75%) */}
           {monthlyData.atRiskCount > 0 && (
-            <Card className="border-rose-200 bg-rose-50/60 shadow-sm overflow-hidden">
+            <Card className="border-rose-200 bg-rose-50/60 shadow-1 overflow-hidden">
               <CardHeader className="py-4 border-b border-rose-200 bg-rose-100/60 flex flex-row items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <AlertTriangle className="h-5 w-5 text-rose-600" />
-                  <CardTitle className="text-base font-bold text-rose-900">
+                  <CardTitle className="text-base font-semibold text-rose-900">
                     At-Risk Students Notice ({monthlyData.atRiskCount} Below 75% Attendance)
                   </CardTitle>
                 </div>
@@ -361,7 +361,7 @@ export function AdminAttendanceManager({ batches, initialMonthlyData }: Props) {
                         </div>
                         <Badge
                           variant="destructive"
-                          className="text-sm font-bold px-2.5 py-1 font-mono"
+                          className="text-sm font-semibold px-2.5 py-1 font-mono"
                         >
                           {st.percentage}%
                         </Badge>
@@ -374,7 +374,7 @@ export function AdminAttendanceManager({ batches, initialMonthlyData }: Props) {
           )}
 
           {/* Full Monthly Roster Table */}
-          <Card className="shadow-sm overflow-hidden">
+          <Card className="shadow-1 overflow-hidden">
             <CardHeader className="py-4 border-b bg-slate-50 flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="text-base font-semibold text-slate-900">
@@ -425,7 +425,7 @@ export function AdminAttendanceManager({ batches, initialMonthlyData }: Props) {
                         >
                           <td className="py-3 px-4">
                             <div className="font-semibold text-slate-900">{st.name}</div>
-                            <div className="text-[11px] font-mono text-slate-500">
+                            <div className="text-xs font-mono text-slate-500">
                               {st.admissionNo} • {st.guardianPhone}
                             </div>
                           </td>
@@ -452,7 +452,7 @@ export function AdminAttendanceManager({ batches, initialMonthlyData }: Props) {
                               </span>
                             ) : (
                               <span
-                                className={`font-mono font-bold text-sm ${
+                                className={`font-mono font-semibold text-sm ${
                                   st.isAtRisk ? "text-rose-600" : "text-slate-800"
                                 }`}
                               >
@@ -464,18 +464,18 @@ export function AdminAttendanceManager({ batches, initialMonthlyData }: Props) {
                             {st.isAtRisk ? (
                               <Badge
                                 variant="destructive"
-                                className="text-[10px] uppercase font-bold py-0.5 px-2"
+                                className="text-xs uppercase font-semibold py-0.5 px-2"
                               >
                                 At Risk
                               </Badge>
                             ) : st.totalSessions === 0 ? (
-                              <Badge variant="outline" className="text-[10px] text-slate-400">
+                              <Badge variant="outline" className="text-xs text-slate-400">
                                 No Sessions
                               </Badge>
                             ) : (
                               <Badge
                                 variant="outline"
-                                className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]"
+                                className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs"
                               >
                                 Normal
                               </Badge>
@@ -493,7 +493,7 @@ export function AdminAttendanceManager({ batches, initialMonthlyData }: Props) {
       ) : (
         /* Tab 2: Daily Register (Admin Override & Editor) */
         <div className="space-y-6">
-          <Card className="shadow-sm">
+          <Card className="shadow-1">
             <CardContent className="p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-end">
                 <div>
@@ -566,7 +566,7 @@ export function AdminAttendanceManager({ batches, initialMonthlyData }: Props) {
           )}
 
           {/* Daily Table */}
-          <Card className="shadow-sm overflow-hidden">
+          <Card className="shadow-1 overflow-hidden">
             <CardHeader className="py-4 border-b bg-slate-50 flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="text-base font-semibold text-slate-900">
@@ -654,7 +654,7 @@ export function AdminAttendanceManager({ batches, initialMonthlyData }: Props) {
 
                       <div className="flex items-center space-x-2">
                         {!st.status && (
-                          <Badge variant="outline" className="text-[10px] bg-slate-100 text-slate-500 border-slate-300 mr-1">
+                          <Badge variant="outline" className="text-xs bg-slate-100 text-slate-500 border-slate-300 mr-1">
                             Unmarked
                           </Badge>
                         )}

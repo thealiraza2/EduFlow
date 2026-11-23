@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { ChangePasswordForm } from "./ChangePasswordForm";
+import { AuthShell } from "@/components/auth/AuthShell";
 
 export const metadata = {
   title: "Change Password | EduFlow",
@@ -24,8 +25,8 @@ export default async function ChangePasswordPage() {
   const isForced = Boolean(session.user.mustChangePassword);
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4">
+    <AuthShell photoCaption="A new password keeps your school's records yours.">
       <ChangePasswordForm isForced={isForced} dashboardUrl={dashboardUrl} />
-    </div>
+    </AuthShell>
   );
 }

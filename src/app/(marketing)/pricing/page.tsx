@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function PricingPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-white text-[#0F2040]">
+    <div className="flex flex-col min-h-screen bg-white text-ink">
       <Header />
 
       <main className="flex-1">

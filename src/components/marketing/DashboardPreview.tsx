@@ -54,22 +54,22 @@ export function DashboardPreview() {
       title: "Midterm Physics Online Test graded and recorded",
       timestamp: "16 Nov 2026",
       icon: FileText,
-      iconColor: "text-[#F5B800]",
+      iconColor: "text-accent",
       badge: "Assessment",
     },
   ];
 
   return (
-    <div className="w-full max-w-md lg:max-w-[420px] bg-white/95 backdrop-blur-md rounded-2xl border border-gray-200/90 shadow-xl p-3 sm:p-4 text-[#0F2040] space-y-2.5 select-none">
+    <div className="w-full max-w-md lg:max-w-[420px] bg-white/95 backdrop-blur-md rounded-2xl border border-gray-200/90 shadow-3 p-3 sm:p-4 text-ink space-y-2.5 select-none">
       {/* Top Bar with Demo Indicator */}
       <div className="flex items-center justify-between pb-2 border-b border-gray-100">
         <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#F5B800] animate-pulse" />
-          <span className="font-bold text-xs sm:text-sm tracking-tight text-[#0F2040]">
+          <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
+          <span className="font-semibold text-xs sm:text-sm tracking-tight text-ink">
             EduFlow Academy Portal
           </span>
         </div>
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-[#FFF9E6] text-[#0F2040] border border-[#F5B800]/40">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs sm:text-xs font-semibold bg-primary-tint text-ink border border-primary/40">
           Live Demo Preview
         </span>
       </div>
@@ -81,10 +81,10 @@ export function DashboardPreview() {
           return (
             <div
               key={s.label}
-              className="bg-[#FAFAFA] rounded-xl py-1.5 px-2.5 sm:py-2 sm:px-2.5 border border-gray-100/90 flex flex-col justify-between"
+              className="bg-canvas rounded-xl py-1.5 px-2.5 sm:py-2 sm:px-2.5 border border-gray-100/90 flex flex-col justify-between"
             >
               <div className="flex items-center justify-between">
-                <span className="text-[10px] sm:text-[11px] font-medium text-gray-500 truncate mr-1">
+                <span className="text-xs sm:text-xs font-medium text-gray-500 truncate mr-1">
                   {s.label}
                 </span>
                 <div className={`p-1 rounded-md ${s.iconBg}`}>
@@ -92,10 +92,10 @@ export function DashboardPreview() {
                 </div>
               </div>
               <div className="mt-0.5">
-                <span className="text-base sm:text-lg font-extrabold text-[#0F2040] tracking-tight">
+                <span className="text-base sm:text-lg font-semibold text-ink tracking-tight">
                   {s.value}
                 </span>
-                <p className="text-[9px] sm:text-[10px] text-gray-400 mt-0.5">{s.change}</p>
+                <p className="text-xs sm:text-xs text-gray-400 mt-0.5">{s.change}</p>
               </div>
             </div>
           );
@@ -105,10 +105,10 @@ export function DashboardPreview() {
       {/* Recent Activity (3 Lines) */}
       <div className="pt-0.5">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-gray-500">
+          <span className="text-xs sm:text-xs font-semibold uppercase tracking-wider text-gray-500">
             Recent Activity (Demo)
           </span>
-          <span className="text-[9px] sm:text-[10px] text-gray-400">Real-time sync</span>
+          <span className="text-xs sm:text-xs text-gray-400">Real-time sync</span>
         </div>
 
         <div className="space-y-1">
@@ -121,11 +121,11 @@ export function DashboardPreview() {
               >
                 <div className="flex items-center gap-1.5 min-w-0 pr-2">
                   <Icon className={`w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 ${act.iconColor}`} />
-                  <span className="text-gray-700 font-medium truncate text-[10px] sm:text-xs">
+                  <span className="text-gray-700 font-medium truncate text-xs sm:text-xs">
                     {act.title}
                   </span>
                 </div>
-                <span className="text-[9px] sm:text-[10px] text-gray-400 shrink-0 font-mono">
+                <span className="text-xs sm:text-xs text-gray-400 shrink-0 font-mono">
                   {act.timestamp}
                 </span>
               </div>

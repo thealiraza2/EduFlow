@@ -42,7 +42,7 @@ export default async function ParentTimetablePage() {
     <div className="p-4 sm:p-6 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Navigation & Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 sm:p-6 rounded-xl border shadow-sm">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 sm:p-6 rounded-xl border shadow-1">
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
             <Button variant="outline" size="sm" asChild className="w-fit">
               <Link href="/parent">
@@ -52,7 +52,7 @@ export default async function ParentTimetablePage() {
             </Button>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Weekly Timetable</h1>
+                <h1 className="font-serif text-xl sm:text-2xl font-semibold text-slate-900">Weekly Timetable</h1>
                 <Badge variant="outline">Guardian Access</Badge>
               </div>
               <p className="text-slate-500 text-xs mt-1">
@@ -81,7 +81,7 @@ export default async function ParentTimetablePage() {
               <div key={child.id} className="space-y-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b pb-2">
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900">{child.name}</h2>
+                    <h2 className="text-xl sm:text-2xl font-semibold text-slate-900">{child.name}</h2>
                     <span className="text-xs font-mono text-slate-500">
                       Admission No: <strong>{child.admissionNo}</strong> | Status: {child.status}
                     </span>
@@ -97,10 +97,10 @@ export default async function ParentTimetablePage() {
                   </p>
                 ) : (
                   child.enrollments.map((enr) => (
-                    <Card key={enr.id} className="shadow-sm overflow-hidden border">
+                    <Card key={enr.id} className="shadow-1 overflow-hidden border">
                       <CardHeader className="bg-slate-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 py-3 px-4 sm:px-5">
                         <div>
-                          <CardTitle className="text-base sm:text-lg font-bold text-white flex items-center">
+                          <CardTitle className="text-base sm:text-lg font-semibold text-white flex items-center">
                             <School className="h-4 w-4 mr-2 text-blue-400 shrink-0" />
                             Class {enr.batch.class.name}-{enr.batch.class.section} — {enr.batch.name}
                           </CardTitle>
@@ -136,7 +136,7 @@ export default async function ParentTimetablePage() {
 
                                   <div className="p-2 flex-1 space-y-1.5">
                                     {daySlots.length === 0 ? (
-                                      <div className="text-[11px] text-slate-400 text-center py-4 italic">
+                                      <div className="text-xs text-slate-400 text-center py-4 italic">
                                         Off
                                       </div>
                                     ) : (
@@ -148,11 +148,11 @@ export default async function ParentTimetablePage() {
                                           <div className="font-semibold text-slate-900 text-xs flex justify-between">
                                             <span>{slot.subject}</span>
                                           </div>
-                                          <div className="text-[11px] font-mono text-slate-600 flex items-center">
+                                          <div className="text-xs font-mono text-slate-600 flex items-center">
                                             <Clock className="h-3 w-3 mr-1 text-slate-400" />
                                             {slot.startTime}–{slot.endTime}
                                           </div>
-                                          <div className="text-[10px] text-slate-500 truncate">
+                                          <div className="text-xs text-slate-500 truncate">
                                             {slot.teacher.user.name}
                                           </div>
                                         </div>

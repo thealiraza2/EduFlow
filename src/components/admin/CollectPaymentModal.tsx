@@ -128,7 +128,7 @@ export function CollectPaymentModal({
                 {formatPKR(invoice.paidMinor)}
               </span>
             </div>
-            <div className="flex justify-between pt-1 border-t text-sm font-bold">
+            <div className="flex justify-between pt-1 border-t text-sm font-semibold">
               <span className="text-slate-900">Remaining Due:</span>
               <span className="font-mono text-rose-600">
                 {formatPKR(invoice.remainingMinor)}
@@ -186,7 +186,7 @@ export function CollectPaymentModal({
                   onClick={() => setMethod(m)}
                   className={`py-2 px-2 text-xs font-semibold rounded-md border text-center transition-all ${
                     method === m
-                      ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+                      ? "bg-slate-900 text-white border-slate-900 shadow-1"
                       : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                   }`}
                 >

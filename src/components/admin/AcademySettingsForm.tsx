@@ -38,11 +38,11 @@ export function AcademySettingsForm({ initialData }: AcademySettingsFormProps) {
   );
 
   return (
-    <Card className="shadow-sm border-slate-200">
+    <Card className="shadow-1 border-slate-200">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <CardTitle className="text-xl font-bold text-slate-900 flex items-center">
+            <CardTitle className="text-xl font-semibold text-slate-900 flex items-center">
               <Building2 className="h-5 w-5 mr-2 text-indigo-600" />
               General Academy Information
             </CardTitle>
@@ -128,7 +128,7 @@ export function AcademySettingsForm({ initialData }: AcademySettingsFormProps) {
                 defaultValue={initialData.academicYear}
                 placeholder="e.g. 2026-2027"
               />
-              <p className="text-[11px] text-slate-500">
+              <p className="text-xs text-slate-500">
                 Active academic cycle used across student enrollments and fee schedules.
               </p>
             </div>
@@ -142,7 +142,7 @@ export function AcademySettingsForm({ initialData }: AcademySettingsFormProps) {
                 value={`${initialData.slug}.eduflow.app`}
                 className="bg-slate-50 text-slate-500 font-mono text-xs"
               />
-              <p className="text-[11px] text-slate-500">
+              <p className="text-xs text-slate-500">
                 Domain slug is managed by platform administrators.
               </p>
             </div>

@@ -10,10 +10,10 @@ export default async function ParentLayout({
   const user = await requireRole([Role.PARENT, Role.ADMIN]);
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-[#F8FAFC]">
+    <div className="flex min-h-screen flex-col bg-canvas lg:flex-row">
       <ParentNav user={user} />
-      <main className="flex-1 min-w-0 py-8 px-4 sm:px-6 lg:px-8 bg-[#F8FAFC]">
-        {children}
+      <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div className="mx-auto w-full max-w-[1280px]">{children}</div>
       </main>
     </div>
   );

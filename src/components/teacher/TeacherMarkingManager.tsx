@@ -108,7 +108,7 @@ export function TeacherMarkingManager({ pendingAnswers, testsSummary }: Props) {
           <FileCheck2 className="h-4 w-4" />
           <span>Subjective Marking Queue</span>
           {pendingAnswers.length > 0 && (
-            <Badge variant="destructive" className="ml-1 text-[10px] py-0 px-1.5">
+            <Badge variant="destructive" className="ml-1 text-xs py-0 px-1.5">
               {pendingAnswers.length} Pending
             </Badge>
           )}
@@ -134,7 +134,7 @@ export function TeacherMarkingManager({ pendingAnswers, testsSummary }: Props) {
             <Card className="text-center py-12">
               <CardContent className="space-y-2">
                 <CheckCircle2 className="h-10 w-10 text-emerald-500 mx-auto" />
-                <h3 className="text-base font-bold text-slate-900">Marking Queue Clear</h3>
+                <h3 className="text-base font-semibold text-slate-900">Marking Queue Clear</h3>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto">
                   All submitted subjective questions have been evaluated. MCQs are graded automatically.
                 </p>
@@ -143,33 +143,33 @@ export function TeacherMarkingManager({ pendingAnswers, testsSummary }: Props) {
           ) : (
             <div className="grid gap-4">
               {pendingAnswers.map((item) => (
-                <Card key={item.id} className="shadow-sm border">
+                <Card key={item.id} className="shadow-1 border">
                   <CardHeader className="pb-3 pt-4 px-5 bg-slate-50/50 border-b flex flex-row items-center justify-between">
                     <div>
                       <div className="flex items-center space-x-2">
-                        <span className="font-bold text-slate-900 text-sm">{item.studentName}</span>
-                        <Badge variant="outline" className="font-mono text-[10px]">
+                        <span className="font-semibold text-slate-900 text-sm">{item.studentName}</span>
+                        <Badge variant="outline" className="font-mono text-xs">
                           {item.admissionNo}
                         </Badge>
                       </div>
                       <span className="text-xs text-slate-500">Test: {item.testTitle}</span>
                     </div>
 
-                    <Badge variant="secondary" className="text-[10px] font-mono">
+                    <Badge variant="secondary" className="text-xs font-mono">
                       Max: {item.maxMarks} Marks
                     </Badge>
                   </CardHeader>
 
                   <CardContent className="p-5 space-y-4">
                     <div>
-                      <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
                         Question Prompt
                       </span>
                       <p className="text-sm font-medium text-slate-800 mt-0.5">{item.questionText}</p>
                     </div>
 
                     <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                      <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+                      <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
                         Student's Written Response:
                       </span>
                       <p className="text-xs font-mono text-slate-800 whitespace-pre-wrap">
@@ -192,7 +192,7 @@ export function TeacherMarkingManager({ pendingAnswers, testsSummary }: Props) {
                               [item.id]: parseFloat(e.target.value) || 0,
                             })
                           }
-                          className="w-20 px-2.5 py-1 text-sm font-mono font-bold rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                          className="w-20 px-2.5 py-1 text-sm font-mono font-semibold rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-900"
                         />
                         <span className="text-xs text-slate-400">/ {item.maxMarks}</span>
                       </div>
@@ -200,7 +200,7 @@ export function TeacherMarkingManager({ pendingAnswers, testsSummary }: Props) {
                       <button
                         onClick={() => handleGrade(item.id, item.maxMarks)}
                         disabled={loadingAnswerId === item.id}
-                        className="px-4 py-1.5 rounded-lg text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-sm transition-colors flex items-center space-x-1.5 disabled:opacity-50"
+                        className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white shadow-1 transition-colors flex items-center space-x-1.5 disabled:opacity-50"
                       >
                         {loadingAnswerId === item.id ? (
                           <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -222,14 +222,14 @@ export function TeacherMarkingManager({ pendingAnswers, testsSummary }: Props) {
       {activeTab === "leaderboard" && (
         <div className="space-y-6">
           {testsSummary.map((test) => (
-            <Card key={test.testId} className="shadow-sm border">
+            <Card key={test.testId} className="shadow-1 border">
               <CardHeader className="pb-3 pt-4 px-5 bg-slate-50 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <div className="flex items-center space-x-2">
-                    <h3 className="font-bold text-slate-900 text-base">{test.testTitle}</h3>
+                    <h3 className="font-semibold text-slate-900 text-base">{test.testTitle}</h3>
                     <Badge
                       variant={test.isClosed ? "default" : "secondary"}
-                      className={`text-[10px] ${test.isClosed ? "bg-emerald-600 text-white" : "bg-amber-100 text-amber-800 border-amber-300"}`}
+                      className={`text-xs ${test.isClosed ? "bg-emerald-600 text-white" : "bg-amber-100 text-amber-800 border-amber-300"}`}
                     >
                       {test.isClosed ? "Leaderboard Published" : "Active Assessment"}
                     </Badge>
@@ -250,7 +250,7 @@ export function TeacherMarkingManager({ pendingAnswers, testsSummary }: Props) {
                     <button
                       onClick={() => handleCloseTest(test.testId)}
                       disabled={closingTestId === test.testId}
-                      className="text-xs px-3 py-1.5 rounded-md bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-sm transition-colors flex items-center space-x-1.5 disabled:opacity-50"
+                      className="text-xs px-3 py-1.5 rounded-md bg-rose-600 hover:bg-rose-700 text-white font-semibold shadow-1 transition-colors flex items-center space-x-1.5 disabled:opacity-50"
                     >
                       {closingTestId === test.testId ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -287,9 +287,9 @@ export function TeacherMarkingManager({ pendingAnswers, testsSummary }: Props) {
                           <tr key={att.id} className="hover:bg-slate-50/50">
                             <td className="py-2.5 px-4">
                               <span className="font-semibold text-slate-900 block">{att.studentName}</span>
-                              <span className="font-mono text-[10px] text-slate-400">{att.admissionNo}</span>
+                              <span className="font-mono text-xs text-slate-400">{att.admissionNo}</span>
                             </td>
-                            <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">
+                            <td className="py-2.5 px-3 text-right font-mono font-semibold text-slate-900">
                               {att.score} / {att.totalMarks}
                             </td>
                             <td className="py-2.5 px-3 text-right font-mono text-slate-600">
@@ -297,19 +297,19 @@ export function TeacherMarkingManager({ pendingAnswers, testsSummary }: Props) {
                             </td>
                             <td className="py-2.5 px-3 text-center">
                               {att.isFlagged ? (
-                                <Badge variant="destructive" className="text-[10px] py-0 px-1.5 animate-pulse">
+                                <Badge variant="destructive" className="text-xs py-0 px-1.5 animate-pulse">
                                   Flagged ({att.tabSwitchCount} switches)
                                 </Badge>
                               ) : att.tabSwitchCount > 0 ? (
-                                <span className="text-[11px] text-slate-500 font-mono">
+                                <span className="text-xs text-slate-500 font-mono">
                                   {att.tabSwitchCount} tab switch{att.tabSwitchCount > 1 ? "es" : ""}
                                 </span>
                               ) : (
-                                <span className="text-[11px] text-emerald-600 font-mono">Clean (0)</span>
+                                <span className="text-xs text-emerald-600 font-mono">Clean (0)</span>
                               )}
                             </td>
                             <td className="py-2.5 px-3 text-center">
-                              <Badge variant="outline" className="text-[10px]">
+                              <Badge variant="outline" className="text-xs">
                                 {att.status}
                               </Badge>
                             </td>

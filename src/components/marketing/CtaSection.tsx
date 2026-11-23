@@ -1,34 +1,36 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 
+/** Closing band on the greenboard itself, with faint chalk ruling. */
 export function CtaSection() {
   return (
-    <section className="py-20 md:py-28 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-3xl bg-[#0F2040] py-16 px-6 sm:py-20 sm:px-12 text-center overflow-hidden shadow-2xl">
-          {/* Subtle Ambient Background Light */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-[#F5B800]/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#F5B800]/10 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="relative z-10 max-w-2xl mx-auto space-y-6">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
-              Get Started with <span className="text-[#F5B800]">EduFlow</span> Today
-            </h2>
-
-            <p className="text-lg text-gray-300 max-w-xl mx-auto leading-relaxed">
-              Automate attendance, fees, and results with a 14-day free trial. Setup takes under 5 minutes.
-            </p>
-
-            <div className="pt-2 flex justify-center">
-              <Link
-                href="/signup"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#F5B800] px-9 py-4 text-base font-bold text-[#0F2040] hover:bg-[#DF9E00] shadow-lg transition-all active:scale-[0.99] whitespace-nowrap"
-              >
-                <span className="whitespace-nowrap">Get Started Free</span>
-                <ArrowRight className="w-4 h-4 shrink-0" />
-              </Link>
-            </div>
-          </div>
+    <section className="relative isolate overflow-hidden bg-sidebar text-sidebar-ink">
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 opacity-[0.07] [background-image:repeating-linear-gradient(to_bottom,transparent_0,transparent_47px,#E8EFEC_47px,#E8EFEC_48px)]"
+      />
+      <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-4 py-20 sm:px-6 md:flex-row md:items-end md:justify-between md:py-24">
+        <div className="max-w-[640px]">
+          <h2 className="text-balance font-serif text-[32px] leading-[1.15] md:text-display-m">
+            Set up your academy this afternoon.
+          </h2>
+          <p className="mt-4 max-w-[52ch] text-[16px] leading-relaxed text-sidebar-ink-2">
+            Free for 14 days with every Pro feature. No card needed — add classes, admit students and mark tomorrow&apos;s
+            attendance in EduFlow.
+          </p>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Link
+            href="/signup"
+            className="press inline-flex h-12 items-center justify-center rounded-md bg-white px-6 text-[16px] font-medium text-primary hover:bg-canvas focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar"
+          >
+            Start free trial
+          </Link>
+          <Link
+            href="/contact"
+            className="press inline-flex h-12 items-center justify-center rounded-md border border-white/25 px-6 text-[16px] font-medium text-white hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          >
+            Book a walkthrough
+          </Link>
         </div>
       </div>
     </section>

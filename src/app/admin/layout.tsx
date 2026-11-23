@@ -9,10 +9,10 @@ export default async function AdminLayout({
   const admin = await requireAdmin();
 
   return (
-    <div className="flex min-h-screen bg-[#F4F6F9]">
+    <div className="flex min-h-screen flex-col bg-canvas lg:flex-row">
       <AdminNav academySlug={admin.academySlug} role={admin.role} />
-      <main className="flex-1 min-w-0 py-8 px-4 sm:px-6 lg:px-8 bg-[#F4F6F9]">
-        {children}
+      <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div className="mx-auto w-full max-w-[1280px]">{children}</div>
       </main>
     </div>
   );

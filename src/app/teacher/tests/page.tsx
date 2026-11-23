@@ -109,7 +109,7 @@ export default async function TeacherTestsPage({
               </Link>
             </Button>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 flex items-center">
+              <h1 className="font-serif text-xl sm:text-2xl font-semibold text-slate-900 flex items-center">
                 <FileSpreadsheet className="h-6 w-6 mr-2 text-blue-600 shrink-0" />
                 Assessment Tests & Marks
               </h1>
@@ -124,7 +124,7 @@ export default async function TeacherTestsPage({
               <Link href="/teacher/tests/generate">
                 <Button
                   size="sm"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-sm flex items-center"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-1 flex items-center"
                 >
                   <Sparkles className="h-4 w-4 mr-1.5" />
                   AI Test Generator
@@ -156,7 +156,7 @@ export default async function TeacherTestsPage({
           />
         ) : (
           <div className="space-y-6">
-            <Card className="shadow-sm">
+            <Card className="shadow-1">
               <CardHeader className="py-4 border-b bg-slate-50 flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-base font-semibold text-slate-900">
@@ -181,10 +181,10 @@ export default async function TeacherTestsPage({
                       >
                         <div>
                           <div className="flex items-center space-x-2">
-                            <span className="font-bold text-slate-900 text-sm">{test.title}</span>
+                            <span className="font-semibold text-slate-900 text-sm">{test.title}</span>
                             <Badge
                               variant={test.status === "PUBLISHED" ? "default" : "secondary"}
-                              className={`text-[10px] uppercase font-bold py-0 px-1.5 ${
+                              className={`text-xs uppercase font-semibold py-0 px-1.5 ${
                                 test.status === "PUBLISHED" ? "bg-emerald-600 text-white" : ""
                               }`}
                             >

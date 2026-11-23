@@ -6,7 +6,8 @@ import { loginAction } from "@/lib/actions/auth";
 import { Input } from "@/components/ui/input";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, Eye, EyeOff } from "lucide-react";
+import { CircleCheck, CircleAlert, Eye, EyeOff, Loader2 } from "lucide-react";
+import { FieldError, FieldLabel } from "@/components/auth/AuthShell";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -14,10 +15,10 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#F5B800] px-6 py-3.5 text-base font-bold text-[#0F2040] hover:bg-[#DF9E00] shadow-md transition-all active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed min-h-[48px]"
+      className="press inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-primary text-[15px] font-medium text-white hover:bg-primary-hover focus-visible:outline-none focus-visible:shadow-focus disabled:cursor-not-allowed disabled:opacity-80"
     >
-      <span>{pending ? "Signing in..." : "Sign In"}</span>
-      {!pending && <ArrowRight className="w-4 h-4" />}
+      {pending && <Loader2 className="h-4 w-4 animate-spin" />}
+      {pending ? "Signing in…" : "Sign In"}
     </button>
   );
 }
@@ -34,90 +35,69 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotNote, setShowForgotNote] = useState(false);
 
-  // Ensure password is unconditionally blank on mount/navigation (Fix: logout password bug)
+  // Password is always blank on mount/navigation (fix: logout password bug)
   useEffect(() => {
     setPassword("");
-    if (defaultEmail) {
-      setEmail(defaultEmail);
-    }
+    if (defaultEmail) setEmail(defaultEmail);
   }, [defaultEmail]);
 
   return (
-    <div className="w-full">
-      {/* Eyebrow Badge */}
-      <div className="inline-flex items-center gap-2 rounded-full border border-[#F5B800]/40 bg-[#FFF9E6] px-3.5 py-1 text-xs font-bold text-[#0F2040] uppercase tracking-wider mb-4">
-        <span className="w-2 h-2 rounded-full bg-[#F5B800]" />
-        <span>EduFlow Secure Portal</span>
-      </div>
+    <div className="w-full animate-rise-in">
+      <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-ink-3">EduFlow secure portal</p>
+      <h1 className="mt-3 font-serif text-[34px] leading-tight text-ink">Sign In</h1>
+      <p className="mt-2 text-[15px] text-ink-2">Use the email and password your school gave you.</p>
 
-      <h1 className="text-3xl font-extrabold text-[#0F2040] tracking-tight">
-        Sign In
-      </h1>
-      <p className="mt-2 text-sm text-gray-600">
-        Enter your school email and password to access your dashboard.
-      </p>
-
-      {/* Registration Success Banner */}
       {registered && (
-        <div className="mt-4 rounded-xl bg-emerald-50 p-4 text-xs font-semibold text-emerald-800 border border-emerald-200 flex items-start gap-2">
-          <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-          <span>Your school platform is ready! Sign in below with your admin credentials.</span>
+        <div role="status" className="mt-6 flex items-start gap-2.5 rounded-md bg-status-success-bg p-3.5 text-[14px] text-status-success">
+          <CircleCheck className="mt-0.5 h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
+          <span>Your academy is ready. Sign in with the admin email and password you just created.</span>
         </div>
       )}
 
-      {/* Error Message */}
       {state?.error && (
-        <div className="mt-4 rounded-xl bg-red-50 p-3.5 text-xs font-semibold text-red-700 border border-red-200">
-          {state.error}
+        <div role="alert" className="mt-6 flex items-start gap-2.5 rounded-md bg-status-danger-bg p-3.5 text-[14px] text-status-danger">
+          <CircleAlert className="mt-0.5 h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
+          <span>{state.error}</span>
         </div>
       )}
 
-      <form action={formAction} className="mt-6 space-y-4" autoComplete="off">
+      <form action={formAction} className="mt-8 space-y-5" autoComplete="off">
         <input type="hidden" name="callbackUrl" value={callbackUrl} />
 
         <div className="space-y-1.5">
-          <label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-gray-700">
-            Email Address
-          </label>
-          <div className="relative">
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              placeholder="you@yourschool.com"
-              required
-              autoComplete="off"
-              className="h-11 rounded-xl text-sm border-gray-200 focus-visible:ring-[#F5B800] focus-visible:border-[#F5B800]"
-            />
-          </div>
-          {state?.fieldErrors?.email && (
-            <p className="text-xs text-red-600 font-medium">
-              {state.fieldErrors.email[0]}
-            </p>
-          )}
+          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            inputMode="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@yourschool.com"
+            required
+            autoComplete="username"
+            aria-invalid={!!state?.fieldErrors?.email}
+            className="h-11"
+          />
+          <FieldError>{state?.fieldErrors?.email?.[0]}</FieldError>
         </div>
 
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-gray-700">
-              Password
-            </label>
+            <FieldLabel htmlFor="password">Password</FieldLabel>
             <button
               type="button"
-              onClick={() => setShowForgotNote(!showForgotNote)}
-              className="text-xs font-semibold text-slate-500 hover:text-[#0F2040] hover:underline"
+              onClick={() => setShowForgotNote((v) => !v)}
+              aria-expanded={showForgotNote}
+              className="rounded-sm text-small font-medium text-primary hover:underline focus-visible:outline-none focus-visible:shadow-focus"
             >
               Forgot password?
             </button>
           </div>
           {showForgotNote && (
-            <div className="rounded-lg bg-blue-50 border border-blue-200 p-2.5 text-xs text-blue-900">
-              Please contact your school or academy administrator to reset your account password.
-            </div>
+            <p className="rounded-md bg-status-info-bg p-3 text-small text-status-info">
+              Ask your school or academy administrator to reset it. They can set a new password from Settings.
+            </p>
           )}
           <div className="relative">
             <Input
@@ -126,43 +106,32 @@ export function LoginForm() {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
               required
-              autoComplete="new-password"
-              className="h-11 rounded-xl text-sm border-gray-200 focus-visible:ring-[#F5B800] focus-visible:border-[#F5B800] pr-10"
+              autoComplete="current-password"
+              aria-invalid={!!state?.fieldErrors?.password}
+              className="h-11 pr-11"
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-1 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-ink-3 hover:bg-surface-sunken hover:text-ink focus-visible:outline-none focus-visible:shadow-focus"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              {showPassword ? <EyeOff className="h-[18px] w-[18px]" strokeWidth={1.75} /> : <Eye className="h-[18px] w-[18px]" strokeWidth={1.75} />}
             </button>
           </div>
-          {state?.fieldErrors?.password && (
-            <p className="text-xs text-red-600 font-medium">
-              {state.fieldErrors.password[0]}
-            </p>
-          )}
+          <FieldError>{state?.fieldErrors?.password?.[0]}</FieldError>
         </div>
 
-        <div className="pt-2">
-          <SubmitButton />
-        </div>
-
-        <div className="pt-4 text-center">
-          <p className="text-xs text-gray-500">
-            Don&apos;t have a school account yet?{" "}
-            <Link
-              href="/signup"
-              className="font-bold text-[#0F2040] hover:text-[#F5B800] transition-colors underline"
-            >
-              Start 14-day free trial →
-            </Link>
-          </p>
-        </div>
+        <SubmitButton />
       </form>
+
+      <p className="mt-8 border-t border-line pt-6 text-[14px] text-ink-2">
+        Running a school or academy?{" "}
+        <Link href="/signup" className="font-medium text-primary hover:underline">
+          Start a 14-day free trial
+        </Link>
+      </p>
     </div>
   );
 }

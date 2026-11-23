@@ -97,7 +97,7 @@ export function EnrollBatchModal({
                 Select Batch *
               </label>
               <select
-                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-1 focus:outline-none focus:ring-1 focus:ring-ring"
                 value={selectedBatchId}
                 onChange={(e) => setSelectedBatchId(e.target.value)}
                 required

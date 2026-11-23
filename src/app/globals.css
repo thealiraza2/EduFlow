@@ -2,113 +2,151 @@
 @tailwind components;
 @tailwind utilities;
 
+/* EduFlow tokens — DESIGN.md §2. Values are RGB channels for Tailwind alpha support. */
 @layer base {
+  :root {
+    --canvas: 247 245 240; /* #F7F5F0 */
+    --surface: 255 255 255;
+    --surface-sunken: 239 236 229; /* #EFECE5 */
+    --ink: 22 33 30; /* #16211E */
+    --ink-2: 74 86 82; /* #4A5652 */
+    --ink-3: 102 113 109; /* #66716D */
+    --line: 226 222 213; /* #E2DED5 */
+    --line-strong: 207 202 192; /* #CFCAC0 */
+
+    --primary: 15 79 69; /* #0F4F45 greenboard */
+    --primary-hover: 11 63 55; /* #0B3F37 */
+    --primary-pressed: 8 47 41; /* #082F29 */
+    --primary-tint: 227 239 236; /* #E3EFEC */
+    --primary-tint-strong: 199 223 217; /* #C7DFD9 */
+    --on-primary: 255 255 255;
+
+    --accent: 142 44 58; /* #8E2C3A uniform maroon — marketing only */
+    --accent-tint: 246 231 233; /* #F6E7E9 */
+
+    --sidebar: 15 42 37; /* #0F2A25 */
+    --sidebar-ink: 232 239 236; /* #E8EFEC */
+    --sidebar-ink-2: 157 179 172; /* #9DB3AC */
+    --sidebar-active: 26 62 55; /* #1A3E37 */
+
+    --success: 30 122 76; /* #1E7A4C */
+    --success-bg: 229 243 235;
+    --warning: 166 95 0; /* #A65F00 */
+    --warning-bg: 251 240 220;
+    --danger: 179 38 30; /* #B3261E */
+    --danger-bg: 251 233 231;
+    --info: 36 87 143; /* #24578F */
+    --info-bg: 230 238 247;
+
+    --disabled-bg: 236 233 226;
+    --disabled-ink: 154 162 159;
+  }
+
   html {
     scroll-behavior: smooth;
-  }
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-
-    --radius: 0.5rem;
+    -webkit-text-size-adjust: 100%;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-  }
-}
-
-@layer base {
   * {
-    @apply border-border;
+    @apply border-line;
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-canvas text-ink font-sans antialiased;
+    font-feature-settings: "kern" 1;
+  }
+
+  ::selection {
+    background: rgb(var(--primary-tint-strong));
+    color: rgb(var(--ink));
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--primary));
+    outline-offset: 2px;
+  }
+
+  /* Numbers line up in columns everywhere they are compared */
+  table,
+  .tabular,
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Prevent iOS zoom on focus: inputs are 16px on small screens */
+  @media (max-width: 640px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
   }
 }
 
 @layer utilities {
-  .card-lift {
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+  .text-balance {
+    text-wrap: balance;
   }
-  .card-lift:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 14px 28px -6px rgba(15, 32, 64, 0.09), 0 6px 12px -3px rgba(15, 32, 64, 0.04);
+  .text-pretty {
+    text-wrap: pretty;
   }
 
+  /* Clickable cards only: lift 2px + shadow-2 (DESIGN.md §7) */
+  .card-lift {
+    transition:
+      transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .card-lift:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 4px 12px -2px rgba(22, 33, 30, 0.08),
+      0 2px 4px -2px rgba(22, 33, 30, 0.05);
+  }
+
+  /* Button press: sink to 98% in 80ms, release in 160ms */
+  .press {
+    transition:
+      transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease;
+  }
+  .press:active {
+    transform: scale(0.98);
+    transition-duration: 80ms;
+  }
+
+  /* First-entry stagger (≤ 600ms total) */
   @keyframes slideInLeftStagger {
     from {
       opacity: 0;
-      transform: translateX(-14px);
+      transform: translateX(-8px);
     }
     to {
       opacity: 1;
       transform: translateX(0);
     }
   }
-
   .animate-stagger-item {
     opacity: 0;
-    animation: slideInLeftStagger 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: slideInLeftStagger 240ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .card-lift:hover {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+      scroll-behavior: auto !important;
+    }
+    .card-lift:hover,
+    .press:active {
       transform: none;
     }
     .animate-stagger-item {
-      animation: none;
       opacity: 1;
       transform: none;
     }

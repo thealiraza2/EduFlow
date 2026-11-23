@@ -96,19 +96,19 @@ export function TeacherQRModal({ batches }: Props) {
           }
         }}
         size="sm"
-        className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-sm flex items-center"
+        className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-1 flex items-center"
       >
         <QrCode className="h-4 w-4 mr-1.5" />
         Generate Live QR
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md bg-white p-6 rounded-2xl shadow-xl">
+        <DialogContent className="max-w-md bg-white p-6 rounded-2xl shadow-3">
           <DialogHeader className="text-center pb-2">
             <div className="mx-auto w-10 h-10 bg-indigo-50 border border-indigo-200 rounded-full flex items-center justify-center text-indigo-600 mb-2">
               <QrCode className="h-5 w-5" />
             </div>
-            <DialogTitle className="text-xl font-bold text-slate-900">
+            <DialogTitle className="text-xl font-semibold text-slate-900">
               Live Batch Attendance QR
             </DialogTitle>
             <DialogDescription className="text-xs text-slate-500">
@@ -154,7 +154,7 @@ export function TeacherQRModal({ batches }: Props) {
             ) : qrResult ? (
               <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 text-center space-y-3">
                 {/* QR Image */}
-                <div className="bg-white p-3 rounded-lg shadow-sm inline-block border mx-auto">
+                <div className="bg-white p-3 rounded-lg shadow-1 inline-block border mx-auto">
                   <img
                     src={qrResult.qrDataUrl}
                     alt="Attendance QR Code"
@@ -164,7 +164,7 @@ export function TeacherQRModal({ batches }: Props) {
 
                 {/* Batch & Timing info */}
                 <div>
-                  <h4 className="font-bold text-sm text-slate-900">{qrResult.batchName}</h4>
+                  <h4 className="font-semibold text-sm text-slate-900">{qrResult.batchName}</h4>
                   <p className="text-xs text-slate-500">{qrResult.batchTiming} • {qrResult.date}</p>
                 </div>
 
@@ -172,7 +172,7 @@ export function TeacherQRModal({ batches }: Props) {
                 <div className="flex items-center justify-center space-x-2">
                   <Badge
                     variant="outline"
-                    className={`font-mono text-xs px-3 py-1 font-bold ${
+                    className={`font-mono text-xs px-3 py-1 font-semibold ${
                       secondsRemaining > 60
                         ? "bg-emerald-50 text-emerald-800 border-emerald-300"
                         : secondsRemaining > 0
@@ -208,7 +208,7 @@ export function TeacherQRModal({ batches }: Props) {
               </div>
             ) : null}
 
-            <div className="text-[11px] text-slate-400 text-center leading-relaxed">
+            <div className="text-xs text-slate-400 text-center leading-relaxed">
               Students open their phone camera, scan this code, and confirm attendance. Server prevents duplicate scans and enforces batch enrollment.
             </div>
           </div>

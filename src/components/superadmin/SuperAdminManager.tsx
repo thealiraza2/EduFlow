@@ -183,81 +183,81 @@ export function SuperAdminManager({
       {/* TOP ROW: 6 Stat Cards — Midnight SaaS Style with Card Lift and CountUp */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {/* Card 1: Total Academies */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 card-lift">
-          <div className="w-10 h-10 rounded-xl bg-[#FFF9E6] border border-[#F5B800]/30 flex items-center justify-center mb-3 shadow-xs">
-            <Building2 className="h-5 w-5 text-[#F5B800]" />
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 p-5 card-lift">
+          <div className="w-10 h-10 rounded-xl bg-primary-tint border border-primary/30 flex items-center justify-center mb-3 shadow-xs">
+            <Building2 className="h-5 w-5 text-accent" />
           </div>
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Total Academies</p>
-          <div className="text-2xl sm:text-3xl font-extrabold text-[#0F2040]">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Total Academies</p>
+          <div className="text-2xl sm:text-3xl font-semibold text-ink">
             <CountUp value={stats.totalAcademies} />
           </div>
-          <p className="text-[11px] text-slate-500 mt-1 font-medium">
+          <p className="text-xs text-slate-500 mt-1 font-medium">
             {stats.activeAcademies} active · {stats.onTrialAcademies} on trial · {stats.suspendedAcademies} suspended
           </p>
         </div>
 
         {/* Card 2: Total Students */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 card-lift">
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 p-5 card-lift">
           <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200/50 flex items-center justify-center mb-3 shadow-xs">
             <Users className="h-5 w-5 text-blue-600" />
           </div>
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Total Students</p>
-          <div className="text-2xl sm:text-3xl font-extrabold text-[#0F2040]">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Total Students</p>
+          <div className="text-2xl sm:text-3xl font-semibold text-ink">
             <CountUp value={stats.totalStudents} />
           </div>
-          <p className="text-[11px] text-slate-400 mt-1">Across all registered academies</p>
+          <p className="text-xs text-slate-400 mt-1">Across all registered academies</p>
         </div>
 
         {/* Card 3: Total Teachers */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 card-lift">
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 p-5 card-lift">
           <div className="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200/50 flex items-center justify-center mb-3 shadow-xs">
             <GraduationCap className="h-5 w-5 text-purple-600" />
           </div>
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Total Teachers</p>
-          <div className="text-2xl sm:text-3xl font-extrabold text-[#0F2040]">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Total Teachers</p>
+          <div className="text-2xl sm:text-3xl font-semibold text-ink">
             <CountUp value={stats.totalTeachers} />
           </div>
-          <p className="text-[11px] text-slate-400 mt-1">Across all registered academies</p>
+          <p className="text-xs text-slate-400 mt-1">Across all registered academies</p>
         </div>
 
         {/* Card 4: Platform MRR */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 card-lift">
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 p-5 card-lift">
           <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/50 flex items-center justify-center mb-3 shadow-xs">
             <TrendingUp className="h-5 w-5 text-emerald-600" />
           </div>
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Platform MRR</p>
-          <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 font-mono">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Platform MRR</p>
+          <div className="text-2xl sm:text-3xl font-semibold text-emerald-600 font-mono">
             <CountUp value={stats.monthlyRevenueMinor / 100} prefix="PKR " />
           </div>
-          <p className="text-[10px] text-slate-500 mt-1 leading-snug">
+          <p className="text-xs text-slate-500 mt-1 leading-snug">
             Starter 2,500 · Growth 5,000 · Pro 9,000 / mo
           </p>
         </div>
 
         {/* Card 5: Active Trials */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 card-lift">
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 p-5 card-lift">
           <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200/50 flex items-center justify-center mb-3 shadow-xs">
             <Clock className="h-5 w-5 text-amber-600" />
           </div>
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Active Trials</p>
-          <div className="text-2xl sm:text-3xl font-extrabold text-[#0F2040]">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Active Trials</p>
+          <div className="text-2xl sm:text-3xl font-semibold text-ink">
             <CountUp value={stats.activeTrialsCount} />
           </div>
-          <p className="text-[11px] text-slate-500 mt-1 font-medium">
+          <p className="text-xs text-slate-500 mt-1 font-medium">
             {stats.activeTrialsCount} on trial · {stats.trialsExpiringSoonCount} expiring soon
           </p>
         </div>
 
         {/* Card 6: New This Month */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 card-lift">
-          <div className="w-10 h-10 rounded-xl bg-[#FFF9E6] border border-[#F5B800]/30 flex items-center justify-center mb-3 shadow-xs">
-            <CalendarPlus className="h-5 w-5 text-[#F5B800]" />
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 p-5 card-lift">
+          <div className="w-10 h-10 rounded-xl bg-primary-tint border border-primary/30 flex items-center justify-center mb-3 shadow-xs">
+            <CalendarPlus className="h-5 w-5 text-accent" />
           </div>
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">New This Month</p>
-          <div className="text-2xl sm:text-3xl font-extrabold text-[#0F2040]">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">New This Month</p>
+          <div className="text-2xl sm:text-3xl font-semibold text-ink">
             <CountUp value={stats.newThisMonthCount} />
           </div>
-          <p className="text-[11px] text-slate-400 mt-1 truncate">
+          <p className="text-xs text-slate-400 mt-1 truncate">
             Joined in {stats.currentMonthName}
           </p>
         </div>
@@ -266,11 +266,11 @@ export function SuperAdminManager({
       {/* CHARTS SECTION (Real data only) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Chart 1: Revenue Trend */}
-        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift overflow-hidden">
+        <Card className="rounded-2xl border border-slate-200/80 shadow-1 bg-white card-lift overflow-hidden">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-base font-bold text-slate-900 flex items-center">
+                <CardTitle className="text-base font-semibold text-slate-900 flex items-center">
                   <TrendingUp className="h-4 w-4 mr-2 text-emerald-600" />
                   Monthly Recurring Revenue (Last 6 Months)
                 </CardTitle>
@@ -278,7 +278,7 @@ export function SuperAdminManager({
                   Computed from real paying subscription records. Showing only months that exist.
                 </CardDescription>
               </div>
-              <Badge variant="outline" className="text-[10px] text-slate-500">
+              <Badge variant="outline" className="text-xs text-slate-500">
                 Live Data
               </Badge>
             </div>
@@ -300,7 +300,7 @@ export function SuperAdminManager({
                         key={pt.key}
                         className="flex-1 flex flex-col items-center justify-end h-full group"
                       >
-                        <div className="text-[11px] font-mono font-bold text-slate-700 mb-1 opacity-90 group-hover:opacity-100">
+                        <div className="text-xs font-mono font-semibold text-slate-700 mb-1 opacity-90 group-hover:opacity-100">
                           {formatPKR(pt.mrrMinor)}
                         </div>
                         <div
@@ -314,14 +314,14 @@ export function SuperAdminManager({
                         <div className="mt-2 text-xs font-semibold text-slate-600">
                           {pt.label}
                         </div>
-                        <div className="text-[10px] text-slate-400">
+                        <div className="text-xs text-slate-400">
                           {pt.academyCount} {pt.academyCount === 1 ? "academy" : "academies"}
                         </div>
                       </div>
                     );
                   })}
                 </div>
-                <div className="flex items-center text-[11px] text-slate-400">
+                <div className="flex items-center text-xs text-slate-400">
                   <Info className="h-3.5 w-3.5 mr-1.5 shrink-0 text-slate-400" />
                   <span>
                     Current month reflects active paying tenants. Academies on 14-day trial contribute PKR 0.
@@ -333,11 +333,11 @@ export function SuperAdminManager({
         </Card>
 
         {/* Chart 2: Plan Distribution */}
-        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift overflow-hidden">
+        <Card className="rounded-2xl border border-slate-200/80 shadow-1 bg-white card-lift overflow-hidden">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-base font-bold text-slate-900 flex items-center">
+                <CardTitle className="text-base font-semibold text-slate-900 flex items-center">
                   <Sparkles className="h-4 w-4 mr-2 text-purple-600" />
                   Subscription Plan Distribution
                 </CardTitle>
@@ -345,7 +345,7 @@ export function SuperAdminManager({
                   Breakdown across Trial, Starter, Growth, and Pro tiers (0 shows as 0).
                 </CardDescription>
               </div>
-              <Badge variant="outline" className="text-[10px] text-slate-500">
+              <Badge variant="outline" className="text-xs text-slate-500">
                 {stats.totalAcademies} Total
               </Badge>
             </div>
@@ -391,10 +391,10 @@ export function SuperAdminManager({
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center space-x-2">
                       <span className="font-semibold text-slate-800">{planItem.name}</span>
-                      <span className="text-[11px] text-slate-400 font-mono">({planItem.price})</span>
+                      <span className="text-xs text-slate-400 font-mono">({planItem.price})</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge className={`text-[10px] font-mono font-bold ${planItem.badgeColor}`}>
+                      <Badge className={`text-xs font-mono font-semibold ${planItem.badgeColor}`}>
                         {planItem.count} {planItem.count === 1 ? "academy" : "academies"}
                       </Badge>
                       <span className="text-xs font-mono text-slate-500 w-10 text-right">{pct}%</span>
@@ -416,11 +416,11 @@ export function SuperAdminManager({
       {/* TABLES SECTION */}
       <div id="academies" className="space-y-6">
         {/* Table 1: Recent Academies (Newest 10) */}
-        <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white card-lift overflow-hidden">
+        <Card className="rounded-2xl border border-slate-200/80 shadow-1 bg-white card-lift overflow-hidden">
           <CardHeader className="pb-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
-                <CardTitle className="text-lg font-bold text-slate-900 flex items-center">
+                <CardTitle className="text-lg font-semibold text-slate-900 flex items-center">
                   <Building2 className="h-5 w-5 mr-2 text-slate-700" />
                   Recent Academies
                 </CardTitle>
@@ -495,21 +495,21 @@ export function SuperAdminManager({
                       return (
                         <tr key={academy.id} className="hover:bg-slate-50/60 transition-colors">
                           <td className="py-3 px-4">
-                            <div className="font-bold text-slate-900 text-sm">{academy.name}</div>
-                            <div className="font-mono text-[11px] text-blue-600 mt-0.5">
+                            <div className="font-semibold text-slate-900 text-sm">{academy.name}</div>
+                            <div className="font-mono text-xs text-blue-600 mt-0.5">
                               {academy.slug}.eduflow.app
                             </div>
                           </td>
 
                           <td className="py-3 px-4">
                             {academy.isOnTrial ? (
-                              <Badge className="bg-amber-100 text-amber-800 border-amber-300 text-[10px] font-bold">
+                              <Badge className="bg-amber-100 text-amber-800 border-amber-300 text-xs font-semibold">
                                 14-Day Free Trial ({academy.plan})
                               </Badge>
                             ) : (
                               <Badge
                                 variant={academy.plan === "PRO" ? "default" : "secondary"}
-                                className={`text-[10px] font-bold ${
+                                className={`text-xs font-semibold ${
                                   academy.plan === "PRO"
                                     ? "bg-purple-600 text-white"
                                     : academy.plan === "GROWTH"
@@ -527,7 +527,7 @@ export function SuperAdminManager({
                           <td className="py-3 px-4">
                             <Badge
                               variant={academy.status === "ACTIVE" ? "default" : "destructive"}
-                              className={`text-[10px] uppercase font-bold ${
+                              className={`text-xs uppercase font-semibold ${
                                 academy.status === "ACTIVE" ? "bg-emerald-600 text-white" : ""
                               }`}
                             >
@@ -541,14 +541,14 @@ export function SuperAdminManager({
 
                           <td className="py-3 px-4">
                             <div className="font-medium text-slate-800">{academy.adminName || "—"}</div>
-                            <div className="text-[11px] text-slate-400 font-mono">{academy.adminEmail || "—"}</div>
+                            <div className="text-xs text-slate-400 font-mono">{academy.adminEmail || "—"}</div>
                           </td>
 
-                          <td className="py-3 px-4 text-slate-500 font-mono text-[11px]">
+                          <td className="py-3 px-4 text-slate-500 font-mono text-xs">
                             {academy.createdAt.split("T")[0]}
                           </td>
 
-                          <td className="py-3 px-4 font-mono font-bold text-slate-800">
+                          <td className="py-3 px-4 font-mono font-semibold text-slate-800">
                             {academy.mrrLabel}
                           </td>
 
@@ -558,7 +558,7 @@ export function SuperAdminManager({
                               size="sm"
                               variant="ghost"
                               onClick={() => setSelectedAcademy(academy)}
-                              className="h-7 text-[11px] px-2 text-slate-600 hover:text-slate-900"
+                              className="h-7 text-xs px-2 text-slate-600 hover:text-slate-900"
                               title="View Academy Details"
                             >
                               <Eye className="h-3 w-3 mr-1" />
@@ -574,7 +574,7 @@ export function SuperAdminManager({
                                 setPlanChangeAcademy(academy);
                                 setSelectedNewPlan(academy.plan);
                               }}
-                              className="h-7 text-[11px] px-2"
+                              className="h-7 text-xs px-2"
                               title="Change subscription plan"
                             >
                               Change Plan
@@ -586,7 +586,7 @@ export function SuperAdminManager({
                               variant={academy.status === "ACTIVE" ? "destructive" : "default"}
                               disabled={isActing}
                               onClick={() => handleToggleStatus(academy.id, academy.status)}
-                              className={`h-7 text-[11px] px-2.5 ${
+                              className={`h-7 text-xs px-2.5 ${
                                 academy.status === "SUSPENDED" ? "bg-emerald-600 hover:bg-emerald-700" : ""
                               }`}
                             >
@@ -618,11 +618,11 @@ export function SuperAdminManager({
         {/* Lower Row: Trials Expiring Soon & Top Academies by Students */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Table 2: Trials Expiring Soon (3 days) */}
-          <Card className="shadow-sm border-slate-200">
+          <Card className="shadow-1 border-slate-200">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-base font-bold text-slate-900 flex items-center">
+                  <CardTitle className="text-base font-semibold text-slate-900 flex items-center">
                     <Clock className="h-4 w-4 mr-2 text-amber-500" />
                     Trials Expiring Soon
                   </CardTitle>
@@ -630,7 +630,7 @@ export function SuperAdminManager({
                     Tenants whose 14-day free trial ends within the next 3 days.
                   </CardDescription>
                 </div>
-                <Badge variant="outline" className="text-[10px] text-amber-700 bg-amber-50">
+                <Badge variant="outline" className="text-xs text-amber-700 bg-amber-50">
                   {trialsExpiringSoon.length} Expiring
                 </Badge>
               </div>
@@ -658,7 +658,7 @@ export function SuperAdminManager({
                     <tbody className="divide-y divide-slate-100">
                       {trialsExpiringSoon.map((a) => (
                         <tr key={a.id} className="hover:bg-slate-50">
-                          <td className="py-2.5 px-4 font-bold text-slate-900">{a.name}</td>
+                          <td className="py-2.5 px-4 font-semibold text-slate-900">{a.name}</td>
                           <td className="py-2.5 px-4 text-slate-600">{a.adminEmail}</td>
                           <td className="py-2.5 px-4 font-mono text-amber-600">
                             {a.trialEndsAt ? a.trialEndsAt.split("T")[0] : "—"}
@@ -668,7 +668,7 @@ export function SuperAdminManager({
                               size="sm"
                               variant="outline"
                               onClick={() => setSelectedAcademy(a)}
-                              className="h-6 text-[10px] px-2"
+                              className="h-6 text-xs px-2"
                             >
                               Details
                             </Button>
@@ -683,11 +683,11 @@ export function SuperAdminManager({
           </Card>
 
           {/* Table 3: Top Academies by Students (Top 5) */}
-          <Card className="shadow-sm border-slate-200">
+          <Card className="shadow-1 border-slate-200">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-base font-bold text-slate-900 flex items-center">
+                  <CardTitle className="text-base font-semibold text-slate-900 flex items-center">
                     <Award className="h-4 w-4 mr-2 text-indigo-600" />
                     Top Academies by Students
                   </CardTitle>
@@ -695,7 +695,7 @@ export function SuperAdminManager({
                     Highest student enrolment across all tenant academies.
                   </CardDescription>
                 </div>
-                <Badge variant="outline" className="text-[10px] text-slate-500">
+                <Badge variant="outline" className="text-xs text-slate-500">
                   Top 5
                 </Badge>
               </div>
@@ -721,27 +721,27 @@ export function SuperAdminManager({
                     <tbody className="divide-y divide-slate-100">
                       {topAcademiesByStudents.map((a, idx) => (
                         <tr key={a.id} className="hover:bg-slate-50">
-                          <td className="py-2.5 px-4 font-bold text-slate-500 font-mono">
+                          <td className="py-2.5 px-4 font-semibold text-slate-500 font-mono">
                             #{idx + 1}
                           </td>
                           <td className="py-2.5 px-4">
-                            <div className="font-bold text-slate-900">{a.name}</div>
-                            <div className="font-mono text-[10px] text-slate-400">{a.slug}</div>
+                            <div className="font-semibold text-slate-900">{a.name}</div>
+                            <div className="font-mono text-xs text-slate-400">{a.slug}</div>
                           </td>
-                          <td className="py-2.5 px-4 text-center font-mono font-bold text-indigo-600">
+                          <td className="py-2.5 px-4 text-center font-mono font-semibold text-indigo-600">
                             {a.studentsCount}
                           </td>
                           <td className="py-2.5 px-4 text-center font-mono text-slate-700">
                             {a.teachersCount}
                           </td>
                           <td className="py-2.5 px-4">
-                            <span className="text-[10px] font-semibold text-slate-600">
+                            <span className="text-xs font-semibold text-slate-600">
                               {a.isOnTrial ? `14-Day Free Trial (${a.plan})` : a.plan}
                             </span>
                           </td>
                           <td className="py-2.5 px-4 text-right">
                             <Badge
-                              className={`text-[9px] font-bold ${
+                              className={`text-xs font-semibold ${
                                 a.status === "ACTIVE"
                                   ? "bg-emerald-100 text-emerald-800 border-emerald-300"
                                   : "bg-rose-100 text-rose-800 border-rose-300"
@@ -762,9 +762,9 @@ export function SuperAdminManager({
 
         {/* SECTION: Plans & Billing Reference Card (Anchor: #plans) */}
         <div id="plans" className="pt-2">
-          <Card className="shadow-sm border-slate-200">
+          <Card className="shadow-1 border-slate-200">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-bold text-slate-900 flex items-center">
+              <CardTitle className="text-base font-semibold text-slate-900 flex items-center">
                 <Sparkles className="h-4 w-4 mr-2 text-purple-600" />
                 EduFlow Platform Subscription Plans & MRR Pricing Formula
               </CardTitle>
@@ -775,41 +775,41 @@ export function SuperAdminManager({
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="p-4 rounded-lg bg-amber-50/50 border border-amber-200/60 space-y-1.5">
-                  <div className="text-xs font-bold text-amber-800 uppercase tracking-wide">
+                  <div className="text-xs font-semibold text-amber-800 uppercase tracking-wide">
                     14-Day Free Trial
                   </div>
-                  <div className="text-xl font-bold font-mono text-slate-900">PKR 0</div>
-                  <p className="text-[11px] text-slate-500">
+                  <div className="text-xl font-semibold font-mono text-slate-900">PKR 0</div>
+                  <p className="text-xs text-slate-500">
                     Automatic 14-day evaluation period on signup. Zero MRR contribution.
                   </p>
                 </div>
 
                 <div className="p-4 rounded-lg bg-blue-50/50 border border-blue-200/60 space-y-1.5">
-                  <div className="text-xs font-bold text-blue-800 uppercase tracking-wide">
+                  <div className="text-xs font-semibold text-blue-800 uppercase tracking-wide">
                     Starter Plan
                   </div>
-                  <div className="text-xl font-bold font-mono text-slate-900">PKR 2,500 / mo</div>
-                  <p className="text-[11px] text-slate-500">
+                  <div className="text-xl font-semibold font-mono text-slate-900">PKR 2,500 / mo</div>
+                  <p className="text-xs text-slate-500">
                     For tuition centres & small academies. Up to 100 active students.
                   </p>
                 </div>
 
                 <div className="p-4 rounded-lg bg-indigo-50/50 border border-indigo-200/60 space-y-1.5">
-                  <div className="text-xs font-bold text-indigo-800 uppercase tracking-wide">
+                  <div className="text-xs font-semibold text-indigo-800 uppercase tracking-wide">
                     Growth Plan
                   </div>
-                  <div className="text-xl font-bold font-mono text-slate-900">PKR 5,000 / mo</div>
-                  <p className="text-[11px] text-slate-500">
+                  <div className="text-xl font-semibold font-mono text-slate-900">PKR 5,000 / mo</div>
+                  <p className="text-xs text-slate-500">
                     For growing schools & coaching institutes. 101 – 500 active students.
                   </p>
                 </div>
 
                 <div className="p-4 rounded-lg bg-purple-50/50 border border-purple-200/60 space-y-1.5">
-                  <div className="text-xs font-bold text-purple-800 uppercase tracking-wide">
+                  <div className="text-xs font-semibold text-purple-800 uppercase tracking-wide">
                     Pro Plan
                   </div>
-                  <div className="text-xl font-bold font-mono text-slate-900">PKR 9,000 / mo</div>
-                  <p className="text-[11px] text-slate-500">
+                  <div className="text-xl font-semibold font-mono text-slate-900">PKR 9,000 / mo</div>
+                  <p className="text-xs text-slate-500">
                     For large schools & academy chains. 500+ active students (Unlimited).
                   </p>
                 </div>
@@ -824,7 +824,7 @@ export function SuperAdminManager({
         <Dialog open={!!selectedAcademy} onOpenChange={() => setSelectedAcademy(null)}>
           <DialogContent className="max-w-md bg-white">
             <DialogHeader>
-              <DialogTitle className="text-lg font-bold text-slate-900 flex items-center">
+              <DialogTitle className="text-lg font-semibold text-slate-900 flex items-center">
                 <Building2 className="h-5 w-5 mr-2 text-purple-600" />
                 {selectedAcademy.name}
               </DialogTitle>
@@ -836,27 +836,27 @@ export function SuperAdminManager({
             <div className="space-y-4 py-2 text-xs">
               <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold block">Slug</span>
-                  <span className="font-mono font-bold text-slate-800">{selectedAcademy.slug}</span>
+                  <span className="text-xs text-slate-400 uppercase font-semibold block">Slug</span>
+                  <span className="font-mono font-semibold text-slate-800">{selectedAcademy.slug}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold block">Domain URL</span>
+                  <span className="text-xs text-slate-400 uppercase font-semibold block">Domain URL</span>
                   <span className="font-mono text-blue-600">{selectedAcademy.slug}.eduflow.app</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold block">Current Plan</span>
+                  <span className="text-xs text-slate-400 uppercase font-semibold block">Current Plan</span>
                   <span className="font-semibold text-slate-800">
                     {selectedAcademy.isOnTrial ? `14-Day Free Trial (${selectedAcademy.plan})` : selectedAcademy.plan}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold block">Tenant Status</span>
-                  <span className="font-bold text-emerald-600">{selectedAcademy.status}</span>
+                  <span className="text-xs text-slate-400 uppercase font-semibold block">Tenant Status</span>
+                  <span className="font-semibold text-emerald-600">{selectedAcademy.status}</span>
                 </div>
               </div>
 
               <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1.5">
-                <div className="text-[10px] text-slate-400 uppercase font-semibold">Director / Admin Contact</div>
+                <div className="text-xs text-slate-400 uppercase font-semibold">Director / Admin Contact</div>
                 <div className="font-medium text-slate-800">{selectedAcademy.adminName || "Not configured"}</div>
                 <div className="text-slate-600 font-mono">{selectedAcademy.adminEmail || "—"}</div>
                 <div className="text-slate-600 font-mono">{selectedAcademy.adminPhone || "—"}</div>
@@ -864,26 +864,26 @@ export function SuperAdminManager({
 
               <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold block">Enrolled Students</span>
-                  <span className="font-mono font-bold text-base text-slate-900">
+                  <span className="text-xs text-slate-400 uppercase font-semibold block">Enrolled Students</span>
+                  <span className="font-mono font-semibold text-base text-slate-900">
                     {selectedAcademy.studentsCount}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold block">Faculty Teachers</span>
-                  <span className="font-mono font-bold text-base text-slate-900">
+                  <span className="text-xs text-slate-400 uppercase font-semibold block">Faculty Teachers</span>
+                  <span className="font-mono font-semibold text-base text-slate-900">
                     {selectedAcademy.teachersCount}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold block">Trial Expiration</span>
+                  <span className="text-xs text-slate-400 uppercase font-semibold block">Trial Expiration</span>
                   <span className="font-mono text-slate-700">
                     {selectedAcademy.trialEndsAt ? selectedAcademy.trialEndsAt.split("T")[0] : "No trial"}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold block">MRR Contribution</span>
-                  <span className="font-mono font-bold text-emerald-700">
+                  <span className="text-xs text-slate-400 uppercase font-semibold block">MRR Contribution</span>
+                  <span className="font-mono font-semibold text-emerald-700">
                     {selectedAcademy.mrrLabel}
                   </span>
                 </div>
@@ -909,7 +909,7 @@ export function SuperAdminManager({
         <Dialog open={!!planChangeAcademy} onOpenChange={() => setPlanChangeAcademy(null)}>
           <DialogContent className="max-w-md bg-white">
             <DialogHeader>
-              <DialogTitle className="text-lg font-bold text-slate-900">
+              <DialogTitle className="text-lg font-semibold text-slate-900">
                 Change Plan: {planChangeAcademy.name}
               </DialogTitle>
               <DialogDescription className="text-xs text-slate-500">
@@ -965,7 +965,7 @@ export function SuperAdminManager({
                       <span>{item.label}</span>
                       <span className="font-mono text-purple-700">{item.price}</span>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5">{item.desc}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{item.desc}</p>
                   </div>
                 </label>
               ))}

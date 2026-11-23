@@ -71,7 +71,7 @@ export default async function TeacherGenerateTestPage() {
               </Link>
             </Button>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center">
+              <h1 className="font-serif text-2xl font-semibold text-slate-900 flex items-center">
                 <Sparkles className="h-6 w-6 mr-2 text-indigo-600" />
                 AI Test Paper Generator
               </h1>

@@ -35,7 +35,7 @@ export default async function AdminBoardsPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center">
+              <h1 className="font-serif text-2xl font-semibold text-slate-900 flex items-center">
                 <School className="h-6 w-6 mr-2 text-indigo-600" />
                 Boards & Pairing Schemes
               </h1>

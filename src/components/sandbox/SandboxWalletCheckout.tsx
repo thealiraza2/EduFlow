@@ -45,15 +45,15 @@ export function SandboxWalletCheckout({
 
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col items-center justify-center p-4 sm:p-6">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-3 overflow-hidden border border-slate-200">
         {/* Gateway Brand Header */}
         <div className={`p-6 text-white ${isJazzCash ? "bg-gradient-to-r from-red-700 to-rose-600" : "bg-gradient-to-r from-emerald-700 to-teal-600"}`}>
           <div className="flex justify-between items-center">
             <div>
-              <span className="text-xs uppercase tracking-widest font-bold opacity-80">
+              <span className="text-xs uppercase tracking-widest font-semibold opacity-80">
                 Official Sandbox Gateway
               </span>
-              <h1 className="text-2xl font-black tracking-tight mt-0.5">
+              <h1 className="font-serif text-2xl font-semibold mt-0.5">
                 {isJazzCash ? "JazzCash Mobile Wallet" : "Easypaisa Account"}
               </h1>
             </div>
@@ -76,22 +76,22 @@ export function SandboxWalletCheckout({
           <div className="bg-slate-50 rounded-xl p-4 border border-slate-200/80 space-y-2.5">
             <div className="flex justify-between items-center pb-2 border-b border-slate-200 text-xs">
               <span className="text-slate-500 font-medium">Academy Invoice</span>
-              <span className="font-mono font-bold text-slate-800">{invoiceId.slice(-8).toUpperCase()}</span>
+              <span className="font-mono font-semibold text-slate-800">{invoiceId.slice(-8).toUpperCase()}</span>
             </div>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div>
-                <span className="text-slate-400 block text-[11px]">Student</span>
+                <span className="text-slate-400 block text-xs">Student</span>
                 <span className="font-semibold text-slate-800">{studentName}</span>
-                <span className="text-slate-500 block text-[10px] font-mono">{admissionNo}</span>
+                <span className="text-slate-500 block text-xs font-mono">{admissionNo}</span>
               </div>
               <div className="text-right">
-                <span className="text-slate-400 block text-[11px]">Billing Month</span>
+                <span className="text-slate-400 block text-xs">Billing Month</span>
                 <span className="font-semibold text-slate-800">{month}</span>
               </div>
             </div>
             <div className="pt-2 border-t border-slate-200 flex justify-between items-center">
               <span className="text-xs font-medium text-slate-600">Total Payable:</span>
-              <span className="text-2xl font-black font-mono text-slate-900">
+              <span className="text-2xl font-semibold font-mono text-slate-900">
                 {formatPKR(amountMinor)}
               </span>
             </div>
@@ -108,7 +108,7 @@ export function SandboxWalletCheckout({
                 onClick={() => setTestMode("valid")}
                 className={`py-2 px-3 text-xs font-semibold rounded-lg border flex items-center justify-center space-x-1.5 transition-all ${
                   testMode === "valid"
-                    ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+                    ? "bg-slate-900 text-white border-slate-900 shadow-1"
                     : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                 }`}
               >
@@ -120,7 +120,7 @@ export function SandboxWalletCheckout({
                 onClick={() => setTestMode("tampered")}
                 className={`py-2 px-3 text-xs font-semibold rounded-lg border flex items-center justify-center space-x-1.5 transition-all ${
                   testMode === "tampered"
-                    ? "bg-rose-900 text-white border-rose-900 shadow-sm"
+                    ? "bg-rose-900 text-white border-rose-900 shadow-1"
                     : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                 }`}
               >
@@ -129,7 +129,7 @@ export function SandboxWalletCheckout({
               </button>
             </div>
             {testMode === "tampered" && (
-              <p className="text-[11px] text-rose-600 mt-1">
+              <p className="text-xs text-rose-600 mt-1">
                 ⚠️ Invariant 11 Test: Submits an altered amount or corrupted signature. The server webhook will reject this request.
               </p>
             )}
@@ -181,7 +181,7 @@ export function SandboxWalletCheckout({
             <button
               type="submit"
               disabled={isProcessing}
-              className={`w-full py-3 px-4 rounded-xl text-white font-bold text-sm shadow-md transition-all flex items-center justify-center space-x-2 ${
+              className={`w-full py-3 px-4 rounded-xl text-white font-semibold text-sm shadow-2 transition-all flex items-center justify-center space-x-2 ${
                 testMode === "valid" ? brandColor : "bg-rose-600 hover:bg-rose-700"
               } disabled:opacity-50`}
             >

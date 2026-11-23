@@ -1,36 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" width="240" height="60" fill="none">
-  <!-- Graduation Cap Icon -->
-  <g transform="translate(6, 6)">
-    <!-- Shadow / Base under cap -->
-    <path d="M12 28 C12 34, 36 34, 36 28 L36 33 C36 38.5, 12 38.5, 12 33 Z" fill="#0A162C" />
-    <!-- Navy Skull Cap Base -->
-    <path d="M11 25.5 C11.5 32, 36.5 32, 37 25.5 L36.5 22 C30 24.5, 18 24.5, 11.5 22 Z" fill="#0F2040" />
-    
-    <!-- Yellow Mortarboard Rhombus / Cap Top -->
-    <path d="M24 10 L44 19 L24 28 L4 19 Z" fill="#F5B800" stroke="#DF9E00" stroke-width="1.2" stroke-linejoin="round" />
-    <!-- Cap top highlight facet -->
-    <path d="M24 10 L44 19 L24 21 L4 19 Z" fill="#FFC926" />
-    
-    <!-- Center Button -->
-    <ellipse cx="24" cy="19" rx="2.5" ry="1.8" fill="#0F2040" />
-    
-    <!-- Tassel Ribbon & Hanging Ball -->
-    <path d="M24 19 C28 20, 36 23, 38 27 L38.5 36" stroke="#0F2040" stroke-width="2" stroke-linecap="round" fill="none" />
-    <circle cx="38.5" cy="37" r="2.2" fill="#F5B800" stroke="#0F2040" stroke-width="1.2" />
-    <path d="M37 39 L40 39 L39.2 43 L37.8 43 Z" fill="#0F2040" />
-
-    <!-- Subtle sparkle/flow accent -->
-    <circle cx="43" cy="12" r="1.5" fill="#F5B800" />
-    <circle cx="6" cy="13" r="1.2" fill="#F5B800" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" width="200" height="48" fill="none">
+  <g transform="translate(4 8)">
+    <rect width="32" height="32" rx="8" fill="#0F4F45" />
+    <path d="M8 10.5h10M8 16h6.5M8 21.5h8" stroke="#E8EFEC" stroke-opacity=".6" stroke-width="2" stroke-linecap="round" />
+    <path d="M17.5 17.5l3 3 5.5-7.5" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
   </g>
-
-  <!-- Wordmark "EduFlow" -->
-  <text x="64" y="38" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="28" font-weight="800" letter-spacing="-0.5">
-    <tspan fill="#0F2040">Edu</tspan><tspan fill="#F5B800">Flow</tspan>
-  </text>
-  
-  <!-- Subtle Tagline Indicator -->
-  <text x="65" y="49" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="8" font-weight="600" letter-spacing="1.5" fill="#6B7280">
-    SCHOOL MANAGEMENT
-  </text>
+  <text x="46" y="32" font-family="'Source Serif 4', Georgia, serif" font-size="24" font-weight="600" fill="#16211E">EduFlow</text>
 </svg>

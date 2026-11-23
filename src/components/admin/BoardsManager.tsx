@@ -307,9 +307,9 @@ export function BoardsManager({ boards }: Props) {
   return (
     <div className="space-y-6">
       {/* Top Action Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-xl border shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-xl border shadow-1">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 flex items-center">
+          <h2 className="text-xl font-semibold text-slate-900 flex items-center">
             <School className="h-5 w-5 mr-2 text-indigo-600" />
             Educational Examination Boards & Pairing Schemes
           </h2>
@@ -321,7 +321,7 @@ export function BoardsManager({ boards }: Props) {
         <Button
           onClick={() => setAddBoardOpen(true)}
           size="sm"
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-sm flex items-center shrink-0"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-1 flex items-center shrink-0"
         >
           <Plus className="h-4 w-4 mr-1.5" />
           Add Board
@@ -347,14 +347,14 @@ export function BoardsManager({ boards }: Props) {
       ) : (
         <div className="space-y-6">
           {boards.map((b) => (
-            <Card key={b.id} className="shadow-sm border-slate-200 overflow-hidden">
+            <Card key={b.id} className="shadow-1 border-slate-200 overflow-hidden">
               <CardHeader className="bg-slate-50 border-b py-3.5 px-5 flex flex-row items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="p-2 bg-indigo-100 text-indigo-700 rounded-lg">
                     <School className="h-5 w-5" />
                   </div>
                   <div>
-                    <CardTitle className="text-base font-bold text-slate-900">{b.name}</CardTitle>
+                    <CardTitle className="text-base font-semibold text-slate-900">{b.name}</CardTitle>
                     <CardDescription className="text-xs text-slate-500">
                       Province: {b.province} • {b.subjects.length} Subjects
                     </CardDescription>
@@ -399,10 +399,10 @@ export function BoardsManager({ boards }: Props) {
                         <div key={sub.id} className="py-4 first:pt-0 last:pb-0 space-y-3">
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                             <div className="flex items-center space-x-2">
-                              <Badge variant="outline" className="font-mono text-xs font-bold bg-slate-100">
+                              <Badge variant="outline" className="font-mono text-xs font-semibold bg-slate-100">
                                 {sub.className}
                               </Badge>
-                              <span className="font-bold text-sm text-slate-900">{sub.name}</span>
+                              <span className="font-semibold text-sm text-slate-900">{sub.name}</span>
                               <span className="text-xs text-slate-400">
                                 ({sub.chapters.length} Chapters)
                               </span>
@@ -417,7 +417,7 @@ export function BoardsManager({ boards }: Props) {
                                 }}
                                 variant="outline"
                                 size="sm"
-                                className="text-[11px] h-7 px-2.5"
+                                className="text-xs h-7 px-2.5"
                               >
                                 <Plus className="h-3 w-3 mr-1" /> Chapter
                               </Button>
@@ -426,7 +426,7 @@ export function BoardsManager({ boards }: Props) {
                                 onClick={() => openSchemeModal(b.id, sub)}
                                 variant="outline"
                                 size="sm"
-                                className="text-[11px] h-7 px-2.5 bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100"
+                                className="text-xs h-7 px-2.5 bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100"
                               >
                                 <FileCheck className="h-3 w-3 mr-1" />
                                 {scheme ? "Edit Scheme" : "Add Scheme"}
@@ -445,15 +445,15 @@ export function BoardsManager({ boards }: Props) {
 
                           {/* Chapters List */}
                           <div className="flex flex-wrap items-center gap-1.5 pl-2">
-                            <span className="text-[11px] text-slate-400 mr-1">Chapters:</span>
+                            <span className="text-xs text-slate-400 mr-1">Chapters:</span>
                             {sub.chapters.length === 0 ? (
-                              <span className="text-[11px] text-slate-400 italic">No chapters added</span>
+                              <span className="text-xs text-slate-400 italic">No chapters added</span>
                             ) : (
                               sub.chapters.map((ch) => (
                                 <Badge
                                   key={ch.id}
                                   variant="secondary"
-                                  className="text-[11px] font-normal pl-2 pr-1 py-0.5 flex items-center space-x-1"
+                                  className="text-xs font-normal pl-2 pr-1 py-0.5 flex items-center space-x-1"
                                 >
                                   <span>
                                     Ch {ch.number}: {ch.title}
@@ -476,19 +476,19 @@ export function BoardsManager({ boards }: Props) {
                                 <div className="flex items-center space-x-2">
                                   <span className="font-semibold text-slate-700">Pairing Scheme:</span>
                                   {isVerified ? (
-                                    <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 text-[10px] font-bold">
+                                    <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 text-xs font-semibold">
                                       <ShieldCheck className="h-3 w-3 mr-1" />
                                       VERIFIED
                                     </Badge>
                                   ) : (
-                                    <Badge className="bg-rose-100 text-rose-800 border-rose-300 text-[10px] font-bold">
+                                    <Badge className="bg-rose-100 text-rose-800 border-rose-300 text-xs font-semibold">
                                       <ShieldAlert className="h-3 w-3 mr-1" />
                                       UNVERIFIED — confirm before use
                                     </Badge>
                                   )}
 
                                   {scheme.notes?.startsWith("PARTIAL:") && (
-                                    <Badge className="bg-amber-100 text-amber-900 border-amber-300 text-[10px] font-bold">
+                                    <Badge className="bg-amber-100 text-amber-900 border-amber-300 text-xs font-semibold">
                                       PARTIAL
                                     </Badge>
                                   )}
@@ -498,7 +498,7 @@ export function BoardsManager({ boards }: Props) {
                                       href={scheme.sourceUrl}
                                       target="_blank"
                                       rel="noreferrer"
-                                      className="text-indigo-600 hover:underline inline-flex items-center text-[11px]"
+                                      className="text-indigo-600 hover:underline inline-flex items-center text-xs"
                                     >
                                       Official Doc <ExternalLink className="h-3 w-3 ml-0.5" />
                                     </a>
@@ -510,7 +510,7 @@ export function BoardsManager({ boards }: Props) {
                                     onClick={() => handleToggleVerify(scheme.id, isVerified)}
                                     size="sm"
                                     variant="outline"
-                                    className={`text-[10px] h-6 px-2 font-semibold ${
+                                    className={`text-xs h-6 px-2 font-semibold ${
                                       isVerified
                                         ? "text-rose-700 hover:bg-rose-50 border-rose-200"
                                         : "bg-emerald-600 text-white hover:bg-emerald-700"
@@ -523,7 +523,7 @@ export function BoardsManager({ boards }: Props) {
                                     onClick={() => handleDeleteScheme(scheme.id)}
                                     variant="ghost"
                                     size="sm"
-                                    className="text-slate-400 hover:text-rose-600 text-[10px] h-6 px-1.5"
+                                    className="text-slate-400 hover:text-rose-600 text-xs h-6 px-1.5"
                                   >
                                     Delete
                                   </Button>
@@ -531,30 +531,30 @@ export function BoardsManager({ boards }: Props) {
                               </div>
 
                               {/* Structure details */}
-                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 font-mono text-[11px]">
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 font-mono text-xs">
                                 <div className="p-2 bg-white rounded border">
-                                  <span className="text-slate-400 block text-[10px]">MCQs:</span>
+                                  <span className="text-slate-400 block text-xs">MCQs:</span>
                                   <span className="font-semibold text-slate-800">
                                     {(scheme.structure as any)?.mcq?.count ?? 0} &times; {(scheme.structure as any)?.mcq?.marksEach ?? 1} mark
                                   </span>
                                 </div>
 
                                 <div className="p-2 bg-white rounded border">
-                                  <span className="text-slate-400 block text-[10px]">Short Questions:</span>
+                                  <span className="text-slate-400 block text-xs">Short Questions:</span>
                                   <span className="font-semibold text-slate-800">
                                     Attempt {(scheme.structure as any)?.short?.attempt ?? (scheme.structure as any)?.short?.count ?? 0} of {(scheme.structure as any)?.short?.count ?? 0} (&times;{(scheme.structure as any)?.short?.marksEach ?? 2}m)
                                   </span>
                                 </div>
 
                                 <div className="p-2 bg-white rounded border">
-                                  <span className="text-slate-400 block text-[10px]">Long Questions:</span>
+                                  <span className="text-slate-400 block text-xs">Long Questions:</span>
                                   <span className="font-semibold text-slate-800">
                                     Attempt {(scheme.structure as any)?.long?.attempt ?? (scheme.structure as any)?.long?.count ?? 0} of {(scheme.structure as any)?.long?.count ?? 0} (&times;{(scheme.structure as any)?.long?.marksEach ?? 5}m)
                                   </span>
                                 </div>
 
                                 <div className="p-2 bg-white rounded border">
-                                  <span className="text-slate-400 block text-[10px]">Total & Time:</span>
+                                  <span className="text-slate-400 block text-xs">Total & Time:</span>
                                   <span className="font-semibold text-indigo-700">
                                     {scheme.totalMarks} Marks ({scheme.timeMinutes ? `${scheme.timeMinutes} mins` : "Time unconfirmed"})
                                   </span>
@@ -562,7 +562,7 @@ export function BoardsManager({ boards }: Props) {
                               </div>
 
                               {scheme.notes && (
-                                <p className="text-[11px] text-slate-600 italic bg-white p-2 rounded border border-slate-200">
+                                <p className="text-xs text-slate-600 italic bg-white p-2 rounded border border-slate-200">
                                   <span className="font-semibold text-slate-700 not-italic">Notes: </span>
                                   {scheme.notes}
                                 </p>
@@ -570,14 +570,14 @@ export function BoardsManager({ boards }: Props) {
                             </div>
                           ) : (
                             <div className="p-2.5 bg-amber-50/50 rounded-lg border border-amber-200/60 text-xs text-amber-900 flex items-center justify-between">
-                              <span className="text-[11px]">
+                              <span className="text-xs">
                                 No pairing scheme configured. AI generation will be disabled for this subject.
                               </span>
                               <Button
                                 onClick={() => openSchemeModal(b.id, sub)}
                                 size="sm"
                                 variant="outline"
-                                className="text-[11px] h-6 bg-white border-amber-300"
+                                className="text-xs h-6 bg-white border-amber-300"
                               >
                                 Configure Scheme
                               </Button>
@@ -596,9 +596,9 @@ export function BoardsManager({ boards }: Props) {
 
       {/* 1. Modal: Add Board */}
       <Dialog open={addBoardOpen} onOpenChange={setAddBoardOpen}>
-        <DialogContent className="max-w-md bg-white p-6 rounded-2xl shadow-xl">
+        <DialogContent className="max-w-md bg-white p-6 rounded-2xl shadow-3">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-slate-900">Add Examination Board</DialogTitle>
+            <DialogTitle className="text-lg font-semibold text-slate-900">Add Examination Board</DialogTitle>
             <DialogDescription className="text-xs text-slate-500">
               Create an educational board (e.g. BISE Lahore, BISE Karachi, Federal Board).
             </DialogDescription>
@@ -645,9 +645,9 @@ export function BoardsManager({ boards }: Props) {
 
       {/* 2. Modal: Add Subject */}
       <Dialog open={addSubjectOpen} onOpenChange={setAddSubjectOpen}>
-        <DialogContent className="max-w-md bg-white p-6 rounded-2xl shadow-xl">
+        <DialogContent className="max-w-md bg-white p-6 rounded-2xl shadow-3">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-slate-900">Add Subject to Board</DialogTitle>
+            <DialogTitle className="text-lg font-semibold text-slate-900">Add Subject to Board</DialogTitle>
             <DialogDescription className="text-xs text-slate-500">
               Specify class grade and subject name (e.g. 9th Physics, 10th Mathematics).
             </DialogDescription>
@@ -692,9 +692,9 @@ export function BoardsManager({ boards }: Props) {
 
       {/* 3. Modal: Add Chapter */}
       <Dialog open={addChapterOpen} onOpenChange={setAddChapterOpen}>
-        <DialogContent className="max-w-md bg-white p-6 rounded-2xl shadow-xl">
+        <DialogContent className="max-w-md bg-white p-6 rounded-2xl shadow-3">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-slate-900">Add Syllabus Chapter</DialogTitle>
+            <DialogTitle className="text-lg font-semibold text-slate-900">Add Syllabus Chapter</DialogTitle>
             <DialogDescription className="text-xs text-slate-500">
               Add chapter number and official title according to curriculum textbook.
             </DialogDescription>
@@ -736,11 +736,11 @@ export function BoardsManager({ boards }: Props) {
 
       {/* 4. Modal: Pairing Scheme Builder (Structured Form, NOT Raw JSON) */}
       <Dialog open={schemeModalOpen} onOpenChange={setSchemeModalOpen}>
-        <DialogContent className="max-w-xl bg-white p-6 rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-xl bg-white p-6 rounded-2xl shadow-3 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <div className="flex items-center space-x-2">
               <FileCheck className="h-5 w-5 text-indigo-600" />
-              <DialogTitle className="text-lg font-bold text-slate-900">
+              <DialogTitle className="text-lg font-semibold text-slate-900">
                 Configure Paper Scheme: {schemeClass} {schemeSubjectName}
               </DialogTitle>
             </div>
@@ -752,12 +752,12 @@ export function BoardsManager({ boards }: Props) {
           <form onSubmit={handleSaveScheme} className="space-y-5 pt-2">
             {/* Section 1: MCQs */}
             <div className="p-3.5 bg-slate-50 rounded-lg border space-y-2">
-              <h4 className="font-bold text-xs text-slate-800 flex items-center">
+              <h4 className="font-semibold text-xs text-slate-800 flex items-center">
                 Section A: Multiple Choice Questions (MCQs)
               </h4>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-600 mb-1">MCQ Count *</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">MCQ Count *</label>
                   <Input
                     type="number"
                     min={0}
@@ -767,7 +767,7 @@ export function BoardsManager({ boards }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-600 mb-1">Marks per MCQ *</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Marks per MCQ *</label>
                   <Input
                     type="number"
                     step="0.5"
@@ -782,12 +782,12 @@ export function BoardsManager({ boards }: Props) {
 
             {/* Section 2: Short Questions */}
             <div className="p-3.5 bg-slate-50 rounded-lg border space-y-2">
-              <h4 className="font-bold text-xs text-slate-800 flex items-center">
+              <h4 className="font-semibold text-xs text-slate-800 flex items-center">
                 Section B: Short Answer Questions
               </h4>
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-600 mb-1">Total Count *</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Total Count *</label>
                   <Input
                     type="number"
                     min={0}
@@ -797,7 +797,7 @@ export function BoardsManager({ boards }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-600 mb-1">Attempt Count *</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Attempt Count *</label>
                   <Input
                     type="number"
                     min={0}
@@ -807,7 +807,7 @@ export function BoardsManager({ boards }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-600 mb-1">Marks Each *</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Marks Each *</label>
                   <Input
                     type="number"
                     min={1}
@@ -821,12 +821,12 @@ export function BoardsManager({ boards }: Props) {
 
             {/* Section 3: Long Questions */}
             <div className="p-3.5 bg-slate-50 rounded-lg border space-y-2">
-              <h4 className="font-bold text-xs text-slate-800 flex items-center">
+              <h4 className="font-semibold text-xs text-slate-800 flex items-center">
                 Section C: Long / Theory Questions
               </h4>
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-600 mb-1">Total Count *</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Total Count *</label>
                   <Input
                     type="number"
                     min={0}
@@ -836,7 +836,7 @@ export function BoardsManager({ boards }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-600 mb-1">Attempt Count *</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Attempt Count *</label>
                   <Input
                     type="number"
                     min={0}
@@ -846,7 +846,7 @@ export function BoardsManager({ boards }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-600 mb-1">Marks Each *</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Marks Each *</label>
                   <Input
                     type="number"
                     min={1}
@@ -861,7 +861,7 @@ export function BoardsManager({ boards }: Props) {
             {/* Overall totals */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-semibold text-slate-700 mb-1">Total Paper Marks *</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Total Paper Marks *</label>
                 <Input
                   type="number"
                   min={1}
@@ -872,7 +872,7 @@ export function BoardsManager({ boards }: Props) {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-700 mb-1">Duration (Minutes) *</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Duration (Minutes) *</label>
                 <Input
                   type="number"
                   min={10}
@@ -884,7 +884,7 @@ export function BoardsManager({ boards }: Props) {
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Official Scheme URL / Reference (Optional)
               </label>
               <Input
@@ -896,7 +896,7 @@ export function BoardsManager({ boards }: Props) {
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Notes / Gaps Information (e.g. PARTIAL: details)
               </label>
               <Input

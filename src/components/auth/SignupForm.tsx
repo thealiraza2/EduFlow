@@ -2,17 +2,17 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { CircleAlert, Loader2 } from "lucide-react";
 import { signupAcademyAction } from "@/lib/actions/signup";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Sparkles, Building2, User, Mail, Lock, Phone, Globe, ArrowRight, Loader2, AlertCircle } from "lucide-react";
-import Link from "next/link";
+import { FieldLabel } from "@/components/auth/AuthShell";
 
 export function SignupForm() {
   const router = useRouter();
   const [academyName, setAcademyName] = useState("");
   const [slug, setSlug] = useState("");
+  const [slugEdited, setSlugEdited] = useState(false);
   const [adminName, setAdminName] = useState("");
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
@@ -23,19 +23,20 @@ export function SignupForm() {
 
   const handleNameChange = (val: string) => {
     setAcademyName(val);
-    // Auto-generate slug from academy name if user hasn't explicitly edited it
-    const generated = val
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-    setSlug(generated);
+    if (slugEdited) return;
+    setSlug(
+      val
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 30)
+    );
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
     startTransition(async () => {
       const res = await signupAcademyAction({
         academyName,
@@ -45,181 +46,145 @@ export function SignupForm() {
         adminPassword,
         adminPhone: adminPhone || undefined,
       });
-
       if (res.success) {
         router.push(`/login?registered=true&email=${encodeURIComponent(res.adminEmail!)}`);
       } else {
-        setError(res.error || "Failed to create academy account.");
+        setError(res.error || "We couldn't create your academy. Please try again.");
       }
     });
   };
 
   return (
-    <Card className="w-full max-w-lg shadow-xl border-gray-200/90 rounded-2xl bg-white">
-      <CardHeader className="space-y-2 text-center pb-6">
-        <div className="flex justify-center mb-1">
-          <Badge className="bg-[#FFF9E6] text-[#0F2040] border-[#F5B800]/40 px-3 py-1 font-semibold flex items-center space-x-1.5 shadow-none">
-            <Sparkles className="h-3.5 w-3.5 text-[#F5B800]" />
-            <span>14-Day Free PRO Trial • No Credit Card Required</span>
-          </Badge>
+    <div className="w-full animate-rise-in">
+      <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-ink-3">
+        14-Day Free PRO Trial • No Credit Card Required
+      </p>
+      <h1 className="mt-3 font-serif text-[34px] leading-tight text-ink">Create Your School Platform</h1>
+      <p className="mt-2 text-[15px] text-ink-2">
+        Every Pro feature for 14 days: students, attendance, fee challans, results and parent portal.
+      </p>
+
+      {error && (
+        <div role="alert" className="mt-6 flex items-start gap-2.5 rounded-md bg-status-danger-bg p-3.5 text-[14px] text-status-danger">
+          <CircleAlert className="mt-0.5 h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
+          <span>{error}</span>
         </div>
-        <CardTitle className="text-2xl font-bold text-[#0F2040] tracking-tight">
-          Create Your School Platform
-        </CardTitle>
-        <CardDescription className="text-xs text-[#4B5563]">
-          Get complete management software for students, teachers, attendance, and fee challans.
-        </CardDescription>
-      </CardHeader>
+      )}
 
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start space-x-2">
-              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-              <span>{error}</span>
-            </div>
-          )}
+      <form onSubmit={handleSubmit} className="mt-8 space-y-8">
+        <fieldset className="space-y-4">
+          <legend className="mb-1 text-xs font-semibold uppercase tracking-[0.08em] text-ink-3">Your school</legend>
 
-          {/* School Info */}
-          <div className="space-y-3 pt-1">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#0F2040] flex items-center">
-              <Building2 className="h-3.5 w-3.5 mr-1.5 text-[#F5B800]" />
-              School / Academy Information
-            </h3>
-
-            <div className="space-y-1.5">
-              <label htmlFor="academyName" className="text-xs font-medium text-gray-700">
-                School or Academy Name
-              </label>
-              <Input
-                id="academyName"
-                placeholder="e.g. Al-Ilm Model School"
-                value={academyName}
-                onChange={(e) => handleNameChange(e.target.value)}
-                required
-                className="h-10 text-xs rounded-xl border-gray-200 focus-visible:ring-[#F5B800] focus-visible:border-[#F5B800]"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label htmlFor="slug" className="text-xs font-medium text-gray-700">
-                Your Web Address (Subdomain)
-              </label>
-              <div className="flex items-center">
-                <div className="relative flex-1">
-                  <Input
-                    id="slug"
-                    placeholder="al-ilm"
-                    value={slug}
-                    onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
-                    required
-                    className="h-10 text-xs font-mono pr-2 rounded-l-xl rounded-r-none border-gray-200 focus-visible:ring-[#F5B800] focus-visible:border-[#F5B800]"
-                  />
-                </div>
-                <span className="text-xs font-mono font-medium text-[#0F2040] bg-[#FFF9E6] border border-l-0 border-gray-200 h-10 px-3 flex items-center rounded-r-xl">
-                  .eduflow.app
-                </span>
-              </div>
-              <p className="text-[11px] text-gray-400">
-                Staff, teachers and parents will access your portal at this link.
-              </p>
-            </div>
+          <div className="space-y-1.5">
+            <FieldLabel htmlFor="academyName">School or academy name</FieldLabel>
+            <Input
+              id="academyName"
+              placeholder="e.g. Al-Ilm Model School"
+              value={academyName}
+              onChange={(e) => handleNameChange(e.target.value)}
+              required
+              autoComplete="organization"
+            />
           </div>
 
-          {/* Admin User Info */}
-          <div className="space-y-3 pt-3 border-t border-gray-100">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#0F2040] flex items-center">
-              <User className="h-3.5 w-3.5 mr-1.5 text-[#F5B800]" />
-              Administrator Credentials
-            </h3>
-
-            <div className="space-y-1.5">
-              <label htmlFor="adminName" className="text-xs font-medium text-gray-700">
-                Full Name
-              </label>
+          <div className="space-y-1.5">
+            <FieldLabel htmlFor="slug">Web address</FieldLabel>
+            <div className="flex rounded-md shadow-1 focus-within:ring-2 focus-within:ring-primary/25">
               <Input
-                id="adminName"
-                placeholder="e.g. Professor Ahmad Tariq"
-                value={adminName}
-                onChange={(e) => setAdminName(e.target.value)}
+                id="slug"
+                placeholder="al-ilm"
+                value={slug}
+                onChange={(e) => {
+                  setSlugEdited(true);
+                  setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""));
+                }}
                 required
-                className="h-10 text-xs rounded-xl border-gray-200 focus-visible:ring-[#F5B800] focus-visible:border-[#F5B800]"
+                className="rounded-r-none font-mono text-[14px] shadow-none focus-visible:ring-0"
+              />
+              <span className="inline-flex h-10 shrink-0 items-center rounded-r-md border border-l-0 border-line-strong bg-surface-sunken px-3 font-mono text-[14px] text-ink-2">
+                .eduflow.app
+              </span>
+            </div>
+            <p className="text-small text-ink-3">Staff, teachers and parents open your portal at this address.</p>
+          </div>
+        </fieldset>
+
+        <fieldset className="space-y-4">
+          <legend className="mb-1 text-xs font-semibold uppercase tracking-[0.08em] text-ink-3">Admin account</legend>
+
+          <div className="space-y-1.5">
+            <FieldLabel htmlFor="adminName">Full name</FieldLabel>
+            <Input
+              id="adminName"
+              placeholder="e.g. Ahmad Tariq"
+              value={adminName}
+              onChange={(e) => setAdminName(e.target.value)}
+              required
+              autoComplete="name"
+            />
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <FieldLabel htmlFor="adminEmail">Email</FieldLabel>
+              <Input
+                id="adminEmail"
+                type="email"
+                inputMode="email"
+                placeholder="principal@school.edu.pk"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                required
+                autoComplete="email"
               />
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <label htmlFor="adminEmail" className="text-xs font-medium text-gray-700">
-                  Email Address
-                </label>
-                <Input
-                  id="adminEmail"
-                  type="email"
-                  placeholder="director@school.edu.pk"
-                  value={adminEmail}
-                  onChange={(e) => setAdminEmail(e.target.value)}
-                  required
-                  className="h-10 text-xs rounded-xl border-gray-200 focus-visible:ring-[#F5B800] focus-visible:border-[#F5B800]"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label htmlFor="adminPhone" className="text-xs font-medium text-gray-700">
-                  Phone Number (Optional)
-                </label>
-                <Input
-                  id="adminPhone"
-                  placeholder="03001234567"
-                  value={adminPhone}
-                  onChange={(e) => setAdminPhone(e.target.value)}
-                  className="h-10 text-xs rounded-xl border-gray-200 focus-visible:ring-[#F5B800] focus-visible:border-[#F5B800]"
-                />
-              </div>
-            </div>
-
             <div className="space-y-1.5">
-              <label htmlFor="adminPassword" className="text-xs font-medium text-gray-700">
-                Admin Password
-              </label>
+              <FieldLabel htmlFor="adminPhone">
+                Phone <span className="font-normal text-ink-3">(optional)</span>
+              </FieldLabel>
               <Input
-                id="adminPassword"
-                type="password"
-                placeholder="At least 8 characters"
-                value={adminPassword}
-                onChange={(e) => setAdminPassword(e.target.value)}
-                required
-                minLength={8}
-                className="h-10 text-xs rounded-xl border-gray-200 focus-visible:ring-[#F5B800] focus-visible:border-[#F5B800]"
+                id="adminPhone"
+                type="tel"
+                inputMode="tel"
+                placeholder="0300 1234567"
+                value={adminPhone}
+                onChange={(e) => setAdminPhone(e.target.value)}
+                autoComplete="tel"
               />
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={isPending}
-            className="w-full h-11 mt-4 bg-[#F5B800] hover:bg-[#DF9E00] text-[#0F2040] font-bold text-sm rounded-xl shadow-md transition-all active:scale-[0.99] flex items-center justify-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
-          >
-            {isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
-                <span>Setting up your school portal...</span>
-              </>
-            ) : (
-              <>
-                <span>Start 14-Day Free PRO Trial</span>
-                <ArrowRight className="h-4 w-4 ml-1" />
-              </>
-            )}
-          </button>
-
-          <div className="pt-2 text-center text-xs text-gray-500">
-            Already have a school account?{" "}
-            <Link href="/login" className="text-[#0F2040] hover:text-[#F5B800] font-bold underline transition-colors">
-              Sign In
-            </Link>
+          <div className="space-y-1.5">
+            <FieldLabel htmlFor="adminPassword">Password</FieldLabel>
+            <Input
+              id="adminPassword"
+              type="password"
+              placeholder="At least 8 characters"
+              value={adminPassword}
+              onChange={(e) => setAdminPassword(e.target.value)}
+              required
+              minLength={8}
+              autoComplete="new-password"
+            />
           </div>
-        </form>
-      </CardContent>
-    </Card>
+        </fieldset>
+
+        <button
+          type="submit"
+          disabled={isPending}
+          className="press inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-primary text-[15px] font-medium text-white hover:bg-primary-hover focus-visible:outline-none focus-visible:shadow-focus disabled:cursor-not-allowed disabled:opacity-80"
+        >
+          {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+          {isPending ? "Creating your academy…" : "Create academy & start trial"}
+        </button>
+      </form>
+
+      <p className="mt-8 border-t border-line pt-6 text-[14px] text-ink-2">
+        Already have an account?{" "}
+        <Link href="/login" className="font-medium text-primary hover:underline">
+          Login
+        </Link>
+      </p>
+    </div>
   );
 }

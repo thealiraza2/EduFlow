@@ -24,7 +24,7 @@ export function AnimatedMenuButton({
       aria-label={ariaLabel}
       className={cn(
         "relative w-10 h-10 rounded-xl flex flex-col items-center justify-center gap-1.5",
-        "text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B800] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F2040]",
+        "text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-primary",
         className
       )}
     >

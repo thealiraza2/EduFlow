@@ -70,7 +70,7 @@ export default async function AdminFeesPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center">
+          <h1 className="font-serif text-2xl font-semibold text-slate-900 flex items-center">
             <Banknote className="h-6 w-6 mr-2 text-emerald-600" />
             Fee Management
           </h1>

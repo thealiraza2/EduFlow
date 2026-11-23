@@ -124,40 +124,40 @@ export function FeeInvoiceManager({
     <div className="space-y-6">
       {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="shadow-sm">
+        <Card className="shadow-1">
           <CardContent className="p-5">
             <span className="text-xs font-semibold text-slate-500 uppercase">Total Billed ({selectedMonth})</span>
-            <div className="text-2xl font-bold font-mono text-slate-900 mt-1">
+            <div className="text-2xl font-semibold font-mono text-slate-900 mt-1">
               {formatPKR(totalBilledMinor)}
             </div>
-            <span className="text-[11px] text-slate-400 mt-0.5 block">{monthInvoices.length} total invoices</span>
+            <span className="text-xs text-slate-400 mt-0.5 block">{monthInvoices.length} total invoices</span>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="shadow-1">
           <CardContent className="p-5">
             <span className="text-xs font-semibold text-emerald-600 uppercase">Total Collected</span>
-            <div className="text-2xl font-bold font-mono text-emerald-600 mt-1">
+            <div className="text-2xl font-semibold font-mono text-emerald-600 mt-1">
               {formatPKR(totalCollectedMinor)}
             </div>
-            <span className="text-[11px] text-slate-400 mt-0.5 block">{collectionRate}% collection rate</span>
+            <span className="text-xs text-slate-400 mt-0.5 block">{collectionRate}% collection rate</span>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="shadow-1">
           <CardContent className="p-5">
             <span className="text-xs font-semibold text-rose-600 uppercase">Outstanding Balance</span>
-            <div className="text-2xl font-bold font-mono text-rose-600 mt-1">
+            <div className="text-2xl font-semibold font-mono text-rose-600 mt-1">
               {formatPKR(totalPendingMinor)}
             </div>
-            <span className="text-[11px] text-slate-400 mt-0.5 block">Pending receivables</span>
+            <span className="text-xs text-slate-400 mt-0.5 block">Pending receivables</span>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm bg-slate-900 text-white flex flex-col justify-between">
+        <Card className="shadow-1 bg-slate-900 text-white flex flex-col justify-between">
           <CardContent className="p-5">
             <span className="text-xs font-semibold text-slate-300 uppercase">Defaulters Alert</span>
-            <div className="text-lg font-bold mt-1 text-white flex items-center">
+            <div className="text-lg font-semibold mt-1 text-white flex items-center">
               Overdue Accounts
               <ArrowUpRight className="h-4 w-4 ml-1 text-rose-400" />
             </div>
@@ -172,7 +172,7 @@ export function FeeInvoiceManager({
       </div>
 
       {/* Control Bar: Month, Generate Invoices, Search, Filters */}
-      <Card className="shadow-sm">
+      <Card className="shadow-1">
         <CardContent className="p-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end">
             <div>
@@ -261,7 +261,7 @@ export function FeeInvoiceManager({
       )}
 
       {/* Invoices List Table */}
-      <Card className="shadow-sm overflow-hidden">
+      <Card className="shadow-1 overflow-hidden">
         <CardHeader className="py-4 border-b bg-slate-50 flex flex-row items-center justify-between">
           <div>
             <CardTitle className="text-base font-semibold text-slate-900">
@@ -308,7 +308,7 @@ export function FeeInvoiceManager({
                       <tr key={inv.id} className="hover:bg-slate-50/60 transition-colors">
                         <td className="py-3 px-4">
                           <div className="font-semibold text-slate-900">{inv.student.name}</div>
-                          <div className="text-[11px] font-mono text-slate-500">
+                          <div className="text-xs font-mono text-slate-500">
                             {inv.student.admissionNo} • {inv.student.guardianPhone}
                           </div>
                           {inv.payments.length > 0 && (
@@ -316,7 +316,7 @@ export function FeeInvoiceManager({
                               {inv.payments.map((p) => (
                                 <span
                                   key={p.id}
-                                  className={`inline-flex items-center text-[9px] font-mono px-1.5 py-0.5 rounded font-semibold ${
+                                  className={`inline-flex items-center text-xs font-mono px-1.5 py-0.5 rounded font-semibold ${
                                     p.gatewayTransactionId
                                       ? "bg-purple-100 text-purple-800 border border-purple-200"
                                       : "bg-slate-100 text-slate-700 border border-slate-200"
@@ -343,7 +343,7 @@ export function FeeInvoiceManager({
                         <td className="py-3 px-3 text-right font-mono">
                           <div className="font-semibold text-slate-900">{formatPKR(inv.totalMinor)}</div>
                           {inv.fineMinor > 0 && (
-                            <div className="text-[10px] text-amber-700 font-sans mt-0.5">
+                            <div className="text-xs text-amber-700 font-sans mt-0.5">
                               Base: {formatPKR(inv.amountMinor)} + Fine: {formatPKR(inv.fineMinor)}
                             </div>
                           )}
@@ -353,7 +353,7 @@ export function FeeInvoiceManager({
                           {formatPKR(paidMinor)}
                         </td>
 
-                        <td className="py-3 px-3 text-right font-mono font-bold text-rose-600">
+                        <td className="py-3 px-3 text-right font-mono font-semibold text-rose-600">
                           {formatPKR(remainingMinor)}
                         </td>
 
@@ -366,7 +366,7 @@ export function FeeInvoiceManager({
                                 ? "secondary"
                                 : "destructive"
                             }
-                            className={`text-[10px] uppercase font-bold py-0.5 px-2 ${
+                            className={`text-xs uppercase font-semibold py-0.5 px-2 ${
                               inv.status === "PAID"
                                 ? "bg-emerald-600 text-white"
                                 : inv.status === "PARTIAL"

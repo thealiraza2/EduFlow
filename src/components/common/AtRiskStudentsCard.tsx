@@ -30,22 +30,22 @@ export function AtRiskStudentsCard({
   const mediumRiskCount = students.filter((s) => s.riskLevel === "MEDIUM").length;
 
   return (
-    <Card className="shadow-sm border-slate-200">
+    <Card className="shadow-1 border-slate-200">
       <CardHeader className="bg-gradient-to-r from-rose-50/60 via-amber-50/30 to-white border-b pb-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-rose-600 rounded-lg text-white shadow-sm">
+            <div className="p-2 bg-rose-600 rounded-lg text-white shadow-1">
               <ShieldAlert className="h-5 w-5" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <CardTitle className="text-base font-bold text-slate-900">{title}</CardTitle>
+                <CardTitle className="text-base font-semibold text-slate-900">{title}</CardTitle>
                 <Badge
                   variant="outline"
                   className={
                     isAiAvailable
-                      ? "bg-purple-50 text-purple-700 border-purple-200 text-[10px]"
-                      : "bg-slate-100 text-slate-600 border-slate-200 text-[10px]"
+                      ? "bg-purple-50 text-purple-700 border-purple-200 text-xs"
+                      : "bg-slate-100 text-slate-600 border-slate-200 text-xs"
                   }
                 >
                   <Brain className="h-3 w-3 mr-1" />
@@ -59,10 +59,10 @@ export function AtRiskStudentsCard({
           </div>
 
           <div className="flex items-center space-x-2">
-            <Badge className="bg-rose-100 text-rose-800 border-rose-200 text-xs font-mono font-bold">
+            <Badge className="bg-rose-100 text-rose-800 border-rose-200 text-xs font-mono font-semibold">
               {highRiskCount} High Risk
             </Badge>
-            <Badge className="bg-amber-100 text-amber-800 border-amber-200 text-xs font-mono font-bold">
+            <Badge className="bg-amber-100 text-amber-800 border-amber-200 text-xs font-mono font-semibold">
               {mediumRiskCount} Medium
             </Badge>
             <span className="text-xs text-slate-400 font-mono">({students.length} Total)</span>
@@ -96,7 +96,7 @@ export function AtRiskStudentsCard({
                         <span className="font-semibold text-sm text-slate-900">{st.studentName}</span>
                         <span className="text-xs font-mono text-slate-400">({st.admissionNo})</span>
                         <Badge
-                          className={`text-[10px] font-bold py-0.5 px-2 ${
+                          className={`text-xs font-semibold py-0.5 px-2 ${
                             isHigh
                               ? "bg-rose-600 text-white"
                               : isMedium
@@ -122,14 +122,14 @@ export function AtRiskStudentsCard({
                     <div className="flex flex-wrap items-center gap-1.5 self-start">
                       {/* Attendance */}
                       {st.attendancePct === null ? (
-                        <span className="text-[11px] px-2 py-0.5 rounded font-mono font-medium border bg-slate-50 text-slate-600 border-slate-200">
+                        <span className="text-xs px-2 py-0.5 rounded font-mono font-medium border bg-slate-50 text-slate-600 border-slate-200">
                           No sessions recorded
                         </span>
                       ) : (
                         <span
-                          className={`text-[11px] px-2 py-0.5 rounded font-mono font-medium border ${
+                          className={`text-xs px-2 py-0.5 rounded font-mono font-medium border ${
                             st.attendancePct < 60
-                              ? "bg-rose-50 text-rose-700 border-rose-200 font-bold"
+                              ? "bg-rose-50 text-rose-700 border-rose-200 font-semibold"
                               : st.attendancePct < 75
                               ? "bg-amber-50 text-amber-700 border-amber-200"
                               : "bg-slate-50 text-slate-700 border-slate-200"
@@ -141,9 +141,9 @@ export function AtRiskStudentsCard({
 
                       {/* Fee Overdue */}
                       <span
-                        className={`text-[11px] px-2 py-0.5 rounded font-mono font-medium border ${
+                        className={`text-xs px-2 py-0.5 rounded font-mono font-medium border ${
                           st.overdueMonths >= 2
-                            ? "bg-rose-50 text-rose-700 border-rose-200 font-bold"
+                            ? "bg-rose-50 text-rose-700 border-rose-200 font-semibold"
                             : st.overdueMonths === 1
                             ? "bg-amber-50 text-amber-700 border-amber-200"
                             : "bg-slate-50 text-slate-700 border-slate-200"
@@ -156,9 +156,9 @@ export function AtRiskStudentsCard({
 
                       {/* Marks Trend */}
                       <span
-                        className={`text-[11px] px-2 py-0.5 rounded font-mono font-medium border inline-flex items-center ${
+                        className={`text-xs px-2 py-0.5 rounded font-mono font-medium border inline-flex items-center ${
                           st.marksTrend === "DROPPING"
-                            ? "bg-rose-50 text-rose-700 border-rose-200 font-bold"
+                            ? "bg-rose-50 text-rose-700 border-rose-200 font-semibold"
                             : st.marksTrend === "RISING"
                             ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                             : "bg-slate-50 text-slate-600 border-slate-200"
@@ -198,7 +198,7 @@ export function AtRiskStudentsCard({
                           {st.weakSubject.averagePercentage}% average).
                         </span>
                         {st.weakSubject.suggestedTopics.length > 0 && (
-                          <div className="text-[11px] text-slate-600 mt-0.5">
+                          <div className="text-xs text-slate-600 mt-0.5">
                             Target topics:{" "}
                             <span className="font-medium text-slate-800">
                               {st.weakSubject.suggestedTopics.join(" • ")}

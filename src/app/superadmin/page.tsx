@@ -182,12 +182,12 @@ export default async function SuperAdminDashboardPage() {
   const currentMonthName = now.toLocaleString("en-US", { month: "long", year: "numeric" });
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-canvas">
       {/* Page Header */}
       <div className="bg-white border-b border-slate-200/80 px-6 sm:px-8 py-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-xs">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#0F2040]">
+            <h1 className="font-serif text-xl sm:text-2xl font-semibold text-ink">
               Platform Administration
             </h1>
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -196,8 +196,8 @@ export default async function SuperAdminDashboardPage() {
             Multi-tenant SaaS root control • <strong className="text-slate-800">{totalAcademies}</strong> tenant academies registered
           </p>
         </div>
-        <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF9E6] border border-[#F5B800]/40 text-xs font-bold text-[#0F2040] shadow-xs">
-          <span className="w-2 h-2 rounded-full bg-[#F5B800]" />
+        <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-tint border border-primary/40 text-xs font-semibold text-ink shadow-xs">
+          <span className="w-2 h-2 rounded-full bg-primary" />
           <span>Super Admin</span>
         </span>
       </div>

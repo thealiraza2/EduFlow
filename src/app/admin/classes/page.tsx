@@ -50,7 +50,7 @@ export default async function ClassesPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Classes & Batches</h1>
+          <h1 className="font-serif text-3xl font-semibold text-slate-900">Classes & Batches</h1>
           <p className="text-slate-500">
             Structure academic grade levels, schedule batch timings, and assign subject faculty.
           </p>
@@ -71,11 +71,11 @@ export default async function ClassesPage() {
       ) : (
         <div className="space-y-6">
           {classes.map((cls) => (
-            <Card key={cls.id} className="overflow-hidden shadow-sm">
+            <Card key={cls.id} className="overflow-hidden shadow-1">
               <CardHeader className="bg-slate-50/70 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between py-4">
                 <div>
                   <div className="flex items-center space-x-2">
-                    <CardTitle className="text-xl font-bold text-slate-900">
+                    <CardTitle className="text-xl font-semibold text-slate-900">
                       Class {cls.name}
                     </CardTitle>
                     <Badge variant="outline" className="font-mono text-xs">
@@ -124,7 +124,7 @@ export default async function ClassesPage() {
                       return (
                         <div
                           key={batch.id}
-                          className="border rounded-lg p-4 bg-white flex flex-col justify-between space-y-4 hover:border-slate-300 transition-colors shadow-sm"
+                          className="border rounded-lg p-4 bg-white flex flex-col justify-between space-y-4 hover:border-slate-300 transition-colors shadow-1"
                         >
                           <div className="space-y-2">
                             <div className="flex justify-between items-start">

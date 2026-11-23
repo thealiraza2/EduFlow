@@ -54,7 +54,7 @@ export default async function ForbiddenPage({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center space-x-3">
-              <Link href={dashboardUrl} className="text-xl font-bold tracking-tight text-slate-900">
+              <Link href={dashboardUrl} className="text-xl font-semibold tracking-tight text-slate-900">
                 EduFlow
               </Link>
               {roleLabel && (
@@ -91,7 +91,7 @@ export default async function ForbiddenPage({
 
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4">
-        <Card className="max-w-lg w-full shadow-lg border-rose-200">
+        <Card className="max-w-lg w-full shadow-2 border-rose-200">
           <CardHeader className="text-center space-y-2">
             <div className="flex justify-center mb-1">
               <div className="p-3 bg-rose-100 rounded-full text-rose-700">
@@ -103,7 +103,7 @@ export default async function ForbiddenPage({
                 403 Forbidden
               </Badge>
             </div>
-            <CardTitle className="text-2xl font-bold text-slate-900">
+            <CardTitle className="text-2xl font-semibold text-slate-900">
               Access Restricted
             </CardTitle>
             <CardDescription className="text-sm text-slate-600">

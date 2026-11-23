@@ -33,13 +33,13 @@ export default async function ParentPortalDashboardPage() {
   return (
     <div className="space-y-7 max-w-5xl mx-auto w-full">
       {/* Top Welcome Banner */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 border-t-4 border-t-[#F5B800] shadow-sm card-lift relative overflow-hidden">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 border-t-4 border-t-primary shadow-1 card-lift relative overflow-hidden">
         <div>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F2040]">
+            <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-ink">
               Welcome, {dashboardData.parent.name}
             </h1>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#F5B800] text-[#0F2040] shadow-xs">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary text-white shadow-xs">
               Guardian Portal
             </span>
           </div>
@@ -54,7 +54,7 @@ export default async function ParentPortalDashboardPage() {
       </div>
 
       {/* Academy Notices */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-0 overflow-hidden card-lift">
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 p-0 overflow-hidden card-lift">
         <AnnouncementsFeed
           announcements={serializedAnnouncements}
           title="Academy Notices &amp; Circulars"
@@ -63,9 +63,9 @@ export default async function ParentPortalDashboardPage() {
 
       {/* Children Cards */}
       {dashboardData.children.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm text-center py-12 px-6 card-lift">
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 text-center py-12 px-6 card-lift">
           <User className="h-10 w-10 text-slate-300 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-[#0F2040]">No student profiles linked</h3>
+          <h3 className="text-lg font-semibold text-ink">No student profiles linked</h3>
           <p className="text-sm text-slate-500 max-w-sm mx-auto mt-1">
             No active student accounts are linked to your guardian email. Contact academy administration to link your child&apos;s admission file.
           </p>
@@ -73,7 +73,7 @@ export default async function ParentPortalDashboardPage() {
       ) : (
         <div className="space-y-6">
           {dashboardData.children.map((childSummary) => (
-            <div key={childSummary.student.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden card-lift p-1">
+            <div key={childSummary.student.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-1 overflow-hidden card-lift p-1">
               <ParentChildCard child={childSummary} />
             </div>
           ))}

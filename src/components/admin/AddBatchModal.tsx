@@ -104,7 +104,7 @@ export function AddBatchModal({
             </label>
             <select
               name="teacherId"
-              className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-1 focus:outline-none focus:ring-1 focus:ring-ring"
             >
               <option value="">-- No Teacher Assigned Yet --</option>
               {teachers.map((t) => (
