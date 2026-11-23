@@ -5,7 +5,6 @@ import { verifyQRToken } from "@/lib/qr";
 import { StudentQRScanConfirm } from "@/components/student/StudentQRScanConfirm";
 import Link from "next/link";
 import { ArrowLeft, QrCode } from "@/components/icons";
-import { Button } from "@/components/ui/button";
 
 interface Props {
   searchParams: { token?: string };
@@ -78,19 +77,20 @@ export default async function StudentQRScanPage({ searchParams }: Props) {
   }
 
   return (
-    <div className="p-6 md:p-8 flex flex-col justify-center">
-      <div className="max-w-md mx-auto w-full space-y-4">
-        <div className="flex items-center justify-between">
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/student">
-              <ArrowLeft className="h-4 w-4 mr-1.5" />
-              Back to Dashboard
-            </Link>
-          </Button>
-          <div className="text-xs font-medium text-slate-500 flex items-center">
-            <QrCode className="h-3.5 w-3.5 mr-1 text-indigo-600" />
-            EduFlow QR Attendance
-          </div>
+    <div className="flex flex-col justify-center py-4 sm:py-8">
+      <div className="mx-auto w-full max-w-md space-y-5">
+        <div className="flex items-center justify-between gap-3">
+          <Link
+            href="/student"
+            className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-ink-2 hover:text-primary"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Link>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-tint px-3 py-1 text-[12.5px] font-semibold text-primary">
+            <QrCode className="h-3.5 w-3.5" />
+            QR attendance
+          </span>
         </div>
 
         <StudentQRScanConfirm

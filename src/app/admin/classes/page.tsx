@@ -9,6 +9,7 @@ import { BatchRosterModal } from "@/components/admin/BatchRosterModal";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Clock, GraduationCap, DollarSign, School } from "@/components/icons";
+import { EmptyState, PageHeader } from "@/components/dashboard/kit";
 
 export default async function ClassesPage() {
   await requireAdmin();
@@ -48,26 +49,19 @@ export default async function ClassesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="font-serif text-3xl font-semibold text-slate-900">Classes & Batches</h1>
-          <p className="text-slate-500">
-            Structure academic grade levels, schedule batch timings, and assign subject faculty.
-          </p>
-        </div>
-        <AddClassModal />
-      </div>
+      <PageHeader
+        eyebrow="Academics"
+        title="Classes & batches"
+        description="Set up grade levels, schedule batch timings and assign teachers."
+        actions={<AddClassModal />}
+      />
 
       {classes.length === 0 ? (
-        <Card className="text-center py-12">
-          <CardContent className="space-y-3">
-            <School className="h-10 w-10 text-slate-400 mx-auto" />
-            <h3 className="text-lg font-semibold text-slate-900">No classes configured</h3>
-            <p className="text-sm text-slate-500 max-w-sm mx-auto">
-              Get started by adding your first academic class (e.g. 9th Grade, Section A).
-            </p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={School}
+          title="No classes yet"
+          body="Add your first class (for example 9th, section A) to start creating batches."
+        />
       ) : (
         <div className="space-y-6">
           {classes.map((cls) => (
@@ -75,7 +69,7 @@ export default async function ClassesPage() {
               <CardHeader className="bg-slate-50/70 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between py-4">
                 <div>
                   <div className="flex items-center space-x-2">
-                    <CardTitle className="text-xl font-semibold text-slate-900">
+                    <CardTitle className="font-serif text-[22px] font-bold tracking-[-0.02em] text-ink">
                       Class {cls.name}
                     </CardTitle>
                     <Badge variant="outline" className="font-mono text-xs">
@@ -124,7 +118,7 @@ export default async function ClassesPage() {
                       return (
                         <div
                           key={batch.id}
-                          className="border rounded-lg p-4 bg-white flex flex-col justify-between space-y-4 hover:border-slate-300 transition-colors shadow-1"
+                          className="flex min-w-0 flex-col justify-between space-y-4 rounded-xl border border-line bg-surface p-4 shadow-1 transition-all hover:-translate-y-0.5 hover:border-line-strong hover:shadow-2"
                         >
                           <div className="space-y-2">
                             <div className="flex justify-between items-start">

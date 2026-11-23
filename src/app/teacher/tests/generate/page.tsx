@@ -2,9 +2,8 @@ import { requireRole } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { AITestPaperGenerator } from "@/components/teacher/AITestPaperGenerator";
-import Link from "next/link";
 import { ArrowLeft, Sparkles } from "@/components/icons";
-import { Button } from "@/components/ui/button";
+import { ButtonLink, EmptyState, PageHeader } from "@/components/dashboard/kit";
 
 export default async function TeacherGenerateTestPage() {
   const user = await requireRole([Role.TEACHER, Role.ADMIN]);
@@ -59,37 +58,25 @@ export default async function TeacherGenerateTestPage() {
   });
 
   return (
-    <div className="p-6 md:p-8">
-      <div className="max-w-5xl mx-auto space-y-6">
-        {/* Navigation & Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm" asChild>
-              <Link href="/teacher/tests">
-                <ArrowLeft className="h-4 w-4 mr-1.5" />
-                Back to Tests
-              </Link>
-            </Button>
-            <div>
-              <h1 className="font-serif text-2xl font-semibold text-slate-900 flex items-center">
-                <Sparkles className="h-6 w-6 mr-2 text-indigo-600" />
-                AI Test Paper Generator
-              </h1>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Generate high quality examination papers strictly matching official educational board pairing schemes.
-              </p>
-            </div>
-          </div>
-        </div>
+    <div>
+      <div className="mx-auto max-w-5xl space-y-6">
+        <PageHeader
+          eyebrow="Tests"
+          title="Paper generator"
+          description="Draft exam papers that follow the official board paper schemes."
+          actions={
+            <ButtonLink href="/teacher/tests" variant="secondary" icon={ArrowLeft}>
+              Back to tests
+            </ButtonLink>
+          }
+        />
 
-        {/* Generator component */}
         {batches.length === 0 ? (
-          <div className="p-12 text-center bg-white rounded-xl border">
-            <p className="text-slate-600 font-medium">No batches assigned yet.</p>
-            <p className="text-xs text-slate-400 mt-1">
-              Please contact the academy administrator to assign batches to your teacher profile.
-            </p>
-          </div>
+          <EmptyState
+            icon={Sparkles}
+            title="No batches assigned yet"
+            body="Ask your school admin to assign batches to your teacher profile."
+          />
         ) : (
           <AITestPaperGenerator
             batches={batches}

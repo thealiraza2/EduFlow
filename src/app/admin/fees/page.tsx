@@ -2,9 +2,8 @@ import { requireAdmin } from "@/lib/permissions";
 import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { FeeInvoiceManager } from "@/components/admin/FeeInvoiceManager";
-import { Banknote, AlertTriangle } from "@/components/icons";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { AlertTriangle } from "@/components/icons";
+import { ButtonLink, PageHeader } from "@/components/dashboard/kit";
 
 export default async function AdminFeesPage() {
   const admin = await requireAdmin();
@@ -68,26 +67,16 @@ export default async function AdminFeesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="font-serif text-2xl font-semibold text-slate-900 flex items-center">
-            <Banknote className="h-6 w-6 mr-2 text-emerald-600" />
-            Fee Management
-          </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Auto-generate monthly invoices, download Challan PDFs, and collect append-only payments.
-          </p>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Link href="/admin/fees/defaulters">
-            <Button variant="outline" size="sm" className="text-xs text-rose-700 border-rose-200 hover:bg-rose-50 flex items-center">
-              <AlertTriangle className="h-3.5 w-3.5 mr-1 text-rose-600" />
-              View Defaulters
-            </Button>
-          </Link>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Finance"
+        title="Fees"
+        description="Generate monthly invoices, download challan PDFs and record payments."
+        actions={
+          <ButtonLink href="/admin/fees/defaulters" variant="secondary" icon={AlertTriangle}>
+            View defaulters
+          </ButtonLink>
+        }
+      />
 
       <FeeInvoiceManager
         initialInvoices={formattedInvoices}

@@ -4,10 +4,9 @@ import { Role } from "@prisma/client";
 import { CreateTestModal } from "@/components/teacher/CreateTestModal";
 import { TeacherMarksEntry } from "@/components/teacher/TeacherMarksEntry";
 import Link from "next/link";
-import { ArrowLeft, FileSpreadsheet, PlusCircle, CheckCircle2, Clock, Sparkles } from "@/components/icons";
+import { ArrowLeft, FileSpreadsheet, Sparkles } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ButtonLink, EmptyState, PageHeader, Panel, StatusPill } from "@/components/dashboard/kit";
 
 export default async function TeacherTestsPage({
   searchParams,
@@ -97,43 +96,31 @@ export default async function TeacherTestsPage({
   }
 
   return (
-    <div className="p-4 sm:p-6 md:p-8">
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* Navigation & Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <Button variant="outline" size="sm" asChild className="shrink-0">
-              <Link href={selectedTest ? "/teacher/tests" : "/teacher"}>
-                <ArrowLeft className="h-4 w-4 mr-1.5" />
-                {selectedTest ? "Back to Tests" : "Back to Dashboard"}
-              </Link>
-            </Button>
-            <div>
-              <h1 className="font-serif text-xl sm:text-2xl font-semibold text-slate-900 flex items-center">
-                <FileSpreadsheet className="h-6 w-6 mr-2 text-blue-600 shrink-0" />
-                Assessment Tests & Marks
-              </h1>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Create tests and enter student marks. Marks remain DRAFT until published by admin.
-              </p>
-            </div>
-          </div>
-
-          {!selectedTest && (
-            <div className="flex items-center gap-2">
-              <Link href="/teacher/tests/generate">
-                <Button
-                  size="sm"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-1 flex items-center"
-                >
-                  <Sparkles className="h-4 w-4 mr-1.5" />
-                  AI Test Generator
-                </Button>
-              </Link>
-              <CreateTestModal batches={batches} />
-            </div>
-          )}
-        </div>
+    <div>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Tests"
+          title={selectedTest ? selectedTest.title : "Tests & marks"}
+          description={
+            selectedTest
+              ? `${selectedTest.batch.class.name} ${selectedTest.batch.name}, ${selectedTest.subject}, out of ${selectedTest.totalMarks}`
+              : "Create tests and enter marks. Marks stay in draft until the admin publishes them."
+          }
+          actions={
+            selectedTest ? (
+              <ButtonLink href="/teacher/tests" variant="secondary" icon={ArrowLeft}>
+                All tests
+              </ButtonLink>
+            ) : (
+              <>
+                <ButtonLink href="/teacher/tests/generate" variant="secondary" icon={Sparkles}>
+                  Paper generator
+                </ButtonLink>
+                <CreateTestModal batches={batches} />
+              </>
+            )
+          }
+        />
 
         {selectedTest ? (
           <TeacherMarksEntry
@@ -156,59 +143,48 @@ export default async function TeacherTestsPage({
           />
         ) : (
           <div className="space-y-6">
-            <Card className="shadow-1">
-              <CardHeader className="py-4 border-b bg-slate-50 flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="text-base font-semibold text-slate-900">
-                    Assigned Tests
-                  </CardTitle>
-                </div>
-                <span className="text-xs font-mono text-slate-500">{tests.length} Total Tests</span>
-              </CardHeader>
-
-              <CardContent className="p-0">
-                {tests.length === 0 ? (
-                  <div className="p-12 text-center text-slate-400">
-                    <FileSpreadsheet className="h-8 w-8 mx-auto mb-2 text-slate-300" />
-                    <p className="text-sm font-medium text-slate-700">No tests created yet.</p>
-                  </div>
-                ) : (
-                  <div className="divide-y divide-slate-100">
-                    {tests.map((test) => (
-                      <div
-                        key={test.id}
-                        className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/60 transition-colors"
-                      >
-                        <div>
-                          <div className="flex items-center space-x-2">
-                            <span className="font-semibold text-slate-900 text-sm">{test.title}</span>
-                            <Badge
-                              variant={test.status === "PUBLISHED" ? "default" : "secondary"}
-                              className={`text-xs uppercase font-semibold py-0 px-1.5 ${
-                                test.status === "PUBLISHED" ? "bg-emerald-600 text-white" : ""
-                              }`}
-                            >
-                              {test.status}
-                            </Badge>
-                          </div>
-                          <div className="text-xs text-slate-500 mt-1">
-                            Batch: <strong>{test.batch.class.name} {test.batch.name}</strong> • Subject: <strong>{test.subject}</strong> • Max: <strong>{test.totalMarks}</strong> • Date: {test.date.toISOString().split("T")[0]}
-                          </div>
+            <Panel
+              title="Your tests"
+              description="Newest first"
+              action={<StatusPill tone="plum">{tests.length} {tests.length === 1 ? "test" : "tests"}</StatusPill>}
+              flush
+            >
+              {tests.length === 0 ? (
+                <EmptyState
+                  icon={FileSpreadsheet}
+                  title="No tests yet"
+                  body="Create a test to start entering marks for a batch."
+                  className="border-0 shadow-none"
+                />
+              ) : (
+                <ul className="divide-y divide-line">
+                  {tests.map((test) => (
+                    <li
+                      key={test.id}
+                      className="flex flex-col justify-between gap-3 px-4 py-4 transition-colors hover:bg-canvas sm:flex-row sm:items-center sm:px-5"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[15px] font-semibold text-ink">{test.title}</span>
+                          <StatusPill tone={test.status === "PUBLISHED" ? "success" : "warning"}>
+                            {test.status === "PUBLISHED" ? "Published" : "Draft"}
+                          </StatusPill>
                         </div>
-
-                        <div className="flex items-center space-x-2">
-                          <Link href={`/teacher/tests?testId=${test.id}`}>
-                            <Button size="sm" variant="outline" className="text-xs">
-                              {test.status === "PUBLISHED" ? "View Results" : "Enter / Edit Marks"}
-                            </Button>
-                          </Link>
-                        </div>
+                        <p className="mt-1 text-[13px] text-ink-3">
+                          {test.batch.class.name} {test.batch.name}, {test.subject}, out of {test.totalMarks}
+                          <span className="ml-2 font-mono text-[12px]">{test.date.toISOString().split("T")[0]}</span>
+                        </p>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                      <Button size="sm" variant="outline" asChild className="shrink-0 self-start sm:self-auto">
+                        <Link href={`/teacher/tests?testId=${test.id}`}>
+                          {test.status === "PUBLISHED" ? "View results" : "Enter marks"}
+                        </Link>
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Panel>
           </div>
         )}
       </div>

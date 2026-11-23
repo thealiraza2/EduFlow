@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/permissions";
 import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { AdminAttendanceManager } from "@/components/admin/AdminAttendanceManager";
-import { CheckCircle2 } from "@/components/icons";
+import { PageHeader } from "@/components/dashboard/kit";
 
 export default async function AdminAttendancePage() {
   await requireAdmin();
@@ -89,17 +89,11 @@ export default async function AdminAttendancePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="font-serif text-2xl font-semibold text-slate-900 flex items-center">
-            <CheckCircle2 className="h-6 w-6 mr-2 text-emerald-600" />
-            Attendance Management
-          </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Monitor academy attendance, track students below the 75% benchmark, and manage daily registers.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Daily register"
+        title="Attendance"
+        description="Monitor attendance, track students below the 75% mark and manage daily registers."
+      />
 
       <AdminAttendanceManager
         batches={batches.map((b) => ({

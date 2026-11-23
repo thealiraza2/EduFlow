@@ -3,9 +3,8 @@ import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { TeacherAttendanceSheet } from "@/components/teacher/TeacherAttendanceSheet";
 import { TeacherQRModal } from "@/components/teacher/TeacherQRModal";
-import Link from "next/link";
-import { ArrowLeft, CheckCircle2 } from "@/components/icons";
-import { Button } from "@/components/ui/button";
+import { CheckCircle2 } from "@/components/icons";
+import { EmptyState, PageHeader } from "@/components/dashboard/kit";
 
 export default async function TeacherAttendancePage() {
   const user = await requireRole([Role.TEACHER, Role.ADMIN]);
@@ -35,30 +34,14 @@ export default async function TeacherAttendancePage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 md:p-8">
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* Navigation & Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <Button variant="outline" size="sm" asChild className="shrink-0">
-              <Link href="/teacher">
-                <ArrowLeft className="h-4 w-4 mr-1.5" />
-                Back to Dashboard
-              </Link>
-            </Button>
-            <div>
-              <h1 className="font-serif text-xl sm:text-2xl font-semibold text-slate-900 flex items-center">
-                <CheckCircle2 className="h-6 w-6 mr-2 text-emerald-600 shrink-0" />
-                Batch Attendance
-              </h1>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Mark daily batch attendance and notify parents of absent students.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {batches.length > 0 && (
+    <div>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow={<>Signed in as <strong className="font-semibold text-ink">{user.name}</strong></>}
+          title="Attendance"
+          description="Mark today's register for a batch. Parents of absent students are notified."
+          actions={
+            batches.length > 0 ? (
               <TeacherQRModal
                 batches={batches.map((b) => ({
                   id: b.id,
@@ -70,20 +53,16 @@ export default async function TeacherAttendancePage() {
                   },
                 }))}
               />
-            )}
-            <div className="text-xs text-slate-500 bg-white border px-3 py-1.5 rounded-md">
-              Logged in as <strong>{user.name}</strong> ({user.role})
-            </div>
-          </div>
-        </div>
+            ) : undefined
+          }
+        />
 
         {batches.length === 0 ? (
-          <div className="bg-white border rounded-xl p-12 text-center text-slate-500">
-            <p className="text-base font-medium text-slate-700">No batches assigned</p>
-            <p className="text-xs text-slate-400 mt-1">
-              You do not have any active batches assigned to your teacher account yet.
-            </p>
-          </div>
+          <EmptyState
+            icon={CheckCircle2}
+            title="No batches assigned"
+            body="You don't have any active batches on your teacher account yet."
+          />
         ) : (
           <TeacherAttendanceSheet
             batches={batches.map((b) => ({

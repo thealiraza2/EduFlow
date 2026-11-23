@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 // DESIGN.md §5 — 6px radius, status bg + status text, 12px/600, always a word.
 const badgeVariants = cva(
-  "inline-flex items-center gap-1 whitespace-nowrap rounded-sm border border-transparent px-2 py-0.5 text-xs font-semibold leading-5",
+  "inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-transparent px-2.5 py-0.5 text-xs font-semibold leading-5",
   {
     variants: {
       variant: {

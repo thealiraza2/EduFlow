@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/permissions";
 import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { ReportsManager } from "@/components/admin/ReportsManager";
-import { FileSpreadsheet } from "@/components/icons";
+import { PageHeader } from "@/components/dashboard/kit";
 
 export default async function AdminReportsPage() {
   await requireAdmin();
@@ -29,15 +29,11 @@ export default async function AdminReportsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-serif text-3xl font-semibold text-slate-900 flex items-center">
-          <FileSpreadsheet className="h-8 w-8 mr-3 text-slate-900" />
-          Analytics & CSV Export Reports
-        </h1>
-        <p className="text-slate-500 text-sm mt-1">
-          Generate, preview, and download official academy data reports for accounting, faculty workload, attendance, and student performance.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Insights"
+        title="Reports"
+        description="Preview and download reports for fees, teacher workload, attendance and student performance."
+      />
 
       <ReportsManager
         batches={serializedBatches}

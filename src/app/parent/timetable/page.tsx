@@ -2,11 +2,9 @@ import { requireRole } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { DAYS_OF_WEEK } from "@/lib/constants";
-import { Calendar, Clock, MapPin, School, BookOpen, User, ArrowLeft } from "@/components/icons";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Clock, School, User } from "@/components/icons";
+import { EmptyState, PageHeader, StatusPill } from "@/components/dashboard/kit";
 
 export default async function ParentTimetablePage() {
   const user = await requireRole([Role.PARENT, Role.ADMIN]);
@@ -39,56 +37,32 @@ export default async function ParentTimetablePage() {
   const displayDays = DAYS_OF_WEEK.filter((d) => d.id >= 1 && d.id <= 6);
 
   return (
-    <div className="p-4 sm:p-6 md:p-8">
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* Navigation & Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 sm:p-6 rounded-xl border shadow-1">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-            <Button variant="outline" size="sm" asChild className="w-fit">
-              <Link href="/parent">
-                <ArrowLeft className="h-4 w-4 mr-1.5" />
-                Back to Dashboard
-              </Link>
-            </Button>
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="font-serif text-xl sm:text-2xl font-semibold text-slate-900">Weekly Timetable</h1>
-                <Badge variant="outline">Guardian Access</Badge>
-              </div>
-              <p className="text-slate-500 text-xs mt-1">
-                Viewing schedule for <strong>{user.name}</strong> ({user.email})
-              </p>
-            </div>
-          </div>
-          <Badge variant="secondary" className="text-xs px-3 py-1">
-            {children.length} Registered {children.length === 1 ? "Child" : "Children"}
-          </Badge>
-        </div>
+    <div>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow={`${children.length} ${children.length === 1 ? "child" : "children"} linked`}
+          title="Timetable"
+          description="Each child's weekly lectures, by batch."
+        />
 
         {children.length === 0 ? (
-          <Card className="text-center py-12">
-            <CardContent className="space-y-3">
-              <User className="h-10 w-10 text-slate-300 mx-auto" />
-              <h3 className="text-lg font-semibold text-slate-900">No student records linked</h3>
-              <p className="text-sm text-slate-500 max-w-sm mx-auto">
-                No student profiles are currently linked to your guardian account. Please contact the academy administration.
-              </p>
-            </CardContent>
-          </Card>
+          <EmptyState
+            icon={User}
+            title="No children linked yet"
+            body="No student profiles are linked to your account. Please contact the school office."
+          />
         ) : (
           <div className="space-y-8">
             {children.map((child) => (
               <div key={child.id} className="space-y-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b pb-2">
-                  <div>
-                    <h2 className="text-xl sm:text-2xl font-semibold text-slate-900">{child.name}</h2>
-                    <span className="text-xs font-mono text-slate-500">
-                      Admission No: <strong>{child.admissionNo}</strong> | Status: {child.status}
-                    </span>
-                  </div>
-                  <Badge variant={child.status === "ACTIVE" ? "default" : "secondary"}>
-                    {child.status}
-                  </Badge>
+                <div className="flex flex-wrap items-center gap-3">
+                  <h2 className="font-serif text-[22px] font-bold tracking-[-0.02em] text-ink">{child.name}</h2>
+                  <span className="rounded-md border border-line bg-surface px-1.5 py-0.5 font-mono text-[12px] text-ink-2">
+                    {child.admissionNo}
+                  </span>
+                  <StatusPill tone={child.status === "ACTIVE" ? "success" : "neutral"}>
+                    {child.status.charAt(0) + child.status.slice(1).toLowerCase()}
+                  </StatusPill>
                 </div>
 
                 {child.enrollments.length === 0 ? (
@@ -97,29 +71,27 @@ export default async function ParentTimetablePage() {
                   </p>
                 ) : (
                   child.enrollments.map((enr) => (
-                    <Card key={enr.id} className="shadow-1 overflow-hidden border">
-                      <CardHeader className="bg-slate-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 py-3 px-4 sm:px-5">
-                        <div>
-                          <CardTitle className="text-base sm:text-lg font-semibold text-white flex items-center">
-                            <School className="h-4 w-4 mr-2 text-blue-400 shrink-0" />
-                            Class {enr.batch.class.name}-{enr.batch.class.section} — {enr.batch.name}
+                    <Card key={enr.id} className="overflow-hidden">
+                      <CardHeader className="flex flex-col items-start justify-between gap-2 border-b border-line px-4 py-4 sm:flex-row sm:items-center sm:px-5">
+                        <div className="min-w-0">
+                          <CardTitle className="flex items-center">
+                            <School className="mr-2 h-4 w-4 shrink-0 text-primary" />
+                            {enr.batch.class.name}-{enr.batch.class.section}, {enr.batch.name}
                           </CardTitle>
-                          <CardDescription className="text-slate-300 text-xs">
-                            Standard Batch Hours: {enr.batch.timing}
-                          </CardDescription>
+                          <CardDescription className="mt-0.5">Batch hours {enr.batch.timing}</CardDescription>
                         </div>
-                        <Badge variant="outline" className="text-white border-slate-700 text-xs shrink-0">
-                          {enr.batch.timetableSlots.length} Weekly Lectures
-                        </Badge>
+                        <StatusPill tone="plum">
+                          {enr.batch.timetableSlots.length} lectures a week
+                        </StatusPill>
                       </CardHeader>
 
-                      <CardContent className="p-4 bg-slate-50/50">
+                      <CardContent className="bg-canvas/60 p-3 sm:p-4">
                         {enr.batch.timetableSlots.length === 0 ? (
                           <div className="text-center py-6 text-xs text-slate-400 italic">
                             No lecture slots scheduled for this batch yet.
                           </div>
                         ) : (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6 [&>*]:min-w-0">
                             {displayDays.map((day) => {
                               const daySlots = enr.batch.timetableSlots.filter(
                                 (s) => s.dayOfWeek === day.id
@@ -128,33 +100,29 @@ export default async function ParentTimetablePage() {
                               return (
                                 <div
                                   key={day.id}
-                                  className="border rounded-md bg-white overflow-hidden shadow-2xs flex flex-col min-h-[160px]"
+                                  className="flex min-h-[160px] flex-col overflow-hidden rounded-xl border border-line bg-surface"
                                 >
-                                  <div className="bg-slate-100 font-semibold text-center text-xs py-1.5 text-slate-700 border-b">
+                                  <div className="border-b border-line bg-surface-sunken py-2 text-center text-[13px] font-semibold text-ink-2">
                                     {day.short}
                                   </div>
 
-                                  <div className="p-2 flex-1 space-y-1.5">
+                                  <div className="flex-1 space-y-2 p-2.5">
                                     {daySlots.length === 0 ? (
-                                      <div className="text-xs text-slate-400 text-center py-4 italic">
-                                        Off
-                                      </div>
+                                      <p className="py-6 text-center text-[13px] text-ink-3">Off</p>
                                     ) : (
                                       daySlots.map((slot) => (
                                         <div
                                           key={slot.id}
-                                          className="p-2 rounded bg-slate-50 border border-slate-200 text-xs space-y-1"
+                                          className="space-y-1.5 rounded-lg border border-line bg-surface p-2.5 shadow-1"
                                         >
-                                          <div className="font-semibold text-slate-900 text-xs flex justify-between">
-                                            <span>{slot.subject}</span>
-                                          </div>
-                                          <div className="text-xs font-mono text-slate-600 flex items-center">
-                                            <Clock className="h-3 w-3 mr-1 text-slate-400" />
+                                          <span className="inline-block max-w-full truncate rounded-md bg-primary-tint px-1.5 py-0.5 text-[12px] font-semibold text-primary">
+                                            {slot.subject}
+                                          </span>
+                                          <p className="flex items-center font-mono text-[12px] font-medium text-ink">
+                                            <Clock className="mr-1 h-3 w-3 shrink-0 text-ink-3" />
                                             {slot.startTime}–{slot.endTime}
-                                          </div>
-                                          <div className="text-xs text-slate-500 truncate">
-                                            {slot.teacher.user.name}
-                                          </div>
+                                          </p>
+                                          <p className="truncate text-[12px] text-ink-3">{slot.teacher.user.name}</p>
                                         </div>
                                       ))
                                     )}

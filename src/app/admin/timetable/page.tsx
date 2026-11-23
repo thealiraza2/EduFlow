@@ -7,6 +7,7 @@ import { TimetableGrid } from "@/components/admin/TimetableGrid";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, School, Clock } from "@/components/icons";
+import { PageHeader } from "@/components/dashboard/kit";
 
 export default async function AdminTimetablePage({
   searchParams,
@@ -55,22 +56,20 @@ export default async function AdminTimetablePage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="font-serif text-3xl font-semibold text-slate-900">Weekly Timetable</h1>
-          <p className="text-slate-500">
-            Define daily subject lectures and avoid teacher double-booking conflicts.
-          </p>
-        </div>
-
-        {selectedBatch && (
-          <AddSlotModal
-            batchId={selectedBatch.id}
-            batchName={`${selectedBatch.class.name}-${selectedBatch.class.section} ${selectedBatch.name}`}
-            teachers={teachers}
-          />
-        )}
-      </div>
+      <PageHeader
+        eyebrow="Academics"
+        title="Timetable"
+        description="Plan each batch's weekly lectures. Teacher double-bookings are blocked automatically."
+        actions={
+          selectedBatch ? (
+            <AddSlotModal
+              batchId={selectedBatch.id}
+              batchName={`${selectedBatch.class.name}-${selectedBatch.class.section} ${selectedBatch.name}`}
+              teachers={teachers}
+            />
+          ) : undefined
+        }
+      />
 
       {batches.length === 0 ? (
         <Card className="text-center py-12">

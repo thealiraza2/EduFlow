@@ -3,6 +3,7 @@ import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { AddTeacherModal } from "@/components/admin/AddTeacherModal";
 import { TeacherList } from "@/components/admin/TeacherList";
+import { PageHeader } from "@/components/dashboard/kit";
 
 export default async function TeachersPage() {
   await requireAdmin();
@@ -30,15 +31,12 @@ export default async function TeachersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="font-serif text-3xl font-semibold text-slate-900">Faculty & Teachers</h1>
-          <p className="text-slate-500">
-            Manage teacher user accounts, subjects, salaries, and assigned batches.
-          </p>
-        </div>
-        <AddTeacherModal />
-      </div>
+      <PageHeader
+        eyebrow="People"
+        title="Teachers"
+        description="Manage teacher accounts, subjects, salaries and assigned batches."
+        actions={<AddTeacherModal />}
+      />
 
       <TeacherList teachers={teachers} />
     </div>

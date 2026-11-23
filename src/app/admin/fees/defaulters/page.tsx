@@ -3,9 +3,8 @@ import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { DefaultersManager, DefaulterItem } from "@/components/admin/DefaultersManager";
 import { calculateRemainingBalance } from "@/lib/fees";
-import Link from "next/link";
-import { ArrowLeft, AlertTriangle } from "@/components/icons";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "@/components/icons";
+import { ButtonLink, PageHeader } from "@/components/dashboard/kit";
 
 export default async function DefaultersPage() {
   const admin = await requireAdmin();
@@ -91,25 +90,16 @@ export default async function DefaultersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex items-center space-x-3">
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/admin/fees">
-              <ArrowLeft className="h-4 w-4 mr-1.5" />
-              Back to Fees
-            </Link>
-          </Button>
-          <div>
-            <h1 className="font-serif text-2xl font-semibold text-slate-900 flex items-center">
-              <AlertTriangle className="h-6 w-6 mr-2 text-rose-600" />
-              Fee Defaulters & Overdue Invoices
-            </h1>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Review accounts with unpaid or partial balances past their due dates.
-            </p>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Finance"
+        title="Fee defaulters"
+        description="Families with unpaid or partial balances past their due date."
+        actions={
+          <ButtonLink href="/admin/fees" variant="secondary" icon={ArrowLeft}>
+            Back to fees
+          </ButtonLink>
+        }
+      />
 
       <DefaultersManager
         initialDefaulters={defaulters}

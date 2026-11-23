@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/permissions";
 import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { TeacherSalariesManager } from "@/components/admin/TeacherSalariesManager";
-import { Wallet } from "@/components/icons";
+import { PageHeader } from "@/components/dashboard/kit";
 
 export default async function AdminSalariesPage() {
   await requireAdmin();
@@ -70,17 +70,11 @@ export default async function AdminSalariesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="font-serif text-3xl font-semibold text-slate-900 flex items-center">
-            <Wallet className="h-8 w-8 mr-3 text-emerald-600" />
-            Teacher Salaries & Payroll
-          </h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Monthly faculty payroll accounting, contract salaries, workload and payment tracking.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Finance"
+        title="Payroll"
+        description="Monthly teacher salaries, workload and payment tracking."
+      />
 
       <TeacherSalariesManager
         teachers={serializedTeachers}

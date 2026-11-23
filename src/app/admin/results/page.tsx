@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/permissions";
 import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { AdminResultsManager } from "@/components/admin/AdminResultsManager";
-import { Award } from "@/components/icons";
+import { PageHeader } from "@/components/dashboard/kit";
 
 export default async function AdminResultsPage() {
   const admin = await requireAdmin();
@@ -95,17 +95,11 @@ export default async function AdminResultsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="font-serif text-2xl font-semibold text-slate-900 flex items-center">
-            <Award className="h-6 w-6 mr-2 text-blue-600" />
-            Assessment Results & Publishing
-          </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Review draft faculty scores, officially publish results, and generate individual Result Card PDFs.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Exams"
+        title="Results"
+        description="Review draft marks, publish results and generate result card PDFs."
+      />
 
       <AdminResultsManager
         initialTests={formattedTests}

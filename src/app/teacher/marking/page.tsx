@@ -1,13 +1,11 @@
 import React from "react";
-import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { TeacherMarkingManager } from "@/components/teacher/TeacherMarkingManager";
 import { rankLeaderboardAttempts } from "@/lib/online-tests";
-import { FileCheck, Trophy, ArrowLeft } from "@/components/icons";
-import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/dashboard/kit";
 
 export default async function TeacherMarkingPage() {
   const user = await requireRole([Role.TEACHER, Role.ADMIN]);
@@ -104,27 +102,13 @@ export default async function TeacherMarkingPage() {
   });
 
   return (
-    <div className="p-4 sm:p-6 md:p-8">
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <Button variant="outline" size="sm" asChild className="shrink-0">
-              <Link href="/teacher">
-                <ArrowLeft className="h-4 w-4 mr-1.5" />
-                Back to Dashboard
-              </Link>
-            </Button>
-            <div>
-              <h1 className="font-serif text-xl sm:text-2xl font-semibold text-slate-900 flex items-center">
-                <FileCheck className="h-6 w-6 mr-2 text-emerald-600 shrink-0" />
-                Online Test Evaluation & Leaderboards
-              </h1>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Grade subjective short questions, monitor anti-cheat tab audits, and publish official test leaderboards.
-              </p>
-            </div>
-          </div>
-        </div>
+    <div>
+      <div className="space-y-6">
+        <PageHeader
+          eyebrow="Online tests"
+          title="Marking queue"
+          description="Grade short answers, review tab-switch audits and publish test leaderboards."
+        />
 
         <TeacherMarkingManager
           pendingAnswers={formattedPending}
