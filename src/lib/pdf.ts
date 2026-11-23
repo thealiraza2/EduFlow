@@ -5,7 +5,42 @@
  * All amounts are formatted from integer minor units (paisa).
  */
 
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { PDFDocument, PDFFont, PDFPage, rgb, StandardFonts } from "pdf-lib";
+
+/** Rounded-rectangle SVG path in the mark's 32-unit grid. */
+function roundedRectPath(x: number, y: number, w: number, h: number, r: number) {
+  return `M${x + r} ${y}H${x + w - r}A${r} ${r} 0 0 1 ${x + w} ${y + r}V${y + h - r}A${r} ${r} 0 0 1 ${x + w - r} ${y + h}H${x + r}A${r} ${r} 0 0 1 ${x} ${y + h - r}V${y + r}A${r} ${r} 0 0 1 ${x + r} ${y}Z`;
+}
+
+/**
+ * Draws the EduFlow mark (vector) with its top-left corner at (x, yTop).
+ * Same geometry as components/brand/Logo.tsx.
+ */
+function drawEduFlowMark(page: PDFPage, x: number, yTop: number, size: number) {
+  const s = size / 32;
+  const white = rgb(1, 1, 1);
+  page.drawSvgPath(roundedRectPath(0, 0, 32, 32, 9), { x, y: yTop, scale: s, color: rgb(0.17, 0.25, 0.82) });
+  page.drawSvgPath(roundedRectPath(9.5, 8.5, 12.5, 3.2, 1.6), { x, y: yTop, scale: s, color: white });
+  page.drawSvgPath(roundedRectPath(9.5, 14.4, 8.5, 3.2, 1.6), { x, y: yTop, scale: s, color: white, opacity: 0.72 });
+  page.drawSvgPath(roundedRectPath(9.5, 20.3, 12.5, 3.2, 1.6), { x, y: yTop, scale: s, color: white });
+  page.drawCircle({ x: x + 22.2 * s, y: yTop - 16 * s, size: 2.1 * s, color: rgb(1, 0.42, 0.46) });
+}
+
+/** Small centred "Generated with EduFlow" line with the mark, at baseline y. */
+function drawPoweredBy(page: PDFPage, font: PDFFont, boldFont: PDFFont, centerX: number, y: number) {
+  const size = 7;
+  const lead = "Generated with ";
+  const name = "EduFlow";
+  const markSize = 9;
+  const gap = 3;
+  const total = markSize + gap + font.widthOfTextAtSize(lead, size) + boldFont.widthOfTextAtSize(name, size);
+  let x = centerX - total / 2;
+  drawEduFlowMark(page, x, y + markSize - 1.5, markSize);
+  x += markSize + gap;
+  page.drawText(lead, { x, y, size, font, color: rgb(0.45, 0.48, 0.56) });
+  x += font.widthOfTextAtSize(lead, size);
+  page.drawText(name, { x, y, size, font: boldFont, color: rgb(0.15, 0.26, 0.84) });
+}
 import { formatPKR, Paisa } from "./money";
 
 export interface ChallanData {
@@ -336,6 +371,8 @@ export async function generateFeeChallanPdf(data: ChallanData): Promise<Uint8Arr
       }
     }
   });
+
+  drawPoweredBy(page, font, boldFont, width / 2, 8);
 
   return await pdfDoc.save();
 }
@@ -694,6 +731,8 @@ export async function generateResultCardPdf(data: ResultCardData): Promise<Uint8
     font: boldFont,
     color: rgb(0.3, 0.3, 0.3),
   });
+
+  drawPoweredBy(page, font, boldFont, width / 2, margin - 3);
 
   return await pdfDoc.save();
 }

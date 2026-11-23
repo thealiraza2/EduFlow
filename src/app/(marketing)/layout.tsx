@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { siteUrl } from "@/lib/site-url";
 
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://eduflow.app"),
+  metadataBase: siteUrl,
   title: "EduFlow — Complete School Management System",
   description:
     "Streamline your school operations with an all-in-one platform. Manage students, teachers, classes, attendance, fees, exams and more — all in one place.",
@@ -12,14 +13,14 @@ export const metadata: Metadata = {
     title: "EduFlow — Complete School Management System",
     description:
       "Streamline your school operations with an all-in-one platform. Manage students, teachers, classes, attendance, fees, exams and more.",
-    url: "https://eduflow.app",
+    url: "/",
     siteName: "EduFlow",
     images: [
       {
-        url: "/images/students-laptop.jpg",
+        url: "/images/og-image.png",
         width: 1200,
-        height: 675,
-        alt: "EduFlow School Management System",
+        height: 630,
+        alt: "EduFlow — school management",
       },
     ],
     locale: "en_US",
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
     title: "EduFlow — Complete School Management System",
     description:
       "Streamline your school operations with an all-in-one platform. Manage students, teachers, classes, attendance, fees, exams and more.",
-    images: ["/images/students-laptop.jpg"],
+    images: ["/images/og-image.png"],
   },
 };
 

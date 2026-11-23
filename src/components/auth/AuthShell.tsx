@@ -48,7 +48,10 @@ export function AuthShell({
           sizes="55vw"
           className="object-cover object-[58%_40%]"
         />
-        <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[rgba(15,23,20,.78)] via-[rgba(15,23,20,.1)] to-transparent" />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[rgba(11,16,48,.82)] via-[rgba(11,16,48,.12)] to-transparent" />
+        <div className="absolute left-10 top-10 rounded-2xl border border-white/15 bg-white/10 py-2.5 pl-3 pr-5 backdrop-blur-md">
+          <Logo tone="light" size="sm" />
+        </div>
         <p className="absolute bottom-10 left-10 right-10 max-w-[30ch] font-serif text-[34px] leading-[1.1] text-white">
           {photoCaption}
         </p>

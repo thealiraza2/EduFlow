@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { ChevronDown, KeyRound, LogOut, Menu, X, type LucideIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
-import { LogoMark } from "@/components/brand/Logo";
+import { LogoMark, Wordmark } from "@/components/brand/Logo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -160,8 +160,8 @@ export function SidebarNav({
         href={items[0]?.href ?? "/"}
         className="flex items-center gap-2.5 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
       >
-        <LogoMark className="h-8 w-8" />
-        <span className="font-serif text-[19px] font-bold tracking-[-0.02em] text-white">EduFlow</span>
+        <LogoMark className="h-9 w-9 drop-shadow-[0_6px_14px_rgba(69,98,255,0.45)]" />
+        <Wordmark tone="light" className="text-[21px]" />
         <span className="ml-auto rounded-full bg-white/[0.08] px-2 py-0.5 text-[11.5px] font-semibold text-sidebar-ink">
           {roleLabel}
         </span>
@@ -185,8 +185,8 @@ export function SidebarNav({
           href={items[0]?.href ?? "/"}
           className="flex items-center gap-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
         >
-          <LogoMark className="h-7 w-7" />
-          <span className="font-serif text-[17px] font-bold text-white">EduFlow</span>
+          <LogoMark className="h-8 w-8" />
+          <Wordmark tone="light" className="text-[18px]" />
           <span className="rounded-full bg-white/[0.08] px-2 py-0.5 text-[11px] font-semibold text-sidebar-ink">{roleLabel}</span>
         </Link>
         <button

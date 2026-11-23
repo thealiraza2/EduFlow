@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileQuestion, ArrowLeft, KeyRound } from "@/components/icons";
 import { SignOutButton } from "@/components/common/SignOutButton";
+import { Logo } from "@/components/brand/Logo";
 
 export const metadata = {
   title: "Page Not Found (404) | EduFlow",
@@ -48,8 +49,8 @@ export default async function NotFoundPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center space-x-3">
-              <Link href={dashboardUrl} className="text-xl font-semibold tracking-tight text-slate-900">
-                EduFlow
+              <Link href={dashboardUrl} aria-label="EduFlow home" className="rounded-lg focus-visible:outline-none focus-visible:shadow-focus">
+                <Logo size="sm" />
               </Link>
               {roleLabel && (
                 <Badge variant="outline" className="text-xs bg-slate-50 text-slate-700">
