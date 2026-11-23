@@ -9,15 +9,15 @@ import {
   MonitorCheck,
   Wallet,
 } from "@/components/icons";
-import { RegisterPreview } from "./RegisterPreview";
+
 
 const container = "mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-8";
 
 function SectionHead({ kicker, title, body, center = false }: { kicker: string; title: React.ReactNode; body?: string; center?: boolean }) {
   return (
     <div className={center ? "mx-auto max-w-[720px] text-center" : "max-w-[720px]"}>
-      <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-primary">{kicker}</p>
-      <h2 className="mt-3 text-balance font-serif text-[38px] leading-[1.05] tracking-[-0.015em] text-ink sm:text-[48px] lg:text-[56px]">
+      <p className="text-[14.5px] font-semibold text-primary">{kicker}</p>
+      <h2 className="mt-3 text-balance font-serif text-[36px] font-extrabold leading-[1.02] tracking-[-0.04em] text-ink sm:text-[48px] lg:text-[56px]">
         {title}
       </h2>
       {body && <p className="mt-4 text-pretty text-[17px] leading-relaxed text-ink-2">{body}</p>}
@@ -115,7 +115,7 @@ export function FeaturesSection() {
           kicker="Everything in one place"
           title={
             <>
-              The whole school office, <em className="text-primary">finally organised.</em>
+              The whole school office, finally organised.
             </>
           }
           body="Replace registers, Excel sheets and scattered WhatsApp groups with one system your staff learns in a day."
@@ -127,10 +127,23 @@ export function FeaturesSection() {
             <h3 className="text-[22px] font-bold tracking-[-0.01em] text-ink sm:text-[24px]">Attendance in 30 seconds</h3>
             <p className="mt-2 max-w-[440px] text-[15.5px] leading-relaxed text-ink-2">
               Teachers mark the class from their phone or students scan a 10-minute QR code. Parents of absent
-              children hear about it the same morning. Try it — tap a name.
+              children hear about it the same morning.
             </p>
-            <div className="mt-6">
-              <RegisterPreview />
+            <div className="mt-6 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface p-4 shadow-1">
+                <div>
+                  <p className="text-[13px] text-ink-3">Class 9 Blue, Physics</p>
+                  <p className="mt-0.5 font-serif text-[26px] font-bold tracking-[-0.03em] text-ink">31 of 34 present</p>
+                </div>
+                <span className="rounded-full bg-status-success-bg px-3 py-1 text-[12.5px] font-semibold text-status-success">
+                  Marked in 28s
+                </span>
+              </div>
+              <div className="ml-auto max-w-[340px] rounded-2xl rounded-br-md bg-[#DCF8C6] p-3.5 text-[14px] leading-snug text-[#0E1328] shadow-1">
+                Assalam-o-Alaikum. Zainab is absent today (Tue 24 Nov). Reply 1 to let the school know.
+                <span className="mt-1 block text-right text-[11.5px] text-[#4A5068]">8:12 am</span>
+              </div>
+              <p className="text-right text-[12.5px] text-ink-3">Sent to the parent on WhatsApp or SMS</p>
             </div>
           </article>
 
@@ -207,15 +220,15 @@ export function HowItWorksSection() {
     <section className="bg-sidebar py-20 text-sidebar-ink sm:py-24 lg:py-28">
       <div className={container}>
         <div className="max-w-[720px]">
-          <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-greenboard-300">Get started</p>
-          <h2 className="mt-3 text-balance font-serif text-[38px] leading-[1.05] tracking-[-0.015em] sm:text-[48px] lg:text-[56px]">
-            Live in one afternoon. <em className="text-greenboard-300">Not one term.</em>
+          <p className="text-[14.5px] font-semibold text-greenboard-300">Get started</p>
+          <h2 className="mt-3 text-balance font-serif text-[36px] font-extrabold leading-[1.02] tracking-[-0.04em] sm:text-[48px] lg:text-[56px]">
+            Live in one afternoon. Not one term.
           </h2>
         </div>
         <ol className="mt-12 grid gap-8 md:grid-cols-3 md:gap-6 lg:mt-16">
           {steps.map((s) => (
             <li key={s.n} className="border-t border-white/15 pt-6">
-              <span className="font-serif text-[44px] leading-none text-greenboard-300">{s.n}</span>
+              <span className="font-serif text-[44px] font-extrabold leading-none text-greenboard-300">{s.n}</span>
               <h3 className="mt-4 text-[20px] font-bold">{s.title}</h3>
               <p className="mt-2 text-[15.5px] leading-relaxed text-sidebar-ink-2">{s.body}</p>
             </li>
@@ -254,7 +267,7 @@ export function BuiltForPakistanSection() {
             kicker="Made for Pakistan"
             title={
               <>
-                Built around how <em className="text-primary">our schools</em> actually work.
+                Built around how our schools actually work.
               </>
             }
             body="Not a foreign tool with a currency switch. EduFlow is designed around PKR fee cycles, local payment wallets and board exams."
@@ -358,7 +371,7 @@ export function FaqSection() {
           kicker="Questions"
           title={
             <>
-              Good questions, <em className="text-primary">straight answers.</em>
+              Good questions, straight answers.
             </>
           }
           body="Still unsure? Our team replies within one working day."

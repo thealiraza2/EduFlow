@@ -1,166 +1,146 @@
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowRight, Building2, GraduationCap, Users } from "@/components/icons";
-
-const roles = [
-  { label: "I run a school or academy", hint: "Start a 14-day free trial", href: "/signup", icon: Building2, primary: true },
-  { label: "I'm a teacher", hint: "Sign in to mark attendance & marks", href: "/login", icon: GraduationCap },
-  { label: "I'm a parent", hint: "See fees, results & attendance", href: "/login", icon: Users },
-];
+import { BorderBeam, BlurFade, DotPattern, Marquee, NumberTicker } from "@/components/magicui";
+import { shimmerClass } from "@/components/magicui/styles";
+import { RegisterPreview } from "./RegisterPreview";
+import {
+  Award,
+  Banknote,
+  CalendarDays,
+  ClipboardCheck,
+  LayoutDashboard,
+  MessageSquareText,
+  QrCode,
+  Receipt,
+  Users,
+  Wallet,
+  FileText,
+  MonitorCheck,
+} from "@/components/icons";
 
 const facts = [
-  { title: "JazzCash & Easypaisa", body: "Fees paid online, matched to invoices automatically" },
-  { title: "Urdu + English", body: "Parent messages that actually get read" },
-  { title: "Punjab boards", body: "Paper schemes for 9th–12th built in" },
-  { title: "14 days free", body: "No card needed — set up in an afternoon" },
+  { icon: Wallet, text: "JazzCash & Easypaisa fees" },
+  { icon: Receipt, text: "PKR fee challans" },
+  { icon: MessageSquareText, text: "Urdu & English parent alerts" },
+  { icon: QrCode, text: "10-minute QR attendance" },
+  { icon: MonitorCheck, text: "Timed online tests" },
+  { icon: FileText, text: "Punjab board paper schemes" },
+  { icon: Award, text: "Locked result cards" },
+  { icon: CalendarDays, text: "Clash-free timetables" },
 ];
 
-function AttendanceRing() {
+/** A faithful, interactive slice of the real admin dashboard. */
+function ProductWindow() {
   return (
-    <svg viewBox="0 0 36 36" className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" aria-hidden>
-      <circle cx="18" cy="18" r="15" fill="none" stroke="#F0EAE2" strokeWidth="4" />
-      <circle
-        cx="18"
-        cy="18"
-        r="15"
-        fill="none"
-        stroke="rgb(var(--primary))"
-        strokeWidth="4"
-        strokeLinecap="round"
-        strokeDasharray="86 100"
-        pathLength={100}
-        transform="rotate(-90 18 18)"
-        className="animate-ring"
+    <div className="relative">
+      <div
+        aria-hidden
+        className="absolute -inset-10 -z-10 rounded-[48px] bg-[radial-gradient(closest-side,rgba(74,98,232,.28),transparent)] blur-2xl"
       />
-    </svg>
-  );
-}
-
-const card =
-  "absolute rounded-2xl bg-surface/95 p-3 shadow-[0_24px_48px_-16px_rgba(28,25,23,.28),0_0_0_1px_rgba(28,25,23,.05)] backdrop-blur sm:p-4 animate-rise-in";
-
-export function HeroSection() {
-  return (
-    <section className="overflow-x-clip">
-      <div className="mx-auto grid max-w-[1240px] items-center gap-12 px-4 pb-14 pt-8 sm:px-6 sm:pt-12 md:grid-cols-2 md:gap-10 lg:grid-cols-[1fr_1.05fr] lg:gap-14 lg:px-8 lg:pb-20 lg:pt-10 [&>*]:min-w-0">
-        {/* Copy */}
-        <div className="animate-rise-in">
-          <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-primary">
-            School management, done beautifully
-          </p>
-          <h1 className="mt-4 font-serif text-[52px] leading-[0.98] tracking-[-0.02em] text-ink sm:text-[66px] md:text-[56px] lg:text-[76px] xl:text-[86px]">
-            Less paperwork.
-            <br />
-            <em className="text-primary">More teaching.</em>
-          </h1>
-          <p className="mt-6 max-w-[540px] text-[17px] leading-relaxed text-ink-2 sm:text-[18.5px]">
-            EduFlow runs attendance, fees, exams and parent updates for schools and academies across Pakistan — so
-            principals lead, teachers teach and parents stay in the loop.
-          </p>
-
-          <p className="mt-8 text-[14px] font-medium text-ink-3">First, tell us who you are</p>
-          <ul className="mt-3 grid max-w-[460px] gap-2.5">
-            {roles.map((r) => {
-              const Icon = r.icon;
-              return (
-                <li key={r.label}>
-                  <Link
-                    href={r.href}
-                    className={
-                      "group press flex min-h-[60px] items-center gap-3.5 rounded-2xl border bg-surface px-4 py-3 shadow-1 transition-[border-color,box-shadow] focus-visible:outline-none focus-visible:shadow-focus " +
-                      (r.primary
-                        ? "border-primary ring-4 ring-primary-tint"
-                        : "border-line hover:border-line-strong hover:shadow-2")
-                    }
-                  >
-                    <span
-                      className={
-                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-full " +
-                        (r.primary ? "bg-primary text-white" : "bg-surface-sunken text-ink-2")
-                      }
-                    >
-                      <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-[16px] font-semibold text-ink">{r.label}</span>
-                      <span className="block truncate text-[13px] text-ink-3">{r.hint}</span>
-                    </span>
-                    <ArrowRight
-                      className="h-[18px] w-[18px] shrink-0 text-primary transition-transform group-hover:translate-x-0.5"
-                      strokeWidth={1.75}
-                    />
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+      <div className="relative overflow-hidden rounded-[22px] border border-line bg-surface shadow-[0_40px_80px_-32px_rgba(11,16,48,.45)]">
+        <BorderBeam size={180} duration={9} colorFrom="#AAB6FA" colorTo="#2743D6" borderWidth={1.5} />
+        <div className="flex h-10 items-center gap-2 border-b border-line bg-canvas px-4">
+          <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
+          <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
+          <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
+          <span className="ml-3 truncate rounded-md bg-surface px-2.5 py-0.5 font-mono text-[11.5px] text-ink-3">
+            al-ilm.eduflow.app/admin
+          </span>
         </div>
-
-        {/* Visual */}
-        <div className="relative mx-auto w-full max-w-[560px] md:max-w-none">
-          <div className="relative ml-0 aspect-[4/5] overflow-hidden rounded-[28px] bg-surface-sunken sm:ml-10 sm:aspect-[1/1] md:ml-6 md:aspect-[4/5] lg:ml-10 lg:aspect-[11/12]">
-            <Image
-              src="/images/students-laptop.jpg"
-              alt="Two students in hijab working together on a laptop in a bright classroom"
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 620px"
-              className="object-cover object-[58%_40%]"
-            />
+        <div className="grid grid-cols-[52px_1fr]">
+          <div className="flex flex-col items-center gap-3 bg-sidebar py-4">
+            {[LayoutDashboard, Users, ClipboardCheck, Banknote, Award].map((I, i) => (
+              <span
+                key={i}
+                className={
+                  "flex h-8 w-8 items-center justify-center rounded-lg " +
+                  (i === 2 ? "bg-white/10 text-greenboard-300" : "text-sidebar-ink-2")
+                }
+              >
+                <I className="h-[17px] w-[17px]" />
+              </span>
+            ))}
           </div>
-
-          {/* Attendance */}
-          <div className={card + " left-3 top-4 w-[196px] sm:left-0 sm:top-10 sm:w-[250px] md:w-[220px] lg:w-[250px]"} style={{ animationDelay: "150ms" }}>
-            <p className="text-[11.5px] font-medium text-ink-3 sm:text-[12.5px]">Attendance · Class 9-B</p>
-            <div className="mt-2 flex items-center gap-3">
-              <AttendanceRing />
-              <div>
-                <p className="text-[24px] font-bold leading-none tracking-[-0.02em] tabular-nums text-ink sm:text-[30px]">
-                  31/34
-                </p>
-                <span className="mt-1.5 inline-flex rounded-full bg-status-success-bg px-2 py-0.5 text-[11.5px] font-semibold text-status-success">
-                  Marked in 28s
-                </span>
+          <div className="min-w-0 space-y-3 bg-canvas p-3 sm:p-4">
+            <div className="relative overflow-hidden rounded-2xl bg-sidebar p-4 text-white">
+              <DotPattern className="fill-white/[0.08] [mask-image:radial-gradient(ellipse_at_top_right,#000_10%,transparent_70%)]" />
+              <div className="relative flex items-end justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="text-[12px] text-sidebar-ink-2">Fees collected in November</p>
+                  <p className="mt-1 truncate font-serif text-[24px] font-bold leading-none tracking-[-0.03em] sm:text-[28px]">
+                    <NumberTicker value={2845500} prefix="PKR " delay={0.3} />
+                  </p>
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className="text-[12px] text-sidebar-ink-2">Present today</p>
+                  <p className="mt-1 font-serif text-[24px] font-bold leading-none sm:text-[28px]">
+                    <NumberTicker value={94} suffix="%" delay={0.5} />
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* Fee */}
-          <div
-            className={card + " right-3 top-[46%] w-[176px] sm:right-0 sm:w-[232px] md:w-[200px] lg:w-[232px] xl:-right-6"}
-            style={{ animationDelay: "300ms" }}
-          >
-            <p className="text-[11.5px] font-medium text-ink-3 sm:text-[12.5px]">Fee received</p>
-            <p className="mt-1 text-[22px] font-bold leading-tight tracking-[-0.02em] tabular-nums text-ink sm:text-[28px]">
-              PKR 4,500
-            </p>
-            <p className="mt-0.5 text-[12px] text-ink-2 sm:text-[13px]">Hamza Tariq · via JazzCash</p>
-          </div>
-
-          {/* Parent message */}
-          <div
-            className={card + " bottom-4 left-3 right-14 sm:bottom-10 sm:left-0 sm:right-auto sm:w-[300px] md:w-[260px] lg:w-[300px]"}
-            style={{ animationDelay: "450ms" }}
-          >
-            <p className="text-[11.5px] font-medium text-ink-3 sm:text-[12.5px]">Message to parent · 8:12 am</p>
-            <p className="mt-1.5 text-[13px] leading-snug text-ink sm:text-[14px]">
-              Assalam-o-Alaikum. <strong className="font-semibold text-primary">Zainab</strong> is absent today (Tue
-              24 Nov). Reply 1 to inform the school.
-            </p>
+            <RegisterPreview />
           </div>
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* Facts */}
-      <div className="mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-8">
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-6 border-t border-line py-8 lg:grid-cols-4 lg:py-10">
-          {facts.map((f) => (
-            <div key={f.title}>
-              <dt className="text-[17px] font-bold text-ink sm:text-[20px]">{f.title}</dt>
-              <dd className="mt-1 text-[14px] leading-snug text-ink-2">{f.body}</dd>
-            </div>
+export function HeroSection() {
+  return (
+    <section className="relative isolate overflow-x-clip">
+      <DotPattern className="-z-10 [mask-image:radial-gradient(ellipse_60%_55%_at_50%_30%,#000_30%,transparent_75%)]" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-[-260px] -z-10 h-[520px] w-[920px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(170,182,250,.45),transparent)]"
+      />
+
+      <div className="mx-auto grid max-w-[1240px] items-center gap-12 px-4 pb-14 pt-10 sm:px-6 sm:pt-14 lg:grid-cols-[1fr_1.08fr] lg:gap-14 lg:px-8 lg:pb-20 lg:pt-16 [&>*]:min-w-0">
+        <BlurFade>
+          <Link
+            href="/features"
+            className="inline-flex max-w-full items-center gap-2 rounded-full border border-line bg-surface/80 py-1 pl-1 pr-3.5 text-[13.5px] font-medium text-ink-2 shadow-1 backdrop-blur transition-colors hover:border-line-strong hover:text-ink"
+          >
+            <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[12px] font-semibold text-white">New</span>
+            <span className="truncate">Fees now reconcile with JazzCash and Easypaisa</span>
+          </Link>
+          <h1 className="mt-6 text-balance font-serif text-[44px] font-extrabold leading-[0.98] tracking-[-0.045em] text-ink sm:text-[60px] lg:text-[66px] xl:text-[74px]">
+            Run your whole school from one calm screen.
+          </h1>
+          <p className="mt-6 max-w-[540px] text-pretty text-[17.5px] leading-relaxed text-ink-2 sm:text-[19px]">
+            Attendance, fee collection, exams and parent updates for schools and academies in Pakistan. Your office
+            closes the day before the last bell.
+          </p>
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Link href="/signup" className={shimmerClass + " h-12 text-[16px]"}>
+              Start a free 14-day trial
+            </Link>
+            <Link
+              href="/pricing"
+              className="press inline-flex h-12 items-center justify-center rounded-full border border-line-strong bg-surface px-6 text-[16px] font-semibold text-ink hover:bg-surface-sunken focus-visible:outline-none focus-visible:shadow-focus"
+            >
+              See pricing in rupees
+            </Link>
+          </div>
+          <p className="mt-5 text-[14px] text-ink-3">No card needed. Set up classes and mark tomorrow&apos;s attendance today.</p>
+        </BlurFade>
+
+        <BlurFade delay={0.15}>
+          <ProductWindow />
+        </BlurFade>
+      </div>
+
+      <div className="border-y border-line bg-surface/70 py-5 backdrop-blur">
+        <Marquee duration={45} className="[mask-image:linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)]">
+          {facts.map(({ icon: I, text }) => (
+            <span key={text} className="inline-flex items-center gap-2.5 whitespace-nowrap text-[15px] font-medium text-ink-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-tint text-primary">
+                <I className="h-4 w-4" />
+              </span>
+              {text}
+            </span>
           ))}
-        </dl>
+        </Marquee>
       </div>
     </section>
   );

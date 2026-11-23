@@ -1,0 +1,3 @@
+// Magic UI style tokens usable from server and client components alike.
+export const shimmerClass =
+  "relative isolate inline-flex items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-full bg-primary px-6 font-semibold text-white shadow-[0_8px_24px_-8px_rgba(39,67,214,.7),inset_0_1px_0_rgba(255,255,255,.25)] transition-[transform,background-color] hover:bg-primary-hover active:scale-[0.98] focus-visible:outline-none focus-visible:shadow-focus before:absolute before:inset-0 before:-z-10 before:translate-x-[-100%] before:bg-[linear-gradient(110deg,transparent_25%,rgba(255,255,255,.35)_50%,transparent_75%)] motion-safe:before:animate-shimmer";

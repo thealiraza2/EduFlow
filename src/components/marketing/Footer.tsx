@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 
 const columns = [
@@ -42,7 +42,7 @@ export function Footer() {
           </div>
           {columns.map((col) => (
             <div key={col.title}>
-              <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-3">{col.title}</h2>
+              <h2 className="text-[14px] font-semibold text-ink">{col.title}</h2>
               <ul className="mt-4 space-y-3">
                 {col.links.map((l) => (
                   <li key={l.href}>
