@@ -22,7 +22,9 @@ function resolveSeedPassword(envVar: string, roleLabel: string): string {
   if (envVal) {
     return envVal;
   }
-  return "TestPassword123!";
+  // No shared default password: generate a unique random one per seed run.
+  // It is written to the gitignored .seed-passwords.json for local test suites.
+  return `Seed-${crypto.randomBytes(12).toString("base64url")}`;
 }
 
 async function main() {

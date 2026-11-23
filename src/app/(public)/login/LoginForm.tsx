@@ -6,7 +6,7 @@ import { loginAction } from "@/lib/actions/auth";
 import { Input } from "@/components/ui/input";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, Eye, EyeOff, Sparkles, Check } from "lucide-react";
+import { ArrowRight, ShieldCheck, Eye, EyeOff } from "lucide-react";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -22,14 +22,6 @@ function SubmitButton() {
   );
 }
 
-const DEMO_LOGINS = [
-  { role: "Super Admin", email: "superadmin@eduflow.test" },
-  { role: "Academy Admin", email: "admin@eduflow.test" },
-  { role: "Teacher", email: "usman.teacher@eduflow.test" },
-  { role: "Student", email: "student@eduflow.test" },
-  { role: "Parent", email: "parent@eduflow.test" },
-];
-
 export function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "";
@@ -40,7 +32,6 @@ export function LoginForm() {
   const [email, setEmail] = useState(defaultEmail);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [activeDemo, setActiveDemo] = useState<string | null>(null);
   const [showForgotNote, setShowForgotNote] = useState(false);
 
   // Ensure password is unconditionally blank on mount/navigation (Fix: logout password bug)
@@ -50,12 +41,6 @@ export function LoginForm() {
       setEmail(defaultEmail);
     }
   }, [defaultEmail]);
-
-  const fillDemo = (acc: (typeof DEMO_LOGINS)[0]) => {
-    setEmail(acc.email);
-    setPassword("TestPassword123!");
-    setActiveDemo(acc.role);
-  };
 
   return (
     <div className="w-full">
@@ -71,37 +56,6 @@ export function LoginForm() {
       <p className="mt-2 text-sm text-gray-600">
         Enter your school email and password to access your dashboard.
       </p>
-
-      {/* Quick Demo Accounts 1-Click Fill */}
-      <div className="mt-4 p-3 rounded-xl bg-amber-50/90 border border-amber-200/90">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-[11px] font-bold tracking-wider text-amber-900 uppercase flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-            Demo Accounts (1-Click Fill)
-          </span>
-          {activeDemo && (
-            <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
-              <Check className="w-3 h-3" /> {activeDemo} Ready
-            </span>
-          )}
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {DEMO_LOGINS.map((acc) => (
-            <button
-              key={acc.role}
-              type="button"
-              onClick={() => fillDemo(acc)}
-              className={`text-xs font-semibold px-2.5 py-1 rounded-lg border transition-all ${
-                activeDemo === acc.role
-                  ? "bg-[#0F2040] text-white border-[#0F2040] shadow-sm"
-                  : "bg-white text-gray-700 border-gray-200 hover:border-amber-400 hover:bg-amber-100/60"
-              }`}
-            >
-              {acc.role}
-            </button>
-          ))}
-        </div>
-      </div>
 
       {/* Registration Success Banner */}
       {registered && (
@@ -133,9 +87,8 @@ export function LoginForm() {
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
-                setActiveDemo(null);
               }}
-              placeholder="e.g. admin@eduflow.test"
+              placeholder="you@yourschool.com"
               required
               autoComplete="off"
               className="h-11 rounded-xl text-sm border-gray-200 focus-visible:ring-[#F5B800] focus-visible:border-[#F5B800]"
