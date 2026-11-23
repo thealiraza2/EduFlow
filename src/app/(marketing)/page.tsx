@@ -7,6 +7,7 @@ import {
   PricingTeaserSection,
   FaqSection,
 } from "@/components/marketing/HomeSections";
+import { PortalShowcase } from "@/components/marketing/PortalShowcase";
 import { CtaSection } from "@/components/marketing/CtaSection";
 import { Footer } from "@/components/marketing/Footer";
 
@@ -74,6 +75,7 @@ export default function MarketingHomePage() {
         <main className="flex-1">
           <HeroSection />
           <FeaturesSection />
+          <PortalShowcase />
           <HowItWorksSection />
           <BuiltForPakistanSection />
           <PricingTeaserSection />

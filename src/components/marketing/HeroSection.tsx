@@ -1,17 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
-import { BorderBeam, BlurFade, DotPattern, Marquee, NumberTicker } from "@/components/magicui";
+import { BorderBeam, BlurFade, DotPattern, Marquee } from "@/components/magicui";
 import { shimmerClass } from "@/components/magicui/styles";
-import { RegisterPreview } from "./RegisterPreview";
 import {
   Award,
-  Banknote,
   CalendarDays,
-  ClipboardCheck,
-  LayoutDashboard,
   MessageSquareText,
   QrCode,
   Receipt,
-  Users,
   Wallet,
   FileText,
   MonitorCheck,
@@ -28,7 +24,7 @@ const facts = [
   { icon: CalendarDays, text: "Clash-free timetables" },
 ];
 
-/** A faithful, interactive slice of the real admin dashboard. */
+/** A real screenshot of the admin dashboard (demo school data), framed as a browser window. */
 function ProductWindow() {
   return (
     <div className="relative">
@@ -36,51 +32,37 @@ function ProductWindow() {
         aria-hidden
         className="absolute -inset-10 -z-10 rounded-[48px] bg-[radial-gradient(closest-side,rgba(74,98,232,.28),transparent)] blur-2xl"
       />
-      <div className="relative overflow-hidden rounded-[22px] border border-line bg-surface shadow-[0_40px_80px_-32px_rgba(11,16,48,.45)]">
+      <div className="relative overflow-hidden rounded-[18px] border border-line bg-surface shadow-[0_40px_80px_-32px_rgba(11,16,48,.45)] sm:rounded-[22px]">
         <BorderBeam size={180} duration={9} colorFrom="#AAB6FA" colorTo="#2743D6" borderWidth={1.5} />
-        <div className="flex h-10 items-center gap-2 border-b border-line bg-canvas px-4">
+        <div className="flex h-9 items-center gap-2 border-b border-line bg-canvas px-4 sm:h-10">
           <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
           <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
           <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
           <span className="ml-3 truncate rounded-md bg-surface px-2.5 py-0.5 font-mono text-[11.5px] text-ink-3">
-            al-ilm.eduflow.app/admin
+            riverside.eduflow.app/admin
           </span>
         </div>
-        <div className="grid grid-cols-[52px_1fr]">
-          <div className="flex flex-col items-center gap-3 bg-sidebar py-4">
-            {[LayoutDashboard, Users, ClipboardCheck, Banknote, Award].map((I, i) => (
-              <span
-                key={i}
-                className={
-                  "flex h-8 w-8 items-center justify-center rounded-lg " +
-                  (i === 2 ? "bg-white/10 text-greenboard-300" : "text-sidebar-ink-2")
-                }
-              >
-                <I className="h-[17px] w-[17px]" />
-              </span>
-            ))}
-          </div>
-          <div className="min-w-0 space-y-3 bg-canvas p-3 sm:p-4">
-            <div className="relative overflow-hidden rounded-2xl bg-sidebar p-4 text-white">
-              <DotPattern className="fill-white/[0.08] [mask-image:radial-gradient(ellipse_at_top_right,#000_10%,transparent_70%)]" />
-              <div className="relative flex items-end justify-between gap-4">
-                <div className="min-w-0">
-                  <p className="text-[12px] text-sidebar-ink-2">Fees collected in November</p>
-                  <p className="mt-1 truncate font-serif text-[24px] font-bold leading-none tracking-[-0.03em] sm:text-[28px]">
-                    <NumberTicker value={2845500} prefix="PKR " delay={0.3} />
-                  </p>
-                </div>
-                <div className="shrink-0 text-right">
-                  <p className="text-[12px] text-sidebar-ink-2">Present today</p>
-                  <p className="mt-1 font-serif text-[24px] font-bold leading-none sm:text-[28px]">
-                    <NumberTicker value={94} suffix="%" delay={0.5} />
-                  </p>
-                </div>
-              </div>
-            </div>
-            <RegisterPreview />
-          </div>
-        </div>
+        <Image
+          src="/images/screens/admin-dashboard.jpg"
+          alt="EduFlow admin dashboard showing fees collected, attendance, defaulters and recent tests for a school"
+          width={2880}
+          height={1800}
+          priority
+          sizes="(min-width: 1024px) 640px, 100vw"
+          className="block h-auto w-full"
+        />
+      </div>
+
+      {/* Phone view of the same dashboard, floating over the corner on larger screens */}
+      <div className="absolute -bottom-10 -left-8 hidden w-[132px] rotate-[-4deg] overflow-hidden rounded-[26px] border-[5px] border-sidebar bg-sidebar shadow-[0_30px_60px_-20px_rgba(11,16,48,.55)] sm:block lg:-left-12 lg:w-[150px]">
+        <Image
+          src="/images/screens/admin-mobile.jpg"
+          alt="The same admin dashboard on a phone"
+          width={1170}
+          height={2532}
+          sizes="150px"
+          className="block h-auto w-full rounded-[20px]"
+        />
       </div>
     </div>
   );
