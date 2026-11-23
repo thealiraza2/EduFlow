@@ -5,7 +5,7 @@ import { getParentDashboardData } from "@/lib/parent";
 import { ParentChildCard } from "@/components/parent/ParentChildCard";
 import { ParentMessagesList } from "@/components/parent/ParentMessagesList";
 import { AnnouncementsFeed } from "@/components/common/AnnouncementsFeed";
-import { User } from "lucide-react";
+import { User } from "@/components/icons";
 
 export default async function ParentPortalDashboardPage() {
   const user = await requireRole([Role.PARENT, Role.ADMIN]);

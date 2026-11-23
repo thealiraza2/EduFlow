@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { assignBatchTeacherAction } from "@/lib/actions/classes";
-import { UserCheck } from "lucide-react";
+import { UserCheck } from "@/components/icons";
 
 interface TeacherOption {
   id: string;

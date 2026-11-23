@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { DAYS_OF_WEEK } from "@/lib/constants";
-import { Clock, MapPin, School, Calendar, BookOpen, CheckCircle2, FileSpreadsheet, FileCheck2, Sparkles, Users } from "lucide-react";
+import { Clock, MapPin, School, Calendar, BookOpen, CheckCircle2, FileSpreadsheet, FileCheck2, Sparkles, Users } from "@/components/icons";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AnnouncementsFeed } from "@/components/common/AnnouncementsFeed";

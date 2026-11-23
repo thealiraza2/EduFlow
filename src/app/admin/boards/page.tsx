@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { BoardsManager } from "@/components/admin/BoardsManager";
 import Link from "next/link";
-import { ArrowLeft, School } from "lucide-react";
+import { ArrowLeft, School } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
 export default async function AdminBoardsPage() {

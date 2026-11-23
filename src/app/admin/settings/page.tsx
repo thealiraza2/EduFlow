@@ -3,7 +3,7 @@ import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { AcademySettingsForm } from "@/components/admin/AcademySettingsForm";
 import Link from "next/link";
-import { ArrowLeft, Settings, Users, GraduationCap, School, BookOpen } from "lucide-react";
+import { ArrowLeft, Settings, Users, GraduationCap, School, BookOpen } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { notFound } from "next/navigation";

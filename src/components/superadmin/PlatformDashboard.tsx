@@ -19,10 +19,11 @@ import {
   Settings2,
   Users,
   Wallet,
-} from "lucide-react";
+} from "@/components/icons";
 import { formatPKR } from "@/lib/money";
 import { openAcademyAsAdminAction, toggleAcademyStatusAction } from "@/lib/actions/superadmin";
-import { ButtonLink, EmptyState, PageHeader, Panel, StatCard, StatGrid, StatusPill } from "@/components/dashboard/kit";
+import { ButtonLink, EmptyState, HeroFigure, HeroPanel, PageHeader, Panel, RadialStat, StatusPill } from "@/components/dashboard/kit";
+import { NumberTicker } from "@/components/magicui";
 import { cn } from "@/lib/utils";
 
 export interface DashboardAcademy {
@@ -62,13 +63,13 @@ interface Props {
   academies: DashboardAcademy[];
 }
 
-// Plan tiers are ordered: neutral for trial/free, then a light→dark plum ramp for paid tiers.
+// Plan tiers are ordered: amber trial, neutral free, then a light→dark royal-ink ramp for paid tiers.
 const PLAN_COLORS: Record<string, string> = {
-  trial: "#D9B76E",
-  free: "#CFC6BA",
-  starter: "#BE7F98",
-  growth: "#9A4D6B",
-  pro: "#6D1F3A",
+  trial: "#E3A93B",
+  free: "#CDD2E0",
+  starter: "#AAB6FA",
+  growth: "#4A62E8",
+  pro: "#182A90",
 };
 
 function initials(name: string) {
@@ -445,37 +446,30 @@ export function PlatformDashboard(props: Props) {
         }
       />
 
-      <StatGrid>
-        <StatCard
-          label="Monthly revenue"
-          value={formatPKR(kpis.mrrMinor)}
-          sub={`${kpis.paying} paying academ${kpis.paying === 1 ? "y" : "ies"} · estimated from plans`}
-          icon={Wallet}
-          tone="plum"
-        />
-        <StatCard
-          label="Academies"
-          value={kpis.academies}
-          sub={`${kpis.active} active · ${kpis.newThisMonth} new this month`}
-          icon={Building2}
-          tone="info"
-        />
-        <StatCard
-          label="On free trial"
-          value={kpis.trials}
-          sub={kpis.trialsEndingSoon ? `${kpis.trialsEndingSoon} ending within 3 days` : "None ending this week"}
-          icon={Clock}
-          tone={kpis.trialsEndingSoon ? "warning" : "neutral"}
-        />
-        <StatCard
-          label="Students on platform"
-          value={kpis.students.toLocaleString()}
-          sub={`${kpis.teachers.toLocaleString()} teachers`}
-          icon={GraduationCap}
-          tone="success"
-        />
-      </StatGrid>
-
+      <HeroPanel
+        title="Platform today"
+        subtitle={`${kpis.active} active academies, ${kpis.newThisMonth} joined this month`}
+        aside={<RadialStat value={kpis.academies ? (kpis.paying / kpis.academies) * 100 : 0} label="Academies paying" />}
+      >
+        <div className="grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-[1.7fr_1fr_1fr_1fr] [&>*:first-child]:col-span-2 md:[&>*:first-child]:col-span-1">
+          <HeroFigure
+            label="Monthly revenue"
+            value={<NumberTicker value={kpis.mrrMinor / 100} prefix="PKR " />}
+            hint="Estimated from active plans"
+          />
+          <HeroFigure label="Academies" value={<NumberTicker value={kpis.academies} />} hint={`${kpis.paying} paying`} />
+          <HeroFigure
+            label="On free trial"
+            value={<NumberTicker value={kpis.trials} />}
+            hint={kpis.trialsEndingSoon ? `${kpis.trialsEndingSoon} ending within 3 days` : "None ending this week"}
+          />
+          <HeroFigure
+            label="Students"
+            value={<NumberTicker value={kpis.students} />}
+            hint={`${kpis.teachers.toLocaleString()} teachers`}
+          />
+        </div>
+      </HeroPanel>
       <div className="grid gap-4 sm:gap-6 lg:grid-cols-3 [&>*]:min-w-0">
         <Panel title="Growth" description="New academies per month" className="lg:col-span-2">
           <SignupsChart data={signups} />

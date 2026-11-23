@@ -5,29 +5,30 @@
 /* EduFlow tokens — DESIGN.md §2. Values are RGB channels for Tailwind alpha support. */
 @layer base {
   :root {
-    --canvas: 251 247 242; /* #FBF7F2 warm cream */
+    /* "Ink & register": royal fountain-pen blue on cool paper, teacher's red pen for alerts */
+    --canvas: 246 247 251; /* #F6F7FB cool paper */
     --surface: 255 255 255;
-    --surface-sunken: 243 237 229; /* #F3EDE5 */
-    --ink: 28 25 23; /* #1C1917 */
-    --ink-2: 87 83 78; /* #57534E */
-    --ink-3: 113 107 102; /* #716B66 */
-    --line: 234 227 218; /* #EAE3DA */
-    --line-strong: 214 204 191; /* #D6CCBF */
+    --surface-sunken: 238 240 246; /* #EEF0F6 */
+    --ink: 14 19 40; /* #0E1328 ink navy */
+    --ink-2: 74 80 104; /* #4A5068 */
+    --ink-3: 107 113 144; /* #6B7190 */
+    --line: 227 230 239; /* #E3E6EF */
+    --line-strong: 205 210 224; /* #CDD2E0 */
 
-    --primary: 109 31 58; /* #6D1F3A plum */
-    --primary-hover: 86 24 48; /* #561830 */
-    --primary-pressed: 67 18 42; /* #43122A */
-    --primary-tint: 246 233 238; /* #F6E9EE */
-    --primary-tint-strong: 235 211 221; /* #EBD3DD */
+    --primary: 39 67 214; /* #2743D6 royal ink */
+    --primary-hover: 31 53 181; /* #1F35B5 */
+    --primary-pressed: 24 42 144; /* #182A90 */
+    --primary-tint: 236 239 254; /* #ECEFFE */
+    --primary-tint-strong: 213 219 253; /* #D5DBFD */
     --on-primary: 255 255 255;
 
-    --accent: 154 107 31; /* #9A6B1F gold — highlights only */
-    --accent-tint: 248 239 223; /* #F8EFDF */
+    --accent: 217 45 58; /* #D92D3A teacher's red pen — rare highlights */
+    --accent-tint: 253 236 238; /* #FDECEE */
 
-    --sidebar: 35 21 25; /* #231519 */
-    --sidebar-ink: 245 236 239; /* #F5ECEF */
-    --sidebar-ink-2: 191 169 177; /* #BFA9B1 */
-    --sidebar-active: 58 34 41; /* #3A2229 */
+    --sidebar: 11 16 48; /* #0B1030 midnight ink */
+    --sidebar-ink: 233 236 251; /* #E9ECFB */
+    --sidebar-ink-2: 154 162 204; /* #9AA2CC */
+    --sidebar-active: 26 34 87; /* #1A2257 */
 
     --success: 30 122 76; /* #1E7A4C */
     --success-bg: 229 243 235;

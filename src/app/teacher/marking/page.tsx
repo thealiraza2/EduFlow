@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { TeacherMarkingManager } from "@/components/teacher/TeacherMarkingManager";
 import { rankLeaderboardAttempts } from "@/lib/online-tests";
-import { FileCheck, Trophy, ArrowLeft } from "lucide-react";
+import { FileCheck, Trophy, ArrowLeft } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
 export default async function TeacherMarkingPage() {

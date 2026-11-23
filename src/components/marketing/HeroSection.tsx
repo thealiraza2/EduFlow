@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Building2, GraduationCap, Users } from "lucide-react";
+import { ArrowRight, Building2, GraduationCap, Users } from "@/components/icons";
 
 const roles = [
   { label: "I run a school or academy", hint: "Start a 14-day free trial", href: "/signup", icon: Building2, primary: true },

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Megaphone, Calendar } from "lucide-react";
+import { Megaphone, Calendar } from "@/components/icons";
 
 interface AnnouncementItem {
   id: string;

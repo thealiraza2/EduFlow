@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "@/components/icons";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { requireAdmin } from "@/lib/permissions";
 import { requireTenant } from "@/lib/tenant";

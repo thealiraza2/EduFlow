@@ -9,34 +9,34 @@ import type { Config } from "tailwindcss";
 
 const v = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
 
-// Warm stone neutral scale (cream canvas → ink)
+// Cool paper neutral scale (canvas → ink navy)
 const neutral = {
-  50: "#FBF7F2",
-  100: "#F3EDE5",
-  200: "#EAE3DA",
-  300: "#D6CCBF",
-  400: "#A8A29E",
-  500: "#78716C",
-  600: "#57534E",
-  700: "#44403C",
-  800: "#292524",
-  900: "#1C1917",
-  950: "#0C0A09",
+  50: "#F6F7FB",
+  100: "#EEF0F6",
+  200: "#E3E6EF",
+  300: "#CDD2E0",
+  400: "#9DA3BC",
+  500: "#6B7190",
+  600: "#4A5068",
+  700: "#353A52",
+  800: "#22263B",
+  900: "#0E1328",
+  950: "#080B19",
 };
 
-// Plum (primary) scale — 600 is the brand primary (key kept as "greenboard" for existing classes)
+// Royal ink (primary) scale — 600 is the brand primary. Key "greenboard"/"plum" kept for existing classes.
 const greenboard = {
-  50: "#FBF4F7",
-  100: "#F6E9EE",
-  200: "#EBD3DD",
-  300: "#D9AFC0",
-  400: "#BE7F98",
-  500: "#9A4D6B",
-  600: "#6D1F3A",
-  700: "#561830",
-  800: "#43122A",
-  900: "#2F0C1D",
-  950: "#1F0813",
+  50: "#F2F4FF",
+  100: "#ECEFFE",
+  200: "#D5DBFD",
+  300: "#AAB6FA",
+  400: "#7387F2",
+  500: "#4A62E8",
+  600: "#2743D6",
+  700: "#1F35B5",
+  800: "#182A90",
+  900: "#121F6B",
+  950: "#0B1446",
 };
 
 const success = {
@@ -260,15 +260,51 @@ const config: Config = {
           from: { strokeDasharray: "0 100" },
           to: { strokeDasharray: "86 100" },
         },
+        marquee: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(calc(-100% - var(--gap)))" },
+        },
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "60%, 100%": { transform: "translateX(100%)" },
+        },
       },
       animation: {
         "rise-in": "rise-in 320ms cubic-bezier(.2,.8,.2,1) both",
         "draw-tick": "draw-tick 220ms cubic-bezier(.2,.8,.2,1) both",
         ring: "ring 900ms cubic-bezier(.2,.8,.2,1) 400ms both",
+        marquee: "marquee var(--duration, 40s) linear infinite",
+        shimmer: "shimmer 3.2s ease-in-out 1.2s infinite",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("daisyui")],
+  // daisyUI: prefixed so its component classes never collide; base styles off
+  // (our tokens own the base); one custom theme mapped to the EduFlow palette.
+  daisyui: {
+    prefix: "d-",
+    base: false,
+    logs: false,
+    themes: [
+      {
+        eduflow: {
+          primary: "#2743D6",
+          "primary-content": "#FFFFFF",
+          secondary: "#0E1328",
+          accent: "#D92D3A",
+          neutral: "#22263B",
+          "base-100": "#FFFFFF",
+          "base-200": "#F6F7FB",
+          "base-300": "#E3E6EF",
+          "base-content": "#0E1328",
+          info: "#24578F",
+          success: "#1E7A4C",
+          warning: "#A65F00",
+          error: "#B3261E",
+        },
+      },
+    ],
+  },
 };
 
 export default config;

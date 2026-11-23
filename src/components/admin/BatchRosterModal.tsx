@@ -19,7 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Users } from "lucide-react";
+import { Users } from "@/components/icons";
 import Link from "next/link";
 
 interface EnrolledStudentItem {

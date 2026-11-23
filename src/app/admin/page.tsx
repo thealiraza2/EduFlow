@@ -10,7 +10,8 @@ import { AdminAnnouncementsCard } from "@/components/admin/AdminAnnouncementsCar
 import { AtRiskStudentsCard } from "@/components/common/AtRiskStudentsCard";
 import { getAcademyStudentsRiskOverview } from "@/lib/risk";
 import { CountUp } from "@/components/common/CountUp";
-import { ButtonLink, EmptyState, PageHeader, Panel, StatCard, StatGrid, StatusPill } from "@/components/dashboard/kit";
+import { ButtonLink, EmptyState, HeroFigure, HeroPanel, PageHeader, Panel, RadialStat, ActionTile, StatusPill } from "@/components/dashboard/kit";
+import { NumberTicker } from "@/components/magicui";
 import Link from "next/link";
 import {
   Users,
@@ -25,7 +26,7 @@ import {
   School,
   Wallet,
   Sparkles,
-} from "lucide-react";
+} from "@/components/icons";
 
 export default async function AdminDashboardPage() {
   const admin = await requireAdmin();
@@ -195,7 +196,7 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow={`Academy snapshot · ${currentMonth}`}
+        eyebrow={now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}
         title={tenant.academy.name}
         description={<>Signed in as <strong className="font-semibold text-ink">{admin.name}</strong></>}
         actions={
@@ -207,45 +208,33 @@ export default async function AdminDashboardPage() {
         }
       />
 
-      <StatGrid>
-        <StatCard
-          label="Fees collected this month"
-          value={<CountUp value={collectedMinor / 100} prefix="PKR " />}
-          sub={`${collectionPct}% of ${formatPKR(totalDueMinor)} billed`}
-          icon={Banknote}
-          tone="success"
-          href="/admin/fees"
-          footer={
-            <div className="h-1.5 overflow-hidden rounded-full bg-surface-sunken">
-              <div className="h-full rounded-full bg-status-success" style={{ width: `${Math.min(100, collectionPct)}%` }} />
-            </div>
-          }
-        />
-        <StatCard
-          label="Fee defaulters"
-          value={<CountUp value={defaultersCount} />}
-          sub="Past their due date"
-          icon={AlertTriangle}
-          tone={defaultersCount ? "danger" : "neutral"}
-          href="/admin/fees/defaulters"
-        />
-        <StatCard
-          label="Attendance today"
-          value={todayAttendancePct !== null ? <CountUp value={todayAttendancePct} suffix="%" /> : "—"}
-          sub={todayAttendances.length > 0 ? `${todayPresentCount} of ${todayAttendances.length} present` : "Not marked yet today"}
-          icon={CheckCircle2}
-          tone="info"
-          href="/admin/attendance"
-        />
-        <StatCard
-          label="Active students"
-          value={<CountUp value={activeStudentsCount} />}
-          sub={`${activeBatchesCount} batches · ${totalTeachersCount} teachers`}
-          icon={GraduationCap}
-          tone="plum"
-          href="/admin/students"
-        />
-      </StatGrid>
+      <HeroPanel
+        title="Today at a glance"
+        subtitle={todayAttendances.length > 0 ? `${todayPresentCount} of ${todayAttendances.length} students marked present so far` : "Attendance hasn't been marked yet today"}
+        aside={<RadialStat value={todayAttendancePct ?? 0} label="Present today" />}
+      >
+        <div className="grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-[1.7fr_1fr_1fr_1fr] [&>*:first-child]:col-span-2 md:[&>*:first-child]:col-span-1">
+          <HeroFigure
+            label="Fees collected this month"
+            value={<NumberTicker value={collectedMinor / 100} prefix="PKR " />}
+            hint={`${collectionPct}% of ${formatPKR(totalDueMinor)} billed`}
+          />
+          <HeroFigure label="Fee defaulters" value={<NumberTicker value={defaultersCount} />} hint="Past their due date" />
+          <HeroFigure
+            label="Active students"
+            value={<NumberTicker value={activeStudentsCount} />}
+            hint={`${activeBatchesCount} batches`}
+          />
+          <HeroFigure label="Teachers" value={<NumberTicker value={totalTeachersCount} />} hint="Active this term" />
+        </div>
+      </HeroPanel>
+
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 [&>*]:min-w-0">
+        <ActionTile title="Collect a fee" body="Record cash, bank or wallet payments" icon={Banknote} tone="success" href="/admin/fees" />
+        <ActionTile title="Follow up defaulters" body="Call or message overdue families" icon={AlertTriangle} tone="danger" href="/admin/fees/defaulters" />
+        <ActionTile title="Today's register" body="See who is in and who is absent" icon={CheckCircle2} tone="info" href="/admin/attendance" />
+        <ActionTile title="Publish results" body="Lock marks and share result cards" icon={Award} tone="plum" href="/admin/results" />
+      </div>
 
       <AtRiskStudentsCard students={atRiskStudents} isAiAvailable={isAiAvailable} />
 

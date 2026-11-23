@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/marketing/Header";
 import { Footer } from "@/components/marketing/Footer";
-import { ArrowLeft, ShieldCheck, Mail, Scale, Cookie, Baby } from "lucide-react";
+import { ArrowLeft, ShieldCheck, Mail, Scale, Cookie, Baby } from "@/components/icons";
 
 export const dynamic = "force-static";
 

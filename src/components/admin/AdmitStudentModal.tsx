@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { admitStudentAction } from "@/lib/actions/students";
-import { UserPlus } from "lucide-react";
+import { UserPlus } from "@/components/icons";
 
 interface BatchOption {
   id: string;

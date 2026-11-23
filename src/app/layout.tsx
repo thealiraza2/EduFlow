@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
-import { DM_Sans, IBM_Plex_Mono, Instrument_Serif } from "next/font/google";
+import { Bricolage_Grotesque, IBM_Plex_Mono, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 
-const sans = DM_Sans({
+// UI + body: crisp, slightly narrow grotesque with good tabular figures.
+const sans = Instrument_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
   display: "swap",
 });
 
-const serif = Instrument_Serif({
+// Display: characterful grotesque with optical sizes — headlines and big numbers.
+const display = Bricolage_Grotesque({
   subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
+  weight: ["500", "600", "700", "800"],
   variable: "--font-serif",
   display: "swap",
 });
@@ -27,7 +28,7 @@ const mono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "EduFlow — School Management System",
   description:
-    "Attendance, fees, results and parent updates for schools and academies in Pakistan — in one beautiful, reliable system.",
+    "Attendance, fees, results and parent updates for schools and academies in Pakistan — in one fast, reliable system.",
 };
 
 export default function RootLayout({
@@ -36,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable}`}>
+    <html lang="en" data-theme="eduflow" className={`${sans.variable} ${display.variable} ${mono.variable}`}>
       <body className="min-h-screen bg-canvas font-sans text-ink antialiased">{children}</body>
     </html>
   );

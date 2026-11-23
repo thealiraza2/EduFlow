@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CircleAlert, Loader2 } from "lucide-react";
+import { CircleAlert, Loader2 } from "@/components/icons";
 import { signupAcademyAction } from "@/lib/actions/signup";
 import { Input } from "@/components/ui/input";
 import { FieldLabel } from "@/components/auth/AuthShell";

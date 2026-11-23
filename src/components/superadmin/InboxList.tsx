@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Inbox, Mail, Phone, Search, Trash2 } from "lucide-react";
+import { Inbox, Mail, Phone, Search, Trash2 } from "@/components/icons";
 import { deleteContactSubmissionAction } from "@/lib/actions/superadmin";
 import { fieldClass } from "./ConsoleUI";
 

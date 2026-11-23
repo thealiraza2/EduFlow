@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CircleAlert, CircleCheck, Loader2, Megaphone } from "lucide-react";
+import { CircleAlert, CircleCheck, Loader2, Megaphone } from "@/components/icons";
 import { sendPlatformAnnouncementAction } from "@/lib/actions/superadmin";
 import { ConsoleSection, fieldClass, primaryBtn } from "./ConsoleUI";
 

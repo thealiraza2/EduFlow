@@ -21,7 +21,7 @@ import {
   CheckCircle2,
   School,
   HeartHandshake,
-} from "lucide-react";
+} from "@/components/icons";
 
 export const dynamic = "force-static";
 

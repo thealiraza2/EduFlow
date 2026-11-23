@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { createTeacherAction } from "@/lib/actions/teachers";
-import { UserPlus } from "lucide-react";
+import { UserPlus } from "@/components/icons";
 
 export function AddTeacherModal() {
   const [open, setOpen] = useState(false);

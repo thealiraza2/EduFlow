@@ -21,7 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Search, Eye, Trash2, UserX, UserCheck, RefreshCw, AlertTriangle } from "lucide-react";
+import { Search, Eye, Trash2, UserX, UserCheck, RefreshCw, AlertTriangle } from "@/components/icons";
 import { StudentStatus } from "@prisma/client";
 import { deleteStudentAction, updateStudentStatusAction } from "@/lib/actions/students";
 

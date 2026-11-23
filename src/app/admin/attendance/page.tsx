@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/permissions";
 import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { AdminAttendanceManager } from "@/components/admin/AdminAttendanceManager";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "@/components/icons";
 
 export default async function AdminAttendancePage() {
   await requireAdmin();

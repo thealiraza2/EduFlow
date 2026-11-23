@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/permissions";
 import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { ReportsManager } from "@/components/admin/ReportsManager";
-import { FileSpreadsheet } from "lucide-react";
+import { FileSpreadsheet } from "@/components/icons";
 
 export default async function AdminReportsPage() {
   await requireAdmin();

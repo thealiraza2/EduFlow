@@ -21,7 +21,7 @@ import {
   Award,
   BookOpen,
   MapPin,
-} from "lucide-react";
+} from "@/components/icons";
 
 interface Props {
   child: ParentChildSummary;

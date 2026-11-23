@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { createClassAction } from "@/lib/actions/classes";
-import { Plus } from "lucide-react";
+import { Plus } from "@/components/icons";
 
 export function AddClassModal() {
   const [open, setOpen] = useState(false);

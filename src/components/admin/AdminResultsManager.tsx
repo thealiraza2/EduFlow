@@ -35,7 +35,7 @@ import {
   BarChart3,
   TrendingDown,
   FileSpreadsheet,
-} from "lucide-react";
+} from "@/components/icons";
 
 interface TestItem {
   id: string;

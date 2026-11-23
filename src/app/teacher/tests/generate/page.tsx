@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { AITestPaperGenerator } from "@/components/teacher/AITestPaperGenerator";
 import Link from "next/link";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft, Sparkles } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
 export default async function TeacherGenerateTestPage() {

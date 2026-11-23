@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/permissions";
 import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { TeacherSalariesManager } from "@/components/admin/TeacherSalariesManager";
-import { Wallet } from "lucide-react";
+import { Wallet } from "@/components/icons";
 
 export default async function AdminSalariesPage() {
   await requireAdmin();

@@ -6,7 +6,7 @@ import { loginAction } from "@/lib/actions/auth";
 import { Input } from "@/components/ui/input";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { CircleCheck, CircleAlert, Eye, EyeOff, Loader2 } from "lucide-react";
+import { CircleCheck, CircleAlert, Eye, EyeOff, Loader2 } from "@/components/icons";
 import { FieldError, FieldLabel } from "@/components/auth/AuthShell";
 
 function SubmitButton() {

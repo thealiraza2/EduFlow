@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, QrCode } from "lucide-react";
+import { LayoutDashboard, QrCode } from "@/components/icons";
 import { SidebarNav, type SidebarNavItem } from "@/components/common/SidebarNav";
 
 const navItems: SidebarNavItem[] = [

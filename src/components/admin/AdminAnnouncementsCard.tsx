@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { createAnnouncementAction } from "@/lib/actions/admin";
-import { Megaphone, Send, Calendar, CheckCircle2, AlertCircle, RefreshCw } from "lucide-react";
+import { Megaphone, Send, Calendar, CheckCircle2, AlertCircle, RefreshCw } from "@/components/icons";
 
 interface AnnouncementItem {
   id: string;

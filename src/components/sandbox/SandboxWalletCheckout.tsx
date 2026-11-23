@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { formatPKR } from "@/lib/money";
-import { ShieldCheck, AlertTriangle, ArrowLeft, Lock, CheckCircle2, XCircle } from "lucide-react";
+import { ShieldCheck, AlertTriangle, ArrowLeft, Lock, CheckCircle2, XCircle } from "@/components/icons";
 import Link from "next/link";
 
 interface CheckoutProps {

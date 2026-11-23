@@ -38,7 +38,7 @@ import {
   ShieldCheck,
   ShieldAlert,
   Loader2,
-} from "lucide-react";
+} from "@/components/icons";
 
 interface ChapterItem {
   id: string;

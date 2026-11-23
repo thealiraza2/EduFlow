@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createTestAction } from "@/lib/actions/tests";
-import { FileSpreadsheet, PlusCircle, RefreshCw, AlertCircle } from "lucide-react";
+import { FileSpreadsheet, PlusCircle, RefreshCw, AlertCircle } from "@/components/icons";
 
 interface BatchItem {
   id: string;

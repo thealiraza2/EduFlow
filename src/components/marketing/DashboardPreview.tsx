@@ -1,4 +1,4 @@
-import { Users, GraduationCap, School, CreditCard, CheckCircle2, QrCode, FileText } from "lucide-react";
+import { Users, GraduationCap, School, CreditCard, CheckCircle2, QrCode, FileText } from "@/components/icons";
 
 export function DashboardPreview() {
   const stats = [

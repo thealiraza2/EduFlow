@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { enrollStudentAction } from "@/lib/actions/students";
 import { formatPKR } from "@/lib/money";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle } from "@/components/icons";
 
 interface BatchOption {
   id: string;

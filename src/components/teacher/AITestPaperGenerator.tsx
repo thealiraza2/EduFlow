@@ -26,7 +26,7 @@ import {
   ShieldAlert,
   School,
   ExternalLink,
-} from "lucide-react";
+} from "@/components/icons";
 
 interface ChapterItem {
   id: string;

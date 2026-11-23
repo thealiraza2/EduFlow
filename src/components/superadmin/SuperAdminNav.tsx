@@ -9,7 +9,7 @@ import {
   Building2,
   LogOut,
   KeyRound,
-} from "lucide-react";
+} from "@/components/icons";
 import { signOut } from "next-auth/react";
 
 const navItems = [

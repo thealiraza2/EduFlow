@@ -4,9 +4,17 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { KeyRound, LogOut, Menu, X, type LucideIcon } from "lucide-react";
+import { ChevronDown, KeyRound, LogOut, Menu, X, type LucideIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
-import { Logo } from "@/components/brand/Logo";
+import { LogoMark } from "@/components/brand/Logo";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export interface SidebarNavItem {
   href: string;
@@ -14,13 +22,13 @@ export interface SidebarNavItem {
   icon: LucideIcon;
   /** Exact match only (e.g. a dashboard root) */
   exact?: boolean;
-  /** Never shown as active (e.g. in-page anchors, cross-portal links) */
+  /** Never shown as active (e.g. cross-portal links) */
   neverActive?: boolean;
 }
 
 interface SidebarNavProps {
   items: SidebarNavItem[];
-  /** e.g. "Academy admin", "Teacher" */
+  /** e.g. "Admin", "Teacher" */
   roleLabel: string;
   /** Section heading above the links */
   sectionLabel?: string;
@@ -29,9 +37,19 @@ interface SidebarNavProps {
   changePasswordHref?: string;
 }
 
+function initials(s?: string | null) {
+  if (!s) return "EF";
+  return s
+    .split(/[\s@.-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]!.toUpperCase())
+    .join("");
+}
+
 /**
- * The greenboard sidebar shared by all five dashboards (DESIGN.md §2, §4.2, §5).
- * ≥1024px: fixed 248px column. <1024px: 56px top bar + slide-in drawer.
+ * The midnight-ink sidebar shared by every portal.
+ * ≥1024px: fixed 264px column. <1024px: slim top bar + slide-in drawer.
  */
 export function SidebarNav({
   items,
@@ -59,20 +77,17 @@ export function SidebarNav({
   const isActive = (item: SidebarNavItem) => {
     if (item.neverActive) return false;
     if (item.exact) return pathname === item.href;
-    // Longest-prefix wins so "/teacher/tests/generate" does not also light up "/teacher/tests"
     const matches = items
       .filter((i) => !i.neverActive && (pathname === i.href || pathname.startsWith(i.href + "/")))
       .sort((a, b) => b.href.length - a.href.length);
     return matches[0]?.href === item.href;
   };
 
-  const links = (onNavigate?: () => void, stagger = false) => (
-    <nav aria-label={`${roleLabel} navigation`} className="flex-1 overflow-y-auto px-3 py-4">
-      <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-[0.1em] text-sidebar-ink-2">
-        {sectionLabel}
-      </p>
+  const links = (onNavigate?: () => void) => (
+    <nav aria-label={`${roleLabel} navigation`} className="flex-1 overflow-y-auto px-3 pb-4">
+      <p className="px-3 pb-2 pt-1 text-[12px] font-medium text-sidebar-ink-2/80">{sectionLabel}</p>
       <ul className="space-y-0.5">
-        {items.map((item, idx) => {
+        {items.map((item) => {
           const Icon = item.icon;
           const active = isActive(item);
           return (
@@ -81,23 +96,26 @@ export function SidebarNav({
                 href={item.href}
                 onClick={onNavigate}
                 aria-current={active ? "page" : undefined}
-                style={stagger ? { animationDelay: `${idx * 40}ms` } : undefined}
                 className={cn(
-                  "group relative flex h-10 items-center gap-3 rounded-md px-3 text-[14px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ink/60",
-                  stagger && "animate-stagger-item",
+                  "group relative flex h-10 items-center gap-3 rounded-xl px-3 text-[14px] font-medium transition-[background-color,color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
                   active
-                    ? "bg-sidebar-active text-sidebar-ink"
-                    : "text-sidebar-ink-2 hover:bg-white/[0.05] hover:text-sidebar-ink"
+                    ? "bg-white/[0.08] text-white shadow-[inset_0_1px_0_rgba(255,255,255,.06)]"
+                    : "text-sidebar-ink-2 hover:bg-white/[0.04] hover:text-sidebar-ink"
                 )}
               >
-                <span
-                  aria-hidden
+                {active && (
+                  <span
+                    aria-hidden
+                    className="absolute -left-3 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-greenboard-400 shadow-[0_0_12px_2px_rgba(115,135,242,.6)]"
+                  />
+                )}
+                <Icon
                   className={cn(
-                    "absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-greenboard-300 transition-opacity",
-                    active ? "opacity-100" : "opacity-0"
+                    "h-[18px] w-[18px] shrink-0 transition-colors",
+                    active ? "text-greenboard-300" : "text-sidebar-ink-2 group-hover:text-sidebar-ink"
                   )}
+                  strokeWidth={1.8}
                 />
-                <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
                 <span className="truncate">{item.label}</span>
               </Link>
             </li>
@@ -107,101 +125,118 @@ export function SidebarNav({
     </nav>
   );
 
-  const footer = (onNavigate?: () => void) => (
-    <div className="border-t border-white/[0.08] p-3">
-      {identity?.primary && (
-        <div className="mb-2 px-3 py-2">
-          <p className="truncate text-[14px] font-medium text-sidebar-ink">{identity.primary}</p>
-          {identity.secondary && (
-            <p className="truncate text-[12px] text-sidebar-ink-2">{identity.secondary}</p>
-          )}
-        </div>
-      )}
-      <Link
-        href={changePasswordHref}
-        onClick={onNavigate}
-        className="flex h-9 items-center gap-3 rounded-md px-3 text-[13px] font-medium text-sidebar-ink-2 transition-colors hover:bg-white/[0.05] hover:text-sidebar-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ink/60"
-      >
-        <KeyRound className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-        Change password
-      </Link>
-      <button
-        type="button"
-        onClick={() => signOut({ callbackUrl: "/login" })}
-        className="flex h-9 w-full items-center gap-3 rounded-md px-3 text-left text-[13px] font-medium text-sidebar-ink-2 transition-colors hover:bg-white/[0.05] hover:text-sidebar-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ink/60"
-      >
-        <LogOut className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-        Sign out
-      </button>
+  const userMenu = (
+    <div className="border-t border-white/[0.06] p-3">
+      <DropdownMenu>
+        <DropdownMenuTrigger className="flex w-full items-center gap-3 rounded-xl p-2 text-left transition-colors hover:bg-white/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-greenboard-400 to-greenboard-700 text-[13px] font-bold text-white ring-2 ring-white/10">
+            {initials(identity?.primary)}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-[14px] font-semibold text-white">{identity?.primary || roleLabel}</span>
+            <span className="block truncate text-[12px] text-sidebar-ink-2">{identity?.secondary || roleLabel}</span>
+          </span>
+          <ChevronDown className="h-4 w-4 shrink-0 text-sidebar-ink-2" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="top" align="start" className="w-[232px]">
+          <DropdownMenuLabel>Signed in as {roleLabel.toLowerCase()}</DropdownMenuLabel>
+          <DropdownMenuItem asChild>
+            <Link href={changePasswordHref}>
+              <KeyRound /> Change password
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem tone="danger" onSelect={() => signOut({ callbackUrl: "/login" })}>
+            <LogOut /> Sign out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 
   const brand = (
-    <div className="flex h-16 items-center justify-between gap-2 border-b border-white/[0.08] px-5">
-      <Link href={items[0]?.href ?? "/"} className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ink/60">
-        <Logo tone="light" />
+    <div className="px-4 pb-4 pt-5">
+      <Link
+        href={items[0]?.href ?? "/"}
+        className="flex items-center gap-2.5 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+      >
+        <LogoMark className="h-8 w-8" />
+        <span className="font-serif text-[19px] font-bold tracking-[-0.02em] text-white">EduFlow</span>
+        <span className="ml-auto rounded-full bg-white/[0.08] px-2 py-0.5 text-[11.5px] font-semibold text-sidebar-ink">
+          {roleLabel}
+        </span>
       </Link>
-      <span className="rounded-sm bg-white/[0.08] px-2 py-0.5 text-xs font-semibold text-sidebar-ink-2">
-        {roleLabel}
-      </span>
     </div>
+  );
+
+  const shell = "relative flex flex-col overflow-hidden bg-sidebar";
+  const glow = (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute -top-24 left-1/2 h-56 w-[140%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(74,98,232,.35),transparent)]"
+    />
   );
 
   return (
     <>
-      {/* Mobile / tablet top bar (<1024px) */}
-      <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-line bg-surface/95 px-4 backdrop-blur lg:hidden">
-        <Link href={items[0]?.href ?? "/"} className="rounded-md focus-visible:outline-none focus-visible:shadow-focus">
-          <Logo />
+      {/* Phone & tablet top bar */}
+      <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-white/[0.06] bg-sidebar px-4 lg:hidden">
+        <Link
+          href={items[0]?.href ?? "/"}
+          className="flex items-center gap-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+        >
+          <LogoMark className="h-7 w-7" />
+          <span className="font-serif text-[17px] font-bold text-white">EduFlow</span>
+          <span className="rounded-full bg-white/[0.08] px-2 py-0.5 text-[11px] font-semibold text-sidebar-ink">{roleLabel}</span>
         </Link>
-        <div className="flex items-center gap-2">
-          <span className="hidden rounded-sm bg-primary-tint px-2 py-0.5 text-xs font-semibold text-primary sm:inline">
-            {roleLabel}
-          </span>
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            aria-expanded={open}
-            aria-label="Open navigation"
-            className="press inline-flex h-10 w-10 items-center justify-center rounded-md text-ink hover:bg-surface-sunken focus-visible:outline-none focus-visible:shadow-focus"
-          >
-            <Menu className="h-5 w-5" strokeWidth={1.75} />
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-expanded={open}
+          aria-label="Open navigation"
+          className="press inline-flex h-10 w-10 items-center justify-center rounded-xl text-white hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
       </header>
 
-      {/* Drawer (<1024px) */}
+      {/* Drawer */}
       {open && (
         <div className="fixed inset-0 z-50 flex lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation">
           <div
-            className="absolute inset-0 bg-ink/50 duration-200 animate-in fade-in"
+            className="absolute inset-0 bg-ink/60 backdrop-blur-sm duration-200 animate-in fade-in"
             onClick={() => setOpen(false)}
             aria-hidden
           />
-          <div className="relative flex h-full w-[280px] max-w-[85vw] flex-col bg-sidebar shadow-3 duration-300 ease-drawer animate-in slide-in-from-left">
-            <div className="flex h-16 items-center justify-between border-b border-white/[0.08] px-5">
-              <Logo tone="light" />
+          <div className={cn(shell, "h-full w-[288px] max-w-[85vw] shadow-3 duration-300 ease-drawer animate-in slide-in-from-left")}>
+            {glow}
+            <div className="relative flex items-center justify-between pr-3">
+              <div className="flex-1">{brand}</div>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close navigation"
-                className="press inline-flex h-10 w-10 items-center justify-center rounded-md text-sidebar-ink-2 hover:bg-white/[0.06] hover:text-sidebar-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ink/60"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-sidebar-ink-2 hover:bg-white/[0.06] hover:text-white"
               >
-                <X className="h-5 w-5" strokeWidth={1.75} />
+                <X className="h-5 w-5" />
               </button>
             </div>
-            <p className="px-6 pt-4 text-[12px] font-semibold text-sidebar-ink-2">{roleLabel}</p>
-            {links(() => setOpen(false), true)}
-            {footer(() => setOpen(false))}
+            <div className="relative flex min-h-0 flex-1 flex-col">
+              {links(() => setOpen(false))}
+              {userMenu}
+            </div>
           </div>
         </div>
       )}
 
-      {/* Desktop sidebar (≥1024px) */}
-      <aside className="sticky top-0 z-30 hidden h-screen w-[248px] shrink-0 flex-col bg-sidebar lg:flex">
-        {brand}
-        {links()}
-        {footer()}
+      {/* Desktop sidebar */}
+      <aside className={cn(shell, "sticky top-0 z-30 hidden h-screen w-[264px] shrink-0 lg:flex")}>
+        {glow}
+        <div className="relative flex min-h-0 flex-1 flex-col">
+          {brand}
+          {links()}
+          {userMenu}
+        </div>
       </aside>
     </>
   );

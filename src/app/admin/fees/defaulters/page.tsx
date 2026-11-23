@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { DefaultersManager, DefaulterItem } from "@/components/admin/DefaultersManager";
 import { calculateRemainingBalance } from "@/lib/fees";
 import Link from "next/link";
-import { ArrowLeft, AlertTriangle } from "lucide-react";
+import { ArrowLeft, AlertTriangle } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
 export default async function DefaultersPage() {

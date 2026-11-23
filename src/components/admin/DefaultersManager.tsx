@@ -20,7 +20,7 @@ import {
   CheckCircle2,
   Calendar,
   ArrowLeft,
-} from "lucide-react";
+} from "@/components/icons";
 
 export interface DefaulterItem {
   id: string;

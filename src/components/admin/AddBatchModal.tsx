@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { createBatchAction } from "@/lib/actions/classes";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle } from "@/components/icons";
 
 interface TeacherOption {
   id: string;

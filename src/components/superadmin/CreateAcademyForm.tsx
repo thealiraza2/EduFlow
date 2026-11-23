@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { CircleAlert, Loader2 } from "lucide-react";
+import { CircleAlert, Loader2 } from "@/components/icons";
 import { createAcademyAction } from "@/lib/actions/superadmin";
 import { ConsoleSection, TempPasswordNotice, fieldClass, primaryBtn, secondaryBtn } from "./ConsoleUI";
 

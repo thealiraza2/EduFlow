@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Check, ArrowRight, ChevronDown, Sparkles, HelpCircle } from "lucide-react";
+import { Check, ArrowRight, ChevronDown, Sparkles, HelpCircle } from "@/components/icons";
 
 export function PricingInteractive() {
   const [isYearly, setIsYearly] = useState(false);

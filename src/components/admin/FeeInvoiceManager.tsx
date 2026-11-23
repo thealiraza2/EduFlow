@@ -20,7 +20,7 @@ import {
   FileText,
   CreditCard,
   ArrowUpRight,
-} from "lucide-react";
+} from "@/components/icons";
 
 interface InvoiceItem {
   id: string;

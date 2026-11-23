@@ -11,7 +11,7 @@ import {
   Sparkles,
   Phone,
   BookOpen,
-} from "lucide-react";
+} from "@/components/icons";
 
 interface Props {
   students: StudentRiskMetrics[];

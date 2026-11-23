@@ -8,7 +8,7 @@ import { AssignTeacherModal } from "@/components/admin/AssignTeacherModal";
 import { BatchRosterModal } from "@/components/admin/BatchRosterModal";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, GraduationCap, DollarSign, School } from "lucide-react";
+import { Clock, GraduationCap, DollarSign, School } from "@/components/icons";
 
 export default async function ClassesPage() {
   await requireAdmin();

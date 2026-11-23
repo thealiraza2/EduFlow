@@ -4,7 +4,7 @@ import { Role } from "@prisma/client";
 import { TeacherAttendanceSheet } from "@/components/teacher/TeacherAttendanceSheet";
 import { TeacherQRModal } from "@/components/teacher/TeacherQRModal";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2 } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
 export default async function TeacherAttendancePage() {

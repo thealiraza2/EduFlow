@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 export function LogoMark({ className, title = "EduFlow" }: { className?: string; title?: string }) {
   return (
     <svg viewBox="0 0 32 32" className={cn("h-8 w-8 shrink-0", className)} role="img" aria-label={title}>
-      <circle cx="16" cy="16" r="16" fill="#6D1F3A" />
+      <circle cx="16" cy="16" r="16" fill="#2743D6" />
       <path
         d="M9.5 16.5l4.2 4.2 8.8-9.4"
         stroke="#FFFFFF"

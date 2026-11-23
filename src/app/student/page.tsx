@@ -25,7 +25,7 @@ import {
   Sparkles,
   MapPin,
   User,
-} from "lucide-react";
+} from "@/components/icons";
 import Link from "next/link";
 import { formatPKR } from "@/lib/money";
 import { DAYS_OF_WEEK } from "@/lib/constants";

@@ -1,7 +1,8 @@
 import Link from "next/link";
-import type { LucideIcon } from "lucide-react";
-import { ArrowUpRight } from "lucide-react";
+import type { LucideIcon } from "@/components/icons";
+import { ArrowUpRight } from "@/components/icons";
 import { cn } from "@/lib/utils";
+import { BorderBeam, DotPattern } from "@/components/magicui";
 
 /*
  * Dashboard kit — one visual language for every portal (admin, teacher, parent,
@@ -27,10 +28,8 @@ export function PageHeader({
   return (
     <header className={cn("flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between", className)}>
       <div className="min-w-0">
-        {eyebrow && (
-          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-primary">{eyebrow}</p>
-        )}
-        <h1 className="mt-1 font-serif text-[32px] leading-[1.08] tracking-[-0.01em] text-ink sm:text-[38px]">{title}</h1>
+        {eyebrow && <p className="text-[13.5px] font-medium text-ink-3">{eyebrow}</p>}
+        <h1 className="mt-1 font-serif text-[30px] font-bold leading-[1.08] tracking-[-0.025em] text-ink sm:text-[36px]">{title}</h1>
         {description && <p className="mt-2 max-w-[640px] text-[15px] leading-relaxed text-ink-2">{description}</p>}
       </div>
       {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
@@ -80,7 +79,7 @@ export function StatCard({
           </span>
         )}
       </div>
-      <p className="mt-2 truncate text-[24px] font-bold leading-none tracking-[-0.02em] tabular-nums text-ink sm:mt-3 sm:text-[30px]">
+      <p className="mt-2 truncate font-serif text-[26px] font-bold leading-none tracking-[-0.03em] tabular-nums text-ink sm:mt-3 sm:text-[32px]">
         {value}
       </p>
       {sub && <p className="mt-2 line-clamp-2 text-[12.5px] leading-snug text-ink-3 sm:text-[13px]">{sub}</p>}
@@ -191,6 +190,112 @@ export function ButtonLink({
     >
       {Icon && <Icon className="h-4 w-4" strokeWidth={1.9} />}
       {children}
+    </Link>
+  );
+}
+
+/**
+ * The one bold element on a dashboard: a midnight-ink panel with a dot texture
+ * and a slow border beam. Put the most important "today" numbers inside.
+ */
+export function HeroPanel({
+  title,
+  subtitle,
+  children,
+  aside,
+  className,
+}: {
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
+  children?: React.ReactNode;
+  aside?: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section
+      className={cn(
+        "relative isolate overflow-hidden rounded-[22px] bg-sidebar p-5 text-white shadow-[0_24px_60px_-24px_rgba(11,16,48,.55)] sm:p-7",
+        className
+      )}
+    >
+      <DotPattern className="fill-white/[0.07] [mask-image:radial-gradient(ellipse_at_top_right,#000_20%,transparent_70%)]" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-24 -top-32 -z-0 h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgba(74,98,232,.55),transparent)]"
+      />
+      <BorderBeam size={160} duration={10} colorFrom="#AAB6FA" colorTo="#4A62E8" />
+      <div className="relative grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div className="min-w-0">
+          <h2 className="font-serif text-[22px] font-bold leading-tight tracking-[-0.02em] sm:text-[26px]">{title}</h2>
+          {subtitle && <p className="mt-1 text-[14px] text-sidebar-ink-2">{subtitle}</p>}
+          {children && <div className="mt-6">{children}</div>}
+        </div>
+        {aside && <div className="relative">{aside}</div>}
+      </div>
+    </section>
+  );
+}
+
+/** A single figure inside the HeroPanel. */
+export function HeroFigure({ label, value, hint }: { label: string; value: React.ReactNode; hint?: React.ReactNode }) {
+  return (
+    <div className="min-w-0">
+      <p className="text-[13px] text-sidebar-ink-2">{label}</p>
+      <p className="mt-1 truncate font-serif text-[30px] font-bold leading-none tracking-[-0.03em] tabular-nums sm:text-[38px]">
+        {value}
+      </p>
+      {hint && <p className="mt-1.5 truncate text-[12.5px] text-sidebar-ink-2">{hint}</p>}
+    </div>
+  );
+}
+
+/** Circular percentage built on daisyUI's radial-progress. */
+export function RadialStat({ value, label, size = "7rem" }: { value: number; label: string; size?: string }) {
+  const v = Math.max(0, Math.min(100, Math.round(value)));
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <div
+        className="d-radial-progress bg-white/[0.06] font-serif text-[22px] font-bold text-white"
+        style={{ ["--value" as string]: v, ["--size" as string]: size, ["--thickness" as string]: "9px", color: "#AAB6FA" } as React.CSSProperties}
+        role="progressbar"
+        aria-valuenow={v}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={label}
+      >
+        <span className="text-white">{v}%</span>
+      </div>
+      <span className="text-[12.5px] text-sidebar-ink-2">{label}</span>
+    </div>
+  );
+}
+
+/** A shortcut to a frequent job. */
+export function ActionTile({
+  href,
+  title,
+  body,
+  icon: Icon,
+  tone = "plum",
+}: {
+  href: string;
+  title: string;
+  body: string;
+  icon: LucideIcon;
+  tone?: Tone;
+}) {
+  return (
+    <Link
+      href={href}
+      className="group flex items-start gap-3 rounded-2xl border border-line bg-surface p-4 shadow-1 transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-line-strong hover:shadow-2 focus-visible:outline-none focus-visible:shadow-focus"
+    >
+      <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", toneChip[tone])}>
+        <Icon className="h-5 w-5" strokeWidth={1.8} />
+      </span>
+      <span className="min-w-0">
+        <span className="block text-[15px] font-semibold text-ink">{title}</span>
+        <span className="mt-0.5 block text-[13px] leading-snug text-ink-3">{body}</span>
+      </span>
     </Link>
   );
 }

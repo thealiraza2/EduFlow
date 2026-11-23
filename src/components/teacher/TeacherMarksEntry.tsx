@@ -16,7 +16,7 @@ import {
   Download,
   Users,
   Award,
-} from "lucide-react";
+} from "@/components/icons";
 
 interface StudentItem {
   id: string;

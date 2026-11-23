@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { verifyQRToken } from "@/lib/qr";
 import { StudentQRScanConfirm } from "@/components/student/StudentQRScanConfirm";
 import Link from "next/link";
-import { ArrowLeft, QrCode } from "lucide-react";
+import { ArrowLeft, QrCode } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
 interface Props {

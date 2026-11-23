@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/permissions";
 import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { AdminResultsManager } from "@/components/admin/AdminResultsManager";
-import { Award } from "lucide-react";
+import { Award } from "@/components/icons";
 
 export default async function AdminResultsPage() {
   const admin = await requireAdmin();

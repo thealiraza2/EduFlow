@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/permissions";
 import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { FeeInvoiceManager } from "@/components/admin/FeeInvoiceManager";
-import { Banknote, AlertTriangle } from "lucide-react";
+import { Banknote, AlertTriangle } from "@/components/icons";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 

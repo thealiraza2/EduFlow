@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { initiatePaymentAction } from "@/lib/actions/payments";
 import { formatPKR } from "@/lib/money";
-import { CreditCard, Loader2, ChevronDown, Check } from "lucide-react";
+import { CreditCard, Loader2, ChevronDown, Check } from "@/components/icons";
 import { useRouter } from "next/navigation";
 
 interface PayInvoiceButtonProps {

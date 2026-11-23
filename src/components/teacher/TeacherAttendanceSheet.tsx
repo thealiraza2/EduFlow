@@ -18,7 +18,7 @@ import {
   Send,
   Lock,
   RefreshCw,
-} from "lucide-react";
+} from "@/components/icons";
 
 interface BatchItem {
   id: string;

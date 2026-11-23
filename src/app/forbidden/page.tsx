@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShieldAlert, ArrowLeft, KeyRound, LogOut } from "lucide-react";
+import { ShieldAlert, ArrowLeft, KeyRound, LogOut } from "@/components/icons";
 import { SignOutButton } from "@/components/common/SignOutButton";
 
 export const metadata = {

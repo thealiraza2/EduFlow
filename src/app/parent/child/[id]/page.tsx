@@ -4,7 +4,7 @@ import { getParentChildData } from "@/lib/parent";
 import { AuthorizationError } from "@/lib/permissions";
 import { ParentChildCard } from "@/components/parent/ParentChildCard";
 import Link from "next/link";
-import { ArrowLeft, ShieldAlert } from "lucide-react";
+import { ArrowLeft, ShieldAlert } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
 export default async function ParentChildDetailPage({

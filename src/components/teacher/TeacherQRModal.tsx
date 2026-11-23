@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { generateBatchQRAction } from "@/lib/actions/qr";
-import { QrCode, RefreshCw, Clock, CheckCircle, AlertTriangle, Loader2 } from "lucide-react";
+import { QrCode, RefreshCw, Clock, CheckCircle, AlertTriangle, Loader2 } from "@/components/icons";
 
 interface BatchItem {
   id: string;

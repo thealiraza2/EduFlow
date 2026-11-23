@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Search, Trash2, UserX, UserCheck, RefreshCw, AlertTriangle } from "lucide-react";
+import { Search, Trash2, UserX, UserCheck, RefreshCw, AlertTriangle } from "@/components/icons";
 import { TeacherStatus } from "@prisma/client";
 import { formatPKR } from "@/lib/money";
 import { deleteTeacherAction, updateTeacherStatusAction } from "@/lib/actions/teachers";

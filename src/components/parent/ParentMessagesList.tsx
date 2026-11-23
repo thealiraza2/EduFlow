@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare, Bell, Calendar, PhoneCall } from "lucide-react";
+import { MessageSquare, Bell, Calendar, PhoneCall } from "@/components/icons";
 
 interface MessageItem {
   id: string;

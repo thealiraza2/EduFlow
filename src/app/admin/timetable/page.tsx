@@ -6,7 +6,7 @@ import { AddSlotModal } from "@/components/admin/AddSlotModal";
 import { TimetableGrid } from "@/components/admin/TimetableGrid";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, School, Clock } from "lucide-react";
+import { Calendar, School, Clock } from "@/components/icons";
 
 export default async function AdminTimetablePage({
   searchParams,

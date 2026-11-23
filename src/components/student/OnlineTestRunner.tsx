@@ -19,7 +19,7 @@ import {
   Loader2,
   HelpCircle,
   EyeOff,
-} from "lucide-react";
+} from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 

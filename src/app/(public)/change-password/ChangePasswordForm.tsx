@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CircleAlert, CircleCheck, Loader2, ShieldAlert } from "lucide-react";
+import { CircleAlert, CircleCheck, Loader2, ShieldAlert } from "@/components/icons";
 import { changePasswordAction } from "@/lib/actions/auth";
 import { Input } from "@/components/ui/input";
 import { FieldError, FieldLabel } from "@/components/auth/AuthShell";

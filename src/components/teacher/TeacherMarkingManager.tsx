@@ -16,7 +16,7 @@ import {
   FileCheck2,
   Lock,
   Unlock,
-} from "lucide-react";
+} from "@/components/icons";
 import Link from "next/link";
 
 interface PendingShortAnswer {

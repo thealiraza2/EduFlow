@@ -16,7 +16,7 @@ import {
   School,
   Loader2,
   Calendar,
-} from "lucide-react";
+} from "@/components/icons";
 
 interface Props {
   token: string;

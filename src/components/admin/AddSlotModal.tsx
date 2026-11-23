@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { createTimetableSlotAction } from "@/lib/actions/timetable";
 import { DAYS_OF_WEEK } from "@/lib/constants";
-import { Plus } from "lucide-react";
+import { Plus } from "@/components/icons";
 
 interface TeacherOption {
   id: string;

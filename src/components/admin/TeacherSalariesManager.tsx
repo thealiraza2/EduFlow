@@ -17,7 +17,7 @@ import {
   Calendar,
   DollarSign,
   UserCheck,
-} from "lucide-react";
+} from "@/components/icons";
 
 interface TeacherItem {
   id: string;

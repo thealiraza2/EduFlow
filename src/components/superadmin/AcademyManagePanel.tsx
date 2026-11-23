@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CircleAlert, CircleCheck, KeyRound, Loader2, LogIn, Trash2, UserPlus } from "lucide-react";
+import { CircleAlert, CircleCheck, KeyRound, Loader2, LogIn, Trash2, UserPlus } from "@/components/icons";
 import {
   addAcademyAdminAction,
   deleteAcademyAction,

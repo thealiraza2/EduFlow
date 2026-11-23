@@ -5,7 +5,7 @@ import { deleteTimetableSlotAction } from "@/lib/actions/timetable";
 import { DAYS_OF_WEEK } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trash2, Clock, User, MapPin } from "lucide-react";
+import { Trash2, Clock, User, MapPin } from "@/components/icons";
 
 interface SlotItem {
   id: string;

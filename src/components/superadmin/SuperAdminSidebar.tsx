@@ -1,6 +1,6 @@
 "use client";
 
-import { Inbox, LayoutDashboard, Megaphone, PlusCircle, ArrowUpRight } from "lucide-react";
+import { Inbox, LayoutDashboard, Megaphone, PlusCircle, ArrowUpRight } from "@/components/icons";
 import { SidebarNav, type SidebarNavItem } from "@/components/common/SidebarNav";
 
 const navItems: SidebarNavItem[] = [

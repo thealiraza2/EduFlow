@@ -22,7 +22,7 @@ import {
   Send,
   Clock,
   UserX,
-} from "lucide-react";
+} from "@/components/icons";
 
 interface BatchItem {
   id: string;

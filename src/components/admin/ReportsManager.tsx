@@ -14,7 +14,7 @@ import {
   Award,
   GraduationCap,
   Info,
-} from "lucide-react";
+} from "@/components/icons";
 
 interface BatchItem {
   id: string;

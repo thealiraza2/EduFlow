@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, CalendarDays } from "lucide-react";
+import { LayoutDashboard, CalendarDays } from "@/components/icons";
 import { SidebarNav, type SidebarNavItem } from "@/components/common/SidebarNav";
 
 const navItems: SidebarNavItem[] = [

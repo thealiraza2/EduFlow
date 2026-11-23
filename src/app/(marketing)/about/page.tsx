@@ -13,7 +13,7 @@ import {
   ArrowRight,
   Code2,
   CheckCircle2,
-} from "lucide-react";
+} from "@/components/icons";
 
 export const dynamic = "force-static";
 

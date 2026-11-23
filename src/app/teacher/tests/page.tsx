@@ -4,7 +4,7 @@ import { Role } from "@prisma/client";
 import { CreateTestModal } from "@/components/teacher/CreateTestModal";
 import { TeacherMarksEntry } from "@/components/teacher/TeacherMarksEntry";
 import Link from "next/link";
-import { ArrowLeft, FileSpreadsheet, PlusCircle, CheckCircle2, Clock, Sparkles } from "lucide-react";
+import { ArrowLeft, FileSpreadsheet, PlusCircle, CheckCircle2, Clock, Sparkles } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

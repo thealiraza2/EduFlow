@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Send, CheckCircle2, AlertCircle, Loader2, ChevronDown, HelpCircle, MessageSquare } from "lucide-react";
+import { Send, CheckCircle2, AlertCircle, Loader2, ChevronDown, HelpCircle, MessageSquare } from "@/components/icons";
 
 export function ContactFormInteractive() {
   const topics = [

@@ -14,7 +14,7 @@ import {
   Settings,
   BookOpenCheck,
   ShieldCheck,
-} from "lucide-react";
+} from "@/components/icons";
 import { SidebarNav, type SidebarNavItem } from "@/components/common/SidebarNav";
 
 const navItems: SidebarNavItem[] = [

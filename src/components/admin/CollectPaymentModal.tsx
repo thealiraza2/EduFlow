@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { recordPaymentAction } from "@/lib/actions/fees";
 import { formatPKR, rupeesToPaisa } from "@/lib/money";
-import { CreditCard, DollarSign, RefreshCw, AlertCircle, CheckCircle2 } from "lucide-react";
+import { CreditCard, DollarSign, RefreshCw, AlertCircle, CheckCircle2 } from "@/components/icons";
 
 interface InvoiceProps {
   id: string;

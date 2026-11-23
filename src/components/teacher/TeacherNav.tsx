@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, ClipboardCheck, FileCheck2, FileSpreadsheet, Sparkles } from "lucide-react";
+import { LayoutDashboard, ClipboardCheck, FileCheck2, FileSpreadsheet, Sparkles } from "@/components/icons";
 import { SidebarNav, type SidebarNavItem } from "@/components/common/SidebarNav";
 
 const navItems: SidebarNavItem[] = [

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Check, Copy, KeyRound } from "lucide-react";
+import { ArrowLeft, Check, Copy, KeyRound } from "@/components/icons";
 
 export function ConsolePageHeader({
   title,

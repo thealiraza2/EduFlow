@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowLeft, UserCheck, ShieldAlert, CreditCard, FileText, Download } from "lucide-react";
+import { ArrowLeft, UserCheck, ShieldAlert, CreditCard, FileText, Download } from "@/components/icons";
 import { EnrollBatchModal } from "@/components/admin/EnrollBatchModal";
 import { StudentStatusChanger } from "@/components/admin/StudentStatusChanger";
 

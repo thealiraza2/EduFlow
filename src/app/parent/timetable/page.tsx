@@ -4,7 +4,7 @@ import { Role } from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DAYS_OF_WEEK } from "@/lib/constants";
-import { Calendar, Clock, MapPin, School, BookOpen, User, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, MapPin, School, BookOpen, User, ArrowLeft } from "@/components/icons";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
