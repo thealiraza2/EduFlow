@@ -13,6 +13,7 @@ import {
   FileSpreadsheet,
   Settings,
   BookOpenCheck,
+  ShieldCheck,
 } from "lucide-react";
 import { SidebarNav, type SidebarNavItem } from "@/components/common/SidebarNav";
 
@@ -36,10 +37,18 @@ interface AdminNavProps {
   role?: string | null;
 }
 
+const superAdminItem: SidebarNavItem = {
+  href: "/superadmin",
+  label: "Platform console",
+  icon: ShieldCheck,
+  neverActive: true,
+};
+
 export function AdminNav({ academySlug, role }: AdminNavProps) {
+  const isSuperAdmin = role === "SUPER_ADMIN";
   return (
     <SidebarNav
-      items={navItems}
+      items={isSuperAdmin ? [superAdminItem, ...navItems] : navItems}
       roleLabel={role === "SUPER_ADMIN" ? "Super admin" : "Admin"}
       sectionLabel="Academy"
       identity={academySlug ? { primary: academySlug, secondary: "Academy workspace" } : undefined}
