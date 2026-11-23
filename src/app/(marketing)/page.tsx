@@ -1,6 +1,12 @@
 import { Header } from "@/components/marketing/Header";
 import { HeroSection } from "@/components/marketing/HeroSection";
-import { SchoolDaySection, PortalsSection } from "@/components/marketing/SchoolDaySection";
+import {
+  FeaturesSection,
+  HowItWorksSection,
+  BuiltForPakistanSection,
+  PricingTeaserSection,
+  FaqSection,
+} from "@/components/marketing/HomeSections";
 import { CtaSection } from "@/components/marketing/CtaSection";
 import { Footer } from "@/components/marketing/Footer";
 
@@ -67,8 +73,11 @@ export default function MarketingHomePage() {
         <Header />
         <main className="flex-1">
           <HeroSection />
-          <SchoolDaySection />
-          <PortalsSection />
+          <FeaturesSection />
+          <HowItWorksSection />
+          <BuiltForPakistanSection />
+          <PricingTeaserSection />
+          <FaqSection />
           <CtaSection />
         </main>
         <Footer />

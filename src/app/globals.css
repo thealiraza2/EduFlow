@@ -5,29 +5,29 @@
 /* EduFlow tokens — DESIGN.md §2. Values are RGB channels for Tailwind alpha support. */
 @layer base {
   :root {
-    --canvas: 247 245 240; /* #F7F5F0 */
+    --canvas: 251 247 242; /* #FBF7F2 warm cream */
     --surface: 255 255 255;
-    --surface-sunken: 239 236 229; /* #EFECE5 */
-    --ink: 22 33 30; /* #16211E */
-    --ink-2: 74 86 82; /* #4A5652 */
-    --ink-3: 102 113 109; /* #66716D */
-    --line: 226 222 213; /* #E2DED5 */
-    --line-strong: 207 202 192; /* #CFCAC0 */
+    --surface-sunken: 243 237 229; /* #F3EDE5 */
+    --ink: 28 25 23; /* #1C1917 */
+    --ink-2: 87 83 78; /* #57534E */
+    --ink-3: 113 107 102; /* #716B66 */
+    --line: 234 227 218; /* #EAE3DA */
+    --line-strong: 214 204 191; /* #D6CCBF */
 
-    --primary: 15 79 69; /* #0F4F45 greenboard */
-    --primary-hover: 11 63 55; /* #0B3F37 */
-    --primary-pressed: 8 47 41; /* #082F29 */
-    --primary-tint: 227 239 236; /* #E3EFEC */
-    --primary-tint-strong: 199 223 217; /* #C7DFD9 */
+    --primary: 109 31 58; /* #6D1F3A plum */
+    --primary-hover: 86 24 48; /* #561830 */
+    --primary-pressed: 67 18 42; /* #43122A */
+    --primary-tint: 246 233 238; /* #F6E9EE */
+    --primary-tint-strong: 235 211 221; /* #EBD3DD */
     --on-primary: 255 255 255;
 
-    --accent: 142 44 58; /* #8E2C3A uniform maroon — marketing only */
-    --accent-tint: 246 231 233; /* #F6E7E9 */
+    --accent: 154 107 31; /* #9A6B1F gold — highlights only */
+    --accent-tint: 248 239 223; /* #F8EFDF */
 
-    --sidebar: 15 42 37; /* #0F2A25 */
-    --sidebar-ink: 232 239 236; /* #E8EFEC */
-    --sidebar-ink-2: 157 179 172; /* #9DB3AC */
-    --sidebar-active: 26 62 55; /* #1A3E37 */
+    --sidebar: 35 21 25; /* #231519 */
+    --sidebar-ink: 245 236 239; /* #F5ECEF */
+    --sidebar-ink-2: 191 169 177; /* #BFA9B1 */
+    --sidebar-active: 58 34 41; /* #3A2229 */
 
     --success: 30 122 76; /* #1E7A4C */
     --success-bg: 229 243 235;
@@ -54,6 +54,8 @@
   body {
     @apply bg-canvas text-ink font-sans antialiased;
     font-feature-settings: "kern" 1;
+    /* Instrument Serif ships one weight: never fake-bold it */
+    font-synthesis-weight: none;
   }
 
   ::selection {

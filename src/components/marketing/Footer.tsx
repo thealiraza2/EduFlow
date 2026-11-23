@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 
 const columns = [
@@ -30,7 +30,7 @@ const columns = [
 export function Footer() {
   return (
     <footer className="border-t border-line bg-canvas text-ink">
-      <div className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6 sm:py-16">
+      <div className="mx-auto max-w-[1240px] px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
         <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div className="max-w-xs">
             <Link href="/" aria-label="EduFlow home" className="inline-block rounded-md focus-visible:outline-none focus-visible:shadow-focus">

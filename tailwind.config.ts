@@ -9,34 +9,34 @@ import type { Config } from "tailwindcss";
 
 const v = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
 
-// Warm greenboard-neutral scale (canvas → ink)
+// Warm stone neutral scale (cream canvas → ink)
 const neutral = {
-  50: "#F7F5F0",
-  100: "#EFECE5",
-  200: "#E2DED5",
-  300: "#CFCAC0",
-  400: "#9AA29F",
-  500: "#66716D",
-  600: "#4A5652",
-  700: "#34403C",
-  800: "#22302B",
-  900: "#16211E",
-  950: "#0F1714",
+  50: "#FBF7F2",
+  100: "#F3EDE5",
+  200: "#EAE3DA",
+  300: "#D6CCBF",
+  400: "#A8A29E",
+  500: "#78716C",
+  600: "#57534E",
+  700: "#44403C",
+  800: "#292524",
+  900: "#1C1917",
+  950: "#0C0A09",
 };
 
-// Greenboard (primary) scale — 600 is the brand primary
+// Plum (primary) scale — 600 is the brand primary (key kept as "greenboard" for existing classes)
 const greenboard = {
-  50: "#F0F6F4",
-  100: "#E3EFEC",
-  200: "#C7DFD9",
-  300: "#94C2B7",
-  400: "#5A9A8B",
-  500: "#2C7565",
-  600: "#0F4F45",
-  700: "#0B3F37",
-  800: "#082F29",
-  900: "#06231F",
-  950: "#041915",
+  50: "#FBF4F7",
+  100: "#F6E9EE",
+  200: "#EBD3DD",
+  300: "#D9AFC0",
+  400: "#BE7F98",
+  500: "#9A4D6B",
+  600: "#6D1F3A",
+  700: "#561830",
+  800: "#43122A",
+  900: "#2F0C1D",
+  950: "#1F0813",
 };
 
 const success = {
@@ -132,6 +132,7 @@ const config: Config = {
         blue: info,
         sky: info,
         greenboard,
+        plum: greenboard,
 
         // Semantic tokens (DESIGN.md §2)
         canvas: v("canvas"),
@@ -255,10 +256,15 @@ const config: Config = {
           from: { strokeDashoffset: "24" },
           to: { strokeDashoffset: "0" },
         },
+        ring: {
+          from: { strokeDasharray: "0 100" },
+          to: { strokeDasharray: "86 100" },
+        },
       },
       animation: {
         "rise-in": "rise-in 320ms cubic-bezier(.2,.8,.2,1) both",
         "draw-tick": "draw-tick 220ms cubic-bezier(.2,.8,.2,1) both",
+        ring: "ring 900ms cubic-bezier(.2,.8,.2,1) 400ms both",
       },
     },
   },
