@@ -1,3 +1,5 @@
+import { ButtonLink, HeroFigure, HeroPanel, PageHeader, RadialStat } from "@/components/dashboard/kit";
+import { NumberTicker } from "@/components/magicui";
 import React from "react";
 import { requireRole } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -205,124 +207,26 @@ export default async function StudentPortalPage() {
   const balanceDueMinor = Math.max(0, totalInvoicedMinor - totalPaidMinor);
 
   return (
-    <div className="space-y-7 max-w-6xl mx-auto w-full">
-      {/* Welcome Header */}
-      <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 border-t-4 border-t-primary shadow-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 card-lift relative overflow-hidden">
-        <div>
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-ink">
-              Student Portal
-            </h1>
-            <Badge className="text-emerald-800 bg-emerald-50 border-emerald-300 text-xs font-semibold px-2.5 py-0.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1.5 animate-pulse" />
-              Active Student
-            </Badge>
-          </div>
-          <p className="text-sm text-slate-600 mt-1.5">
-            Welcome, <strong className="text-slate-900">{student?.name || user.name}</strong> • Roll No:{" "}
-            <strong className="font-mono text-ink">{student?.admissionNo || "—"}</strong>
-            {student?.academy && ` • ${student.academy.name}`}
-          </p>
+    <div className="mx-auto w-full max-w-6xl space-y-6">
+      <PageHeader
+        eyebrow={student?.academy?.name ?? "Student portal"}
+        title={`Hi, ${(student?.name || user.name || "").split(" ")[0]}`}
+        description={<>Roll number <span className="font-mono font-medium text-ink">{student?.admissionNo || "—"}</span></>}
+        actions={<ButtonLink href="/student/attendance/scan" icon={QrCode}>Scan attendance QR</ButtonLink>}
+      />
+
+      <HeroPanel
+        title={pendingTests.length > 0 ? `${pendingTests.length} test${pendingTests.length > 1 ? "s" : ""} waiting for you` : "You're all caught up"}
+        subtitle={totalSessions > 0 ? `Present in ${presentCount + lateCount} of ${totalSessions} classes this month` : "No classes recorded yet this month"}
+        aside={<RadialStat value={totalSessions > 0 ? attendancePct : 0} label="Attendance" />}
+      >
+        <div className="grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-4">
+          <HeroFigure label="Fee balance" value={<NumberTicker value={balanceDueMinor / 100} prefix="PKR " />} hint={`${invoices.length} invoice${invoices.length === 1 ? "" : "s"}`} />
+          <HeroFigure label="Tests taken" value={<NumberTicker value={completedTests.length} />} hint="Completed" />
+          <HeroFigure label="Pending tests" value={<NumberTicker value={pendingTests.length} />} hint={pendingTests.length ? "Start below" : "Nothing due"} />
+          <HeroFigure label="Batches" value={<NumberTicker value={student?.enrollments.length || 0} />} hint={student?.enrollments.map((e) => e.batch.class.name).join(", ") || "Enrolled"} />
         </div>
-
-        <div className="flex items-center space-x-2">
-          <Button size="sm" asChild className="bg-primary hover:bg-primary-hover text-white font-semibold text-xs shadow-1 focus-visible:ring-2 focus-visible:ring-primary">
-            <Link href="/student/attendance/scan">
-              <QrCode className="h-4 w-4 mr-1.5" />
-              Scan QR Attendance
-            </Link>
-          </Button>
-        </div>
-      </div>
-
-      {/* 5 Summary Stat Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
-        <Card className="rounded-2xl border border-slate-200/80 shadow-1 bg-white card-lift p-1">
-          <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Attendance</span>
-            <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
-              <CheckCircle2 className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent className="py-0 px-4 pb-3">
-            <div className="text-2xl sm:text-3xl font-semibold text-emerald-600 font-mono">
-              {totalSessions > 0 ? <CountUp value={attendancePct} suffix="%" /> : "—"}
-            </div>
-            <p className="text-xs text-slate-500 mt-0.5 font-medium">
-              {presentCount} Present / {totalSessions} Sessions
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl border border-slate-200/80 shadow-1 bg-white card-lift p-1">
-          <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Fee Balance</span>
-            <div className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
-              <Banknote className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent className="py-0 px-4 pb-3">
-            <div className="text-2xl sm:text-3xl font-semibold text-ink font-mono">
-              <CountUp value={balanceDueMinor / 100} prefix="PKR " />
-            </div>
-            <p className="text-xs text-slate-500 mt-0.5 font-medium">
-              {invoices.length} {invoices.length === 1 ? "Invoice" : "Invoices"} Recorded
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl border border-slate-200/80 shadow-1 bg-white card-lift p-1">
-          <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Active Batches</span>
-            <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
-              <School className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent className="py-0 px-4 pb-3">
-            <div className="text-2xl sm:text-3xl font-semibold text-ink font-mono">
-              <CountUp value={student?.enrollments.length || 0} />
-            </div>
-            <p className="text-xs text-slate-500 mt-0.5 truncate font-medium">
-              {student?.enrollments.map((e) => e.batch.class.name).join(", ") || "Enrolled"}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl border border-slate-200/80 shadow-1 bg-white card-lift p-1">
-          <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Tests Taken</span>
-            <div className="p-1.5 rounded-lg bg-purple-50 text-purple-600">
-              <Trophy className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent className="py-0 px-4 pb-3">
-            <div className="text-2xl sm:text-3xl font-semibold text-purple-600 font-mono">
-              <CountUp value={completedTests.length} />
-            </div>
-            <p className="text-xs text-slate-500 mt-0.5 font-medium">
-              {completedTests.length} completed
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl border border-slate-200/80 shadow-1 bg-white card-lift p-1 col-span-2 sm:col-span-1">
-          <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0 text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Pending Tests</span>
-            <div className="p-1.5 rounded-lg bg-amber-50 text-amber-600">
-              <FileSpreadsheet className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent className="py-0 px-4 pb-3">
-            <div className="text-2xl sm:text-3xl font-semibold text-amber-600 font-mono">
-              <CountUp value={pendingTests.length} />
-            </div>
-            <p className="text-xs text-slate-500 mt-0.5 font-medium">
-              {pendingTests.length > 0 ? "Action required" : "All completed"}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
+      </HeroPanel>
         {/* Pending Assessment Alert Card (NO Trapping: displayed as an interactive card ON dashboard) */}
         {pendingTests.length > 0 && (
           <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-6 shadow-1 space-y-4">

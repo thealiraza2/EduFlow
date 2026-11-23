@@ -1,3 +1,5 @@
+import { ActionTile, ButtonLink, HeroFigure, HeroPanel, PageHeader } from "@/components/dashboard/kit";
+import { NumberTicker } from "@/components/magicui";
 import { requireRole } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
@@ -89,7 +91,7 @@ export default async function TeacherDashboardPage() {
 
   // Compute greeting
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   // Compute today's slot count
   const todayDayId = new Date().getDay(); // 0=Sun,1=Mon,...
@@ -99,100 +101,37 @@ export default async function TeacherDashboardPage() {
   const totalBatches = teacher?.batches.length ?? 0;
 
   return (
-    <div className="space-y-7 max-w-7xl mx-auto w-full">
-      {/* Top Welcome Banner */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5 bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 border-t-4 border-t-primary shadow-1 card-lift relative overflow-hidden">
-        <div>
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-ink">
-              {greeting}, {teacher?.user?.name || user.name}
-            </h1>
-            <Badge className="border-amber-300 text-amber-900 bg-amber-50 text-xs font-semibold px-2.5 py-0.5">
-              Faculty Workspace
-            </Badge>
-          </div>
-          <p className="text-sm text-slate-600 mt-1.5">
-            You have{" "}
-            <span className="font-semibold text-ink">{totalBatches}</span>{" "}
-            assigned {totalBatches === 1 ? "batch" : "batches"} this academic term
-          </p>
-        </div>
+    <div className="mx-auto w-full max-w-7xl space-y-6">
+      <PageHeader
+        eyebrow={new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}
+        title={`${greeting}, ${(teacher?.user?.name || user.name || "").split(" ")[0]}`}
+        description={`You teach ${totalBatches} ${totalBatches === 1 ? "batch" : "batches"} this term.`}
+        actions={
+          <>
+            <ButtonLink href="/teacher/tests/generate" variant="secondary" icon={Sparkles}>Paper generator</ButtonLink>
+            <ButtonLink href="/teacher/attendance" icon={CheckCircle2}>Mark attendance</ButtonLink>
+          </>
+        }
+      />
 
-        <div className="flex flex-wrap items-center gap-2.5">
-          <Link href="/teacher/tests/generate">
-            <Button size="sm" className="bg-primary hover:bg-primary-hover text-white font-semibold flex items-center text-xs shadow-1 whitespace-nowrap focus-visible:ring-2 focus-visible:ring-primary">
-              <Sparkles className="h-4 w-4 mr-1.5" />
-              AI Test Generator
-            </Button>
-          </Link>
-          <Link href="/teacher/marking">
-            <Button size="sm" variant="outline" className="flex items-center text-xs font-semibold text-ink border-slate-200 hover:bg-primary-tint whitespace-nowrap shadow-1 focus-visible:ring-2 focus-visible:ring-primary">
-              <FileCheck2 className="h-4 w-4 mr-1.5 text-accent" />
-              Marking Queue
-            </Button>
-          </Link>
-          <Link href="/teacher/tests">
-            <Button size="sm" variant="outline" className="flex items-center text-xs font-semibold text-slate-700 border-slate-200 hover:bg-slate-50 whitespace-nowrap shadow-1 focus-visible:ring-2 focus-visible:ring-primary">
-              <FileSpreadsheet className="h-4 w-4 mr-1.5 text-ink" />
-              Tests &amp; Marks
-            </Button>
-          </Link>
-          <Link href="/teacher/attendance">
-            <Button size="sm" className="bg-primary hover:bg-sidebar-active text-white flex items-center whitespace-nowrap text-xs font-semibold shadow-1 focus-visible:ring-2 focus-visible:ring-primary">
-              <CheckCircle2 className="h-4 w-4 mr-1.5 text-accent" />
-              Mark Attendance
-            </Button>
-          </Link>
+      <HeroPanel
+        title="Your day"
+        subtitle={todaySlots.length === 0 ? "No lectures on your timetable today" : `First lecture at ${[...todaySlots].sort((a, b) => a.startTime.localeCompare(b.startTime))[0]!.startTime}`}
+      >
+        <div className="grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-4">
+          <HeroFigure label="Lectures today" value={<NumberTicker value={todaySlots.length} />} hint={`${slots.length} this week`} />
+          <HeroFigure label="Your batches" value={<NumberTicker value={totalBatches} />} hint="Active this term" />
+          <HeroFigure label="Students needing attention" value={<NumberTicker value={atRiskStudents.length} />} hint="Low attendance or marks" />
+          <HeroFigure label="Notices" value={<NumberTicker value={serializedAnnouncements.length} />} hint="From your academy" />
         </div>
+      </HeroPanel>
+
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 [&>*]:min-w-0">
+        <ActionTile title="Mark attendance" body="Take today's register in seconds" icon={CheckCircle2} tone="success" href="/teacher/attendance" />
+        <ActionTile title="Marking queue" body="Grade short answers waiting for you" icon={FileCheck2} tone="warning" href="/teacher/marking" />
+        <ActionTile title="Tests & marks" body="Create tests and enter marks" icon={FileSpreadsheet} tone="info" href="/teacher/tests" />
+        <ActionTile title="Paper generator" body="Draft a board-style paper" icon={Sparkles} tone="plum" href="/teacher/tests/generate" />
       </div>
-
-      {/* Stat Cards Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        {/* Assigned Batches */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 p-6 flex items-start gap-4 card-lift">
-          <div className="bg-primary-tint border border-primary/30 w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-xs">
-            <BookOpen className="h-6 w-6 text-accent" />
-          </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Assigned Batches</p>
-            <p className="text-3xl font-semibold text-ink mt-1">
-              <CountUp value={totalBatches} />
-            </p>
-            <p className="text-xs text-slate-400 mt-0.5">Active teaching cohorts</p>
-          </div>
-        </div>
-
-        {/* At-Risk Students */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 p-6 flex items-start gap-4 card-lift">
-          <div className="bg-amber-50 border border-amber-200/50 w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-xs">
-            <Users className="h-6 w-6 text-amber-600" />
-          </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">At-Risk Students</p>
-            <p className="text-3xl font-semibold text-ink mt-1">
-              <CountUp value={atRiskStudents.length} />
-            </p>
-            <p className="text-xs text-slate-400 mt-0.5">Low attendance or test alerts</p>
-          </div>
-        </div>
-
-        {/* Today's Schedule */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 p-6 flex items-start gap-4 card-lift">
-          <div className="bg-blue-50 border border-blue-200/50 w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-xs">
-            <Calendar className="h-6 w-6 text-blue-600" />
-          </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Today&apos;s Lectures</p>
-            <p className="text-3xl font-semibold text-ink mt-1">
-              <CountUp value={todaySlots.length} />
-            </p>
-            <p className="text-xs text-slate-500 mt-0.5 font-medium">
-              {todaySlots.length === 0 ? "No lectures scheduled today" : `${todaySlots.length} session${todaySlots.length > 1 ? "s" : ""} today`}
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Weekly Timetable */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-1 overflow-hidden card-lift">
         <div className="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-slate-50/50">
