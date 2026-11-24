@@ -41,7 +41,8 @@ export function PaperWizard({ books }: { books: WizardBook[] }) {
   const [cls, setCls] = useState(classes[0] ?? "");
   const [bookId, setBookId] = useState<string>("");
   const [units, setUnits] = useState<Set<string>>(new Set());
-  const [sources, setSources] = useState<Set<Source>>(new Set(["EXERCISE", "PAST_PAPER"]));
+  // All sources start selected so every reviewed question counts; teachers narrow it down if they want.
+  const [sources, setSources] = useState<Set<Source>>(new Set(["EXERCISE", "PAST_PAPER", "ADDITIONAL", "CONCEPTUAL"]));
   const [rows, setRows] = useState<Row[]>(PRESETS[1].rows);
   const [title, setTitle] = useState("Monthly test");
   const [time, setTime] = useState("60");
