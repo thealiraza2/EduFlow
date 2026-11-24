@@ -1,0 +1,71 @@
+// Additional original questions (round 2) appended to existing chapters.
+module.exports = [
+  { unit: 2, q: [["S", "2.2", "An element has atomic number 8 and mass number 16. Find its protons, neutrons and electrons.", "ایک عنصر کا ایٹمی نمبر 8 اور ماس نمبر 16 ہے۔ اس کے پروٹانز، نیوٹرانز اور الیکٹرانز معلوم کریں۔"]] },
+  { unit: 3, q: [["M", "3.5", "The most electronegative element is:", "سب سے زیادہ الیکٹرونیگیٹو عنصر ہے:", [["oxygen", "آکسیجن"], ["fluorine", "فلورین"], ["chlorine", "کلورین"], ["nitrogen", "نائٹروجن"]], "B"]] },
+  { unit: 4, q: [
+    ["M", "4.6", "One mole of any substance contains:", "کسی بھی مادے کے ایک مول میں ہوتے ہیں:", [["6.022 × 10²³ particles", "6.022 × 10²³ ذرات"], ["1 particle", "1 ذرہ"], ["22.4 particles", "22.4 ذرات"], ["100 particles", "100 ذرات"]], "A"],
+    ["M", "4.8", "In the equation 2H₂ + O₂ → 2H₂O, the number of oxygen molecules is:", "مساوات 2H₂ + O₂ → 2H₂O میں آکسیجن مالیکیولز کی تعداد ہے:", [["1", "1"], ["2", "2"], ["4", "4"], ["0", "0"]], "A"],
+    ["S", "4.7", "Calculate the molar mass of H₂SO₄ (H = 1, S = 32, O = 16).", "H₂SO₄ کی مولر ماس معلوم کریں (H = 1، S = 32، O = 16)۔"],
+  ] },
+  { unit: 5, q: [
+    ["M", "5.2", "The SI unit of enthalpy change is:", "اینتھالپی کی تبدیلی کا ایس آئی یونٹ ہے:", [["kJ mol⁻¹", "کلو جول فی مول"], ["kg", "کلوگرام"], ["mol", "مول"], ["K", "کیلون"]], "A"],
+    ["M", "5.3", "Burning of methane is a/an:", "میتھین کا جلنا ہے:", [["endothermic reaction", "اینڈوتھرمک تعامل"], ["exothermic reaction", "ایگزوتھرمک تعامل"], ["no reaction", "کوئی تعامل نہیں"], ["physical change", "طبعی تبدیلی"]], "B"],
+    ["M", "5.5", "Aerobic respiration needs:", "ایروبک تنفس کے لیے ضروری ہے:", [["oxygen", "آکسیجن"], ["nitrogen", "نائٹروجن"], ["no gas", "کوئی گیس نہیں"], ["chlorine", "کلورین"]], "A"],
+    ["S", "5.1", "Differentiate between system and surroundings with an example.", "سسٹم اور ماحول میں مثال کے ساتھ فرق بیان کریں۔"],
+  ] },
+  { unit: 6, q: [
+    ["M", "6.3", "Increasing temperature for an exothermic equilibrium shifts it:", "ایگزوتھرمک توازن کے لیے درجۂ حرارت بڑھانے سے یہ منتقل ہوتا ہے:", [["forward", "آگے کی طرف"], ["backward", "پیچھے کی طرف"], ["nowhere", "کہیں نہیں"], ["to products only", "صرف حاصلات کی طرف"]], "B"],
+    ["M", "6.3", "A catalyst at equilibrium:", "توازن پر عمل انگیز:", [["shifts it forward", "اسے آگے منتقل کرتا ہے"], ["shifts it backward", "اسے پیچھے منتقل کرتا ہے"], ["does not change its position", "اس کی پوزیشن نہیں بدلتا"], ["stops the reaction", "تعامل روک دیتا ہے"]], "C"],
+    ["M", "6.1", "Burning of wood is a/an:", "لکڑی کا جلنا ہے:", [["reversible change", "قابلِ واپسی تبدیلی"], ["irreversible change", "ناقابلِ واپسی تبدیلی"], ["physical change", "طبعی تبدیلی"], ["equilibrium", "توازن"]], "B"],
+    ["M", "6.2", "At equilibrium, the concentrations of reactants and products:", "توازن پر ری ایکٹنٹس اور حاصلات کا ارتکاز:", [["keep changing", "بدلتا رہتا ہے"], ["remain constant", "مستقل رہتا ہے"], ["become zero", "صفر ہو جاتا ہے"], ["become equal always", "ہمیشہ برابر ہو جاتا ہے"]], "B"],
+    ["S", "6.2", "Give one example of a physical equilibrium.", "طبعی توازن کی ایک مثال دیں۔"],
+    ["S", "6.3", "State Le Chatelier's principle.", "لی شیٹلیئر کا اصول بیان کریں۔"],
+  ] },
+  { unit: 7, q: [
+    ["M", "7.4", "Bases turn red litmus paper:", "اساس سرخ لٹمس پیپر کو کر دیتی ہیں:", [["blue", "نیلا"], ["green", "سبز"], ["yellow", "پیلا"], ["colourless", "بے رنگ"]], "A"],
+    ["M", "7.2", "According to Lewis, a base is an:", "لیوس کے مطابق اساس ہے:", [["electron pair donor", "الیکٹران جوڑا دینے والی"], ["electron pair acceptor", "الیکٹران جوڑا لینے والی"], ["proton donor", "پروٹان دینے والی"], ["H⁺ producer", "H⁺ پیدا کرنے والی"]], "A"],
+    ["S", "7.4", "What is neutralisation? Give one example.", "تعدیل کیا ہے؟ ایک مثال دیں۔"],
+  ] },
+  { unit: 8, q: [
+    ["M", "8.2", "Elements in group 18 are called:", "گروپ 18 کے عناصر کہلاتے ہیں:", [["halogens", "ہیلوجنز"], ["noble gases", "نوبل گیسیں"], ["alkali metals", "الکلی دھاتیں"], ["transition metals", "ٹرانزیشن دھاتیں"]], "B"],
+    ["M", "8.4", "Electronegativity across a period from left to right:", "پیریڈ میں بائیں سے دائیں الیکٹرونیگیٹیویٹی:", [["increases", "بڑھتی ہے"], ["decreases", "کم ہوتی ہے"], ["stays constant", "مستقل رہتی ہے"], ["becomes zero", "صفر ہو جاتی ہے"]], "A"],
+    ["S", "8.3", "Why do sodium and potassium show similar chemical properties?", "سوڈیم اور پوٹاشیم ملتی جلتی کیمیائی خصوصیات کیوں رکھتے ہیں؟"],
+    ["L", "8.2", "Describe the main features of the modern periodic table: periods, groups and blocks.", "جدید پیریاڈک ٹیبل کی اہم خصوصیات (پیریڈز، گروپس اور بلاکس) بیان کریں۔", 5],
+  ] },
+  { unit: 9, q: [
+    ["M", "9.2", "Chlorine gas is:", "کلورین گیس ہے:", [["colourless", "بے رنگ"], ["greenish-yellow", "سبزی مائل پیلی"], ["red", "سرخ"], ["violet", "بنفشی"]], "B"],
+    ["M", "9.4", "Which noble gas is used in advertising signs?", "اشتہاری بورڈز میں کون سی نوبل گیس استعمال ہوتی ہے؟", [["Neon", "نیون"], ["Radon", "ریڈون"], ["Xenon only", "صرف زینون"], ["Krypton only", "صرف کرپٹون"]], "A"],
+    ["S", "9.3", "Write two properties of transition metals.", "ٹرانزیشن دھاتوں کی دو خصوصیات لکھیں۔"],
+  ] },
+  { unit: 10, q: [
+    ["M", "10.2", "Which gas is responsible for depletion of the ozone layer?", "اوزون کی تہہ کو کم کرنے کی ذمہ دار گیس کون سی ہے؟", [["CFCs", "سی ایف سیز"], ["Oxygen", "آکسیجن"], ["Nitrogen", "نائٹروجن"], ["Argon", "آرگان"]], "A"],
+    ["M", "10.4", "The main cause of global warming is increase in:", "گلوبل وارمنگ کی بنیادی وجہ اضافہ ہے:", [["CO₂ in air", "ہوا میں CO₂ کا"], ["oxygen", "آکسیجن کا"], ["forests", "جنگلات کا"], ["rainfall", "بارش کا"]], "A"],
+    ["M", "10.3", "Acid rain damages:", "تیزابی بارش نقصان پہنچاتی ہے:", [["buildings and plants", "عمارتوں اور پودوں کو"], ["only the sky", "صرف آسمان کو"], ["sound", "آواز کو"], ["the Sun", "سورج کو"]], "A"],
+    ["S", "10.1", "Name the four main gases of the atmosphere.", "فضا کی چار اہم گیسوں کے نام لکھیں۔"],
+  ] },
+  { unit: 11, q: [
+    ["M", "11.2", "The first member of the alkane series is:", "الکین سیریز کا پہلا رکن ہے:", [["ethane", "ایتھین"], ["methane", "میتھین"], ["propane", "پروپین"], ["butane", "بیوٹین"]], "B"],
+    ["M", "11.2", "The molecular formula of butane is:", "بیوٹین کا مالیکیولر فارمولا ہے:", [["C₃H₈", "C₃H₈"], ["C₄H₁₀", "C₄H₁₀"], ["C₄H₈", "C₄H₈"], ["C₂H₆", "C₂H₆"]], "B"],
+    ["M", "11.4", "Incomplete combustion of alkanes produces the poisonous gas:", "الکینز کے نامکمل جلنے سے زہریلی گیس بنتی ہے:", [["CO₂", "CO₂"], ["CO", "CO"], ["O₂", "O₂"], ["H₂", "H₂"]], "B"],
+    ["S", "11.1", "What are hydrocarbons? Give two examples.", "ہائیڈروکاربنز کیا ہیں؟ دو مثالیں دیں۔"],
+    ["L", "11.2", "Write the names, molecular formulas and structural formulas of the first four alkanes.", "پہلی چار الکینز کے نام، مالیکیولر فارمولے اور سٹرکچرل فارمولے لکھیں۔", 5],
+  ] },
+  { unit: 12, q: [
+    ["M", "12.1", "The SI unit of mass is:", "کمیت کا ایس آئی یونٹ ہے:", [["gram", "گرام"], ["kilogram", "کلوگرام"], ["milligram", "ملی گرام"], ["tonne", "ٹن"]], "B"],
+    ["M", "12.2", "An electronic balance reading 2.345 g has a precision of:", "2.345 گرام دکھانے والے الیکٹرانک بیلنس کی درستی ہے:", [["0.1 g", "0.1 گرام"], ["0.01 g", "0.01 گرام"], ["0.001 g", "0.001 گرام"], ["1 g", "1 گرام"]], "C"],
+    ["M", "12.3", "Repeating an experiment several times improves:", "تجربہ کئی بار دہرانے سے بہتر ہوتی ہے:", [["reliability of results", "نتائج کی ساکھ"], ["colour", "رنگ"], ["cost", "لاگت"], ["temperature", "درجۂ حرارت"]], "A"],
+    ["M", "12.1", "1 dm³ equals:", "1 ڈیسی میٹر مکعب برابر ہے:", [["1 cm³", "1 مکعب سینٹی میٹر"], ["100 cm³", "100 مکعب سینٹی میٹر"], ["1000 cm³", "1000 مکعب سینٹی میٹر"], ["10 cm³", "10 مکعب سینٹی میٹر"]], "C"],
+    ["S", "12.3", "What is a random error? Give an example.", "اتفاقی غلطی کیا ہے؟ مثال دیں۔"],
+    ["S", "12.2", "How should the volume in a burette be read correctly?", "بیوریٹ میں حجم درست طریقے سے کیسے پڑھا جاتا ہے؟"],
+    ["L", "12.2", "Describe the tools used in a chemistry lab to measure mass, volume and temperature accurately.", "کیمسٹری لیب میں کمیت، حجم اور درجۂ حرارت درستی سے ناپنے کے آلات بیان کریں۔", 5],
+  ] },
+  { unit: 13, q: [
+    ["M", "13.2", "A skull-and-crossbones sign means a chemical is:", "کھوپڑی اور ہڈیوں کا نشان ظاہر کرتا ہے کہ کیمیکل:", [["toxic", "زہریلا ہے"], ["harmless", "بے ضرر ہے"], ["edible", "کھانے کے قابل ہے"], ["frozen", "منجمد ہے"]], "A"],
+    ["M", "13.1", "Working with toxic gases should be done in a:", "زہریلی گیسوں کے ساتھ کام کرنا چاہیے:", [["fume cupboard", "فیوم کپ بورڈ میں"], ["closed room", "بند کمرے میں"], ["classroom", "کلاس روم میں"], ["kitchen", "باورچی خانے میں"]], "A"],
+    ["M", "13.3", "Long hair in the lab should be:", "لیب میں لمبے بال ہونے چاہئیں:", [["tied back", "باندھے ہوئے"], ["left open", "کھلے"], ["wet", "گیلے"], ["covered with oil", "تیل لگے"]], "A"],
+    ["M", "13.5", "If a chemical gets into the eyes, first:", "اگر کیمیکل آنکھوں میں چلا جائے تو پہلے:", [["rub the eyes", "آنکھیں ملیں"], ["wash with plenty of water", "بہت سے پانی سے دھوئیں"], ["close them and wait", "بند کر کے انتظار کریں"], ["apply cream", "کریم لگائیں"]], "B"],
+    ["S", "13.4", "Why should you know the location of the fire extinguisher in a lab?", "آپ کو لیب میں آگ بجھانے والے آلے کا مقام کیوں معلوم ہونا چاہیے؟"],
+    ["S", "13.2", "Draw or describe the hazard sign for corrosive substances.", "کھرچنے والے (کوروسِو) مادوں کا خطرے کا نشان بنائیں یا بیان کریں۔"],
+    ["L", "13.3", "Describe the rules of safety in a chemistry laboratory and the use of personal protective equipment.", "کیمسٹری لیبارٹری میں حفاظت کے اصول اور ذاتی حفاظتی سامان کا استعمال بیان کریں۔", 5],
+  ] },
+];

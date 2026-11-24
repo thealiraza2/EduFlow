@@ -6,11 +6,7 @@ const path = require("path");
 
 const [dir, out] = process.argv.slice(2);
 const book = JSON.parse(fs.readFileSync(path.join(dir, "book.json"), "utf8"));
-const units = fs
-  .readdirSync(dir)
-  .filter((f) => f.endsWith(".cjs"))
-  .sort()
-  .flatMap((f) => require(path.resolve(dir, f)));
+const units = require("./load.cjs")(dir);
 
 const s = (v) => (v == null ? "NULL" : `'${String(v).replace(/'/g, "''")}'`);
 const j = (v) => (v == null ? "NULL" : `${s(JSON.stringify(v))}::jsonb`);
