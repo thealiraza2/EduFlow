@@ -7,7 +7,8 @@ export default async function TeacherLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await requireRole([Role.TEACHER, Role.ADMIN]);
+  // Admins and super admins reach this shell through the paper generator link.
+  const user = await requireRole([Role.TEACHER, Role.ADMIN, Role.SUPER_ADMIN]);
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas lg:flex-row">

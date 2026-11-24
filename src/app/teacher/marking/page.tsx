@@ -1,14 +1,13 @@
 import React from "react";
-import { requireRole } from "@/lib/auth";
+import { requireClassroomRole } from "@/lib/auth";
 import { requireTenant } from "@/lib/tenant";
 import { db } from "@/lib/db";
-import { Role } from "@prisma/client";
 import { TeacherMarkingManager } from "@/components/teacher/TeacherMarkingManager";
 import { rankLeaderboardAttempts } from "@/lib/online-tests";
 import { PageHeader } from "@/components/dashboard/kit";
 
 export default async function TeacherMarkingPage() {
-  const user = await requireRole([Role.TEACHER, Role.ADMIN]);
+  const user = await requireClassroomRole();
   const tenant = await requireTenant();
 
   // 1. Fetch pending SHORT answers across tests in this academy

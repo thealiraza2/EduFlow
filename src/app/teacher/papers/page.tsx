@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Papers | EduFlow" };
 
 export default async function PapersPage() {
-  await requireRole([Role.TEACHER, Role.ADMIN]);
+  await requireRole([Role.TEACHER, Role.ADMIN, Role.SUPER_ADMIN]);
   const { academyId } = await requireTenant();
   const papers = await db.savedPaper.findMany({
     where: { academyId },

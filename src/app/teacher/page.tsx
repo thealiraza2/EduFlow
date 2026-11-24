@@ -1,6 +1,6 @@
 import { ActionTile, ButtonLink, HeroFigure, HeroPanel, PageHeader } from "@/components/dashboard/kit";
 import { NumberTicker } from "@/components/magicui";
-import { requireRole } from "@/lib/auth";
+import { requireClassroomRole } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +14,7 @@ import { getAcademyStudentsRiskOverview } from "@/lib/risk";
 import { CountUp } from "@/components/common/CountUp";
 
 export default async function TeacherDashboardPage() {
-  const user = await requireRole([Role.TEACHER, Role.ADMIN]);
+  const user = await requireClassroomRole();
 
   // Find the teacher profile
   let teacher = await db.teacher.findFirst({

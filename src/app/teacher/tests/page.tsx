@@ -1,6 +1,5 @@
-import { requireRole } from "@/lib/auth";
+import { requireClassroomRole } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { Role } from "@prisma/client";
 import { CreateTestModal } from "@/components/teacher/CreateTestModal";
 import { TeacherMarksEntry } from "@/components/teacher/TeacherMarksEntry";
 import Link from "next/link";
@@ -13,7 +12,7 @@ export default async function TeacherTestsPage({
 }: {
   searchParams: { testId?: string };
 }) {
-  const user = await requireRole([Role.TEACHER, Role.ADMIN]);
+  const user = await requireClassroomRole();
 
   // Find teacher profile
   let teacher = await db.teacher.findFirst({

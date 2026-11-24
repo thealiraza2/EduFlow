@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "New paper | EduFlow" };
 
 export default async function NewPaperPage() {
-  await requireRole([Role.TEACHER, Role.ADMIN]);
+  await requireRole([Role.TEACHER, Role.ADMIN, Role.SUPER_ADMIN]);
   const [books, counts] = await Promise.all([
     db.book.findMany({
       where: { isCurrent: true },

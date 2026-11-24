@@ -161,6 +161,20 @@ export async function requireUser() {
  * Server-side helper to ensure user has one of the allowed roles.
  * Returns the authenticated user or throws Error("FORBIDDEN").
  */
+/**
+ * For classroom pages (teacher or academy admin). A super admin can open the
+ * teacher shell through the paper generator but has no classroom of their own,
+ * so they are sent to the paper generator instead of hitting an error.
+ */
+export async function requireClassroomRole() {
+  const user = await requireUser();
+  if (user.role === Role.SUPER_ADMIN) {
+    const { redirect } = await import("next/navigation");
+    redirect("/teacher/papers");
+  }
+  return requireRole([Role.TEACHER, Role.ADMIN]);
+}
+
 export async function requireRole(allowedRoles: Role | Role[]) {
   const user = await requireUser();
   const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];

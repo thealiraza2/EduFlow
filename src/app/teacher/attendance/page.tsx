@@ -1,4 +1,4 @@
-import { requireRole } from "@/lib/auth";
+import { requireClassroomRole } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { TeacherAttendanceSheet } from "@/components/teacher/TeacherAttendanceSheet";
@@ -7,7 +7,7 @@ import { CheckCircle2 } from "@/components/icons";
 import { EmptyState, PageHeader } from "@/components/dashboard/kit";
 
 export default async function TeacherAttendancePage() {
-  const user = await requireRole([Role.TEACHER, Role.ADMIN]);
+  const user = await requireClassroomRole();
 
   // Find the teacher profile
   let teacher = await db.teacher.findFirst({
