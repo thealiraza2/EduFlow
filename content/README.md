@@ -20,6 +20,13 @@ book: `book.json` holds the `Book` row, and the `*.cjs` files export its units.
 Topics are `[code, title]` or `[code, title, titleUr]`. Books with `"lang": "en"` or
 `"lang": "ur"` in `book.json` leave the other language empty.
 
+## Adding questions later
+
+Put new questions in a new file whose name sorts **after every existing file** in the
+folder (files load in name order). Today the last file is `zz-more.cjs`, so use a
+name such as `zzz-exercise.cjs`. A file that sorts earlier (e.g. `zz-exercise.cjs`,
+because "e" < "m") renumbers the questions after it and overwrites them in the live bank.
+
 ## Building SQL
 
 ```powershell

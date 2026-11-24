@@ -51,6 +51,8 @@ for (const u of units) {
     if (!topicCodes.has(topic)) errors.push(`unit ${u.unit}: unknown topic ${topic}`);
     perTopic[`${kind}${topic}`] = (perTopic[`${kind}${topic}`] || 0) + 1;
     const id = `${unitId}_t${slug(topic)}_${kind.toLowerCase()}${perTopic[`${kind}${topic}`]}`;
+    const last = q[q.length - 1];
+    const explicitSource = last && typeof last === "object" && !Array.isArray(last) && last.source ? last.source : null;
     let type, options = null, answer = null, marks;
     if (kind === "M") {
       type = "MCQ";
@@ -68,10 +70,10 @@ for (const u of units) {
       marks = 2;
     } else {
       type = "LONG";
-      marks = q[4] || 5;
+      marks = typeof q[4] === "number" ? q[4] : 5;
     }
-    // Reasoning ("why/explain") items are CONCEPTUAL; the rest ADDITIONAL.
-    const source = /^(why|explain|how|can )/i.test(en) ? "CONCEPTUAL" : "ADDITIONAL";
+    // Explicit source if provided (e.g. EXERCISE); reasoning ("why/explain") items are CONCEPTUAL; the rest ADDITIONAL.
+    const source = explicitSource || (en && /^(why|explain|how|can )/i.test(en) ? "CONCEPTUAL" : "ADDITIONAL");
     count[kind]++;
     lines.push(
       `INSERT INTO "BankQuestion" ("id","bookId","unitId","topicId","type","source","textEn","textUr","options","answer","marks","status","updatedAt") VALUES (` +
