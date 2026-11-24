@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Printer, RefreshCw, Save, Shuffle, Trash2, X } from "@/components/icons";
 import { deletePaperAction, replaceQuestionsAction, savePaperAction } from "@/lib/actions/papers";
-import { paperMarks, sectionHeading, shuffle, type PaperSection, type PaperSettings } from "@/lib/bank/paper";
+import { normalizeSections, paperMarks, sectionHeading, shuffle, toRoman, type PaperSection, type PaperSettings } from "@/lib/bank/paper";
 import { urdu } from "@/lib/fonts/urdu";
 
 export type EditorQuestion = {
@@ -15,7 +15,6 @@ export type EditorQuestion = {
 type Lang = "en" | "ur" | "dual";
 type Paper = { id: string; title: string; className: string; subject: string; timeMinutes: number | null; language: Lang; sections: PaperSection[]; settings: PaperSettings };
 
-const ROMAN = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", "xi", "xii", "xiii", "xiv", "xv", "xvi", "xvii", "xviii", "xix", "xx"];
 const tool = "press inline-flex h-9 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-3.5 text-[13px] font-semibold text-ink hover:bg-surface-sunken disabled:opacity-50";
 
 export function PaperEditor({ paper, questions, shortfall }: { paper: Paper; questions: EditorQuestion[]; shortfall: string | null }) {
@@ -24,7 +23,7 @@ export function PaperEditor({ paper, questions, shortfall }: { paper: Paper; que
   const [title, setTitle] = useState(paper.title);
   const [time, setTime] = useState(paper.timeMinutes ? String(paper.timeMinutes) : "");
   const [lang, setLang] = useState<Lang>(paper.language);
-  const [sections, setSections] = useState(paper.sections);
+  const [sections, setSections] = useState(() => normalizeSections(paper.sections));
   const [settings, setSettings] = useState(paper.settings);
   const [bank, setBank] = useState(() => new Map(questions.map((q) => [q.id, q])));
   const [dirty, setDirty] = useState(false);
@@ -32,7 +31,7 @@ export function PaperEditor({ paper, questions, shortfall }: { paper: Paper; que
 
   const total = paperMarks(sections);
   const touch = <T,>(fn: (v: T) => void) => (v: T) => { fn(v); setDirty(true); };
-  const updateSection = (id: string, patch: Partial<PaperSection>) => { setSections((s) => s.map((x) => (x.id === id ? { ...x, ...patch } : x))); setDirty(true); };
+  const updateSection = (id: string, patch: Partial<PaperSection>) => { setSections((s) => normalizeSections(s.map((x) => (x.id === id ? { ...x, ...patch } : x)))); setDirty(true); };
 
   const save = () =>
     start(async () => {
@@ -164,10 +163,16 @@ export function PaperEditor({ paper, questions, shortfall }: { paper: Paper; que
                 </div>
 
                 <div className="no-print my-1 flex flex-wrap items-center gap-2 rounded-lg bg-primary-tint/60 px-2 py-1 text-[12.5px] text-ink" dir="ltr">
-                  <span className="font-semibold">Attempt</span>
-                  <input className="h-7 w-12 rounded border border-line-strong px-1" inputMode="numeric" value={s.required}
-                    onChange={(e) => updateSection(s.id, { required: Math.max(0, Math.min(s.questionIds.length, Number(e.target.value) || 0)) })} />
-                  <span>of {s.questionIds.length}</span>
+                  {s.type === "MCQ" ? (
+                    <span className="font-semibold">{s.questionIds.length} MCQs, all compulsory</span>
+                  ) : (
+                    <>
+                      <span className="font-semibold">Attempt</span>
+                      <input className="h-7 w-12 rounded border border-line-strong px-1" inputMode="numeric" value={s.required}
+                        onChange={(e) => updateSection(s.id, { required: Math.max(0, Math.min(s.questionIds.length, Number(e.target.value) || 0)) })} />
+                      <span>of {s.questionIds.length}</span>
+                    </>
+                  )}
                   <span className="ml-2 font-semibold">Marks each</span>
                   <input className="h-7 w-14 rounded border border-line-strong px-1" inputMode="decimal" value={s.marksEach}
                     onChange={(e) => updateSection(s.id, { marksEach: Number(e.target.value) || 0 })} />
@@ -205,7 +210,7 @@ export function PaperEditor({ paper, questions, shortfall }: { paper: Paper; que
                       if (!q) return null;
                       return (
                         <li key={id} className="group/q relative flex gap-2">
-                          <span className="w-8 shrink-0">{s.type === "SHORT" ? `(${ROMAN[i] ?? i + 1})` : `${i + 1}.`}</span>
+                          <span className="w-8 shrink-0">{s.type === "SHORT" ? `(${toRoman(i + 1)})` : `${i + 1}.`}</span>
                           <Text en={q.textEn} ur={q.textUr} className="flex-1" />
                           <QuestionTools onSwap={() => replace(s, [id])} onRemove={() => updateSection(s.id, { questionIds: s.questionIds.filter((x) => x !== id), required: Math.min(s.required, s.questionIds.length - 1) })} />
                         </li>

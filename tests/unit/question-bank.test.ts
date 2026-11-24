@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { csvTemplate, parseCsv, parseQuestionCsv } from "@/lib/bank/csv";
-import { buildSections, paperMarks, pickSpread, sectionHeading } from "@/lib/bank/paper";
+import { buildSections, normalizeSections, paperMarks, pickSpread, sectionHeading, toRoman } from "@/lib/bank/paper";
 
 const seeded = (s = 1) => () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
 
@@ -70,5 +70,20 @@ describe("paper builder", () => {
     const h = sectionHeading({ type: "SHORT", required: 5, marksEach: 2, questionIds: ["a", "b", "c", "d", "e", "f", "g", "h"] });
     expect(h.en).toBe("Answer any 5 of the following 8 questions briefly. (5 × 2 = 10)");
     expect(h.ur).toContain("کوئی سے 5");
+  });
+
+  it("makes every printed MCQ compulsory, including in papers saved earlier", () => {
+    const { sections } = buildSections([{ type: "MCQ", total: 8, required: 3, marksEach: 1 }], pool, seeded(5));
+    expect(sections[0].required).toBe(8);
+    const old = [{ type: "MCQ" as const, required: 10, marksEach: 1, questionIds: Array.from({ length: 30 }, (_, i) => `q${i}`) },
+      { type: "SHORT" as const, required: 8, marksEach: 2, questionIds: Array.from({ length: 12 }, (_, i) => `s${i}`) }];
+    const fixed = normalizeSections(old);
+    expect(fixed[0].required).toBe(30);
+    expect(fixed[1]).toBe(old[1]);
+    expect(sectionHeading(fixed[0]).en).toBe("Choose the correct answer. (30 × 1 = 30)");
+  });
+
+  it("numbers short questions in Roman numerals past twenty", () => {
+    expect([1, 4, 9, 20, 21, 24, 40, 45, 49].map(toRoman)).toEqual(["i", "iv", "ix", "xx", "xxi", "xxiv", "xl", "xlv", "xlix"]);
   });
 });

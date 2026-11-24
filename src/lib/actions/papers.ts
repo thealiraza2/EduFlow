@@ -6,7 +6,7 @@ import { Role } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { requireTenant } from "@/lib/tenant";
-import { buildSections, DEFAULT_SETTINGS, paperMarks, pickSpread, type PaperSection, type PaperSettings } from "@/lib/bank/paper";
+import { buildSections, DEFAULT_SETTINGS, normalizeSections, paperMarks, pickSpread, type PaperSection, type PaperSettings } from "@/lib/bank/paper";
 
 type Result<T = unknown> = { ok: true; data?: T } | { ok: false; error: string };
 const fail = (e: unknown): { ok: false; error: string } => ({
@@ -126,6 +126,7 @@ export async function savePaperAction(input: z.input<typeof saveSchema>): Promis
   try {
     const { academyId } = await context();
     const d = saveSchema.parse(input);
+    d.sections = normalizeSections(d.sections);
     await ownPaper(d.id, academyId);
     for (const s of d.sections) if (s.required > s.questionIds.length) return { ok: false, error: "A section asks students to attempt more questions than it has." };
     await db.savedPaper.update({

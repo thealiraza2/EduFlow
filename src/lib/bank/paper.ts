@@ -86,12 +86,28 @@ export function buildSections(
     return {
       id: `s${i + 1}`,
       type: r.type,
-      required: Math.min(r.required, ids.length),
+      required: r.type === "MCQ" ? ids.length : Math.min(r.required, ids.length),
       marksEach: r.marksEach,
       questionIds: ids,
     };
   });
   return { sections, shortfalls };
+}
+
+/**
+ * Students attempt every printed MCQ, so an MCQ section's `required` always equals
+ * its question count. Papers saved before this rule may say otherwise; this fixes them.
+ */
+export function normalizeSections<T extends Pick<PaperSection, "type" | "required" | "questionIds">>(sections: T[]): T[] {
+  return sections.map((s) => (s.type === "MCQ" && s.required !== s.questionIds.length ? { ...s, required: s.questionIds.length } : s));
+}
+
+/** Lower-case Roman numeral for short-question numbering: 1 → "i", 24 → "xxiv". */
+export function toRoman(n: number): string {
+  const table: [number, string][] = [[100, "c"], [90, "xc"], [50, "l"], [40, "xl"], [10, "x"], [9, "ix"], [5, "v"], [4, "iv"], [1, "i"]];
+  let out = "";
+  for (const [v, s] of table) while (n >= v) { out += s; n -= v; }
+  return out;
 }
 
 /** Section heading in English and Urdu, e.g. "Answer any 5 of the following 8 questions. (5 × 2 = 10)". */

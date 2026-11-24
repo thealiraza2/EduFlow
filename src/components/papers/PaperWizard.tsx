@@ -68,7 +68,13 @@ export function PaperWizard({ books }: { books: WizardBook[] }) {
   }
 
   const pickBook = (id: string) => { setBookId(id); setUnits(new Set()); };
-  const setRow = (i: number, patch: Partial<Row>) => setRows(rows.map((r, j) => (j === i ? { ...r, ...patch } : r)));
+  // Every printed MCQ is compulsory, so an MCQ row's Attempt always follows Print.
+  const setRow = (i: number, patch: Partial<Row>) =>
+    setRows(rows.map((r, j) => {
+      if (j !== i) return r;
+      const n = { ...r, ...patch };
+      return n.type === "MCQ" ? { ...n, required: n.total } : n;
+    }));
 
   const submit = () => {
     setErr(null);
@@ -176,7 +182,9 @@ export function PaperWizard({ books }: { books: WizardBook[] }) {
                   </label>
                   <label>
                     <span className="mb-1 block text-[12.5px] font-semibold text-ink-2">Attempt</span>
-                    <input className={field} inputMode="numeric" value={r.required} onChange={(e) => setRow(i, { required: Number(e.target.value) || 0 })} />
+                    <input className={field + (r.type === "MCQ" ? " bg-surface-sunken text-ink-3" : "")} inputMode="numeric" value={r.type === "MCQ" ? r.total : r.required}
+                      disabled={r.type === "MCQ"} title={r.type === "MCQ" ? "All printed MCQs are compulsory" : undefined}
+                      onChange={(e) => setRow(i, { required: Number(e.target.value) || 0 })} />
                   </label>
                   <label>
                     <span className="mb-1 block text-[12.5px] font-semibold text-ink-2">Marks each</span>
